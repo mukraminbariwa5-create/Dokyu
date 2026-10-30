@@ -2,3 +2,10 @@ packages:
   - apps/*
   - packages/*
   - server
+
+# pnpm 10 skips dependency build scripts unless they are listed here.
+onlyBuiltDependencies:
+  - '@prisma/client'
+  - '@prisma/engines'
+  - esbuild
+  - prisma

@@ -27,7 +27,10 @@ export function createApp(env: Env, db: PrismaClient) {
       }),
     );
   }
-  app.use('/api', rateLimit({ windowMs: 60_000, limit: 120, standardHeaders: 'draft-8', legacyHeaders: false }));
+  app.use(
+    '/api',
+    rateLimit({ windowMs: 60_000, limit: 120, standardHeaders: 'draft-8', legacyHeaders: false }),
+  );
 
   app.use('/api/v1/health', health);
   app.use('/api/v1/guides', guidesRouter(db));

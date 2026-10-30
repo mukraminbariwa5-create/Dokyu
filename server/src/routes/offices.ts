@@ -18,10 +18,14 @@ export function officesRouter(db: PrismaClient) {
 
   r.get('/', async (req, res) => {
     const parsed = query.safeParse(req.query);
-    if (!parsed.success) return res.status(400).json({ error: 'Invalid query' });
+    if (!parsed.success) {
+      res.status(400).json({ error: 'Invalid query' });
+      return;
+    }
     const { agency, province, municipality, lat, lng } = parsed.data;
     if (lat !== undefined && lng !== undefined && !isValidCoordinate(lat, lng)) {
-      return res.status(400).json({ error: 'Invalid coordinates' });
+      res.status(400).json({ error: 'Invalid coordinates' });
+      return;
     }
     const offices = await db.office.findMany({
       where: {
@@ -33,7 +37,8 @@ export function officesRouter(db: PrismaClient) {
       include: { agency: { select: { code: true, name: true } } },
     });
     // Coordinates are used only here and are never stored or logged.
-    const data = lat !== undefined && lng !== undefined ? sortByDistance(offices, { lat, lng }) : offices;
+    const data =
+      lat !== undefined && lng !== undefined ? sortByDistance(offices, { lat, lng }) : offices;
     res.json({ data });
   });
 

@@ -4,13 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "start": "node --import tsx src/index.ts",
+    "dev": "tsx watch --env-file=.env src/index.ts",
+    "start": "node --env-file=.env --import tsx src/index.ts",
     "typecheck": "tsc --noEmit",
-    "lint": "tsc --noEmit",
     "test": "vitest run",
     "prisma:migrate": "prisma migrate dev",
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx --env-file=.env prisma/seed.ts"
   },
   "dependencies": {
     "@dokyu/shared": "workspace:*",

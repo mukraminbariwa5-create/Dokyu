@@ -28,8 +28,9 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-      - run: pnpm install --frozen-lockfile=false
+      - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @dokyu/server exec prisma generate
       - run: pnpm --filter @dokyu/server exec prisma migrate deploy || pnpm --filter @dokyu/server exec prisma db push
+      - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test

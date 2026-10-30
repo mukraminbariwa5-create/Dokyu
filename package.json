@@ -5,7 +5,9 @@
   "author": "Mukramin Bariwa Ansao",
   "license": "MIT",
   "packageManager": "pnpm@10.28.0",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev:app": "pnpm --filter @dokyu/mobile-web start",
     "dev:web": "pnpm --filter @dokyu/mobile-web web",
@@ -15,11 +17,17 @@
     "db:seed": "pnpm --filter @dokyu/server seed",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
-    "lint": "pnpm -r lint",
-    "format": "prettier --write ."
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
+    "@eslint/js": "^9.30.0",
+    "eslint": "^9.30.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "globals": "^16.3.0",
     "prettier": "^3.3.3",
-    "typescript": "~5.8.3"
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.35.0"
   }
 }
