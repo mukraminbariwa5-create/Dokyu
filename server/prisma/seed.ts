@@ -1,12 +1,15 @@
 /**
- * Seeds verified content (docs/CONTENT.md) and the clearly-labelled demo barangay.
+ * Seeds verified content (docs/CONTENT.md) plus a demo user and the Super Admin.
  * Run: pnpm db:seed
  */
 import { PrismaClient } from '@prisma/client';
 import { randomBytes } from 'node:crypto';
-import { DEMO_BARANGAY, DEMO_BARANGAY_DOCS, GUIDES, OFFICES } from '@dokyu/shared';
+import { GUIDES, OFFICES } from '@dokyu/shared';
+import { hashPassword } from '../src/lib/passwords.js';
 
 const db = new PrismaClient();
+const DEMO_USER_EMAIL = 'demo@example.com';
+const ADMIN_EMAIL = 'admin@example.com';
 
 const AGENCIES: Record<string, { name: string; officialUrl: string }> = {
   PSA: { name: 'Philippine Statistics Authority', officialUrl: 'https://psa.gov.ph' },
@@ -33,11 +36,19 @@ async function main() {
       verified: g.verified,
       lastVerifiedAt: new Date(g.lastVerified),
     };
-    await db.documentGuide.upsert({ where: { slug: g.slug }, create: { slug: g.slug, ...data }, update: data });
+    await db.documentGuide.upsert({
+      where: { slug: g.slug },
+      create: { slug: g.slug, ...data },
+      update: data,
+    });
   }
 
   for (const [code, a] of Object.entries(AGENCIES)) {
-    await db.agency.upsert({ where: { code: code.toUpperCase() }, create: { code: code.toUpperCase(), ...a }, update: a });
+    await db.agency.upsert({
+      where: { code: code.toUpperCase() },
+      create: { code: code.toUpperCase(), ...a },
+      update: a,
+    });
   }
 
   for (const o of OFFICES) {
@@ -54,34 +65,52 @@ async function main() {
       lastVerifiedAt: new Date('2026-10-30'),
       sourceUrl: o.source,
     };
-    await db.office.upsert({ where: { slug: o.slug }, create: { slug: o.slug, ...data }, update: data });
-  }
-
-  const brgy = await db.barangay.upsert({
-    where: { slug: DEMO_BARANGAY.slug },
-    create: {
-      slug: DEMO_BARANGAY.slug,
-      name: DEMO_BARANGAY.name,
-      municipality: DEMO_BARANGAY.municipality,
-      province: DEMO_BARANGAY.province,
-      status: 'ACTIVE',
-      isDemo: true,
-      inviteCode: randomBytes(6).toString('hex'),
-      officeHours: { text: DEMO_BARANGAY.hours },
-    },
-    update: {},
-  });
-
-  for (const d of DEMO_BARANGAY_DOCS) {
-    const data = { name: d.name, fee: d.fee, processing: d.processing, requirements: d.requirements, legalBasis: d.legalBasis ?? null };
-    await db.brgyDocumentType.upsert({
-      where: { barangayId_code: { barangayId: brgy.id, code: d.code } },
-      create: { barangayId: brgy.id, code: d.code, ...data },
+    await db.office.upsert({
+      where: { slug: o.slug },
+      create: { slug: o.slug, ...data },
       update: data,
     });
   }
 
-  console.log(`Seeded ${GUIDES.length} guides, ${OFFICES.length} offices, demo barangay with ${DEMO_BARANGAY_DOCS.length} documents.`);
+  // Demo accounts (plan §10). The demo user's password is public on purpose so recruiters can try the app.
+  // The admin password comes from SEED_ADMIN_PASSWORD, or a random one is printed once.
+  const demoPassword = 'Dokyu-demo-2026';
+  await db.user.upsert({
+    where: { email: DEMO_USER_EMAIL },
+    create: {
+      email: DEMO_USER_EMAIL,
+      passwordHash: await hashPassword(demoPassword),
+      fullName: 'Juan Dela Cruz (Demo)',
+      province: 'Sulu',
+      municipality: 'Jolo',
+      goals: ['first-job', 'passport'],
+      consentAt: new Date(),
+      emailVerifiedAt: new Date(),
+      onboardedAt: new Date(),
+    },
+    update: {},
+  });
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD || randomBytes(12).toString('base64url');
+  const admin = await db.user.findUnique({ where: { email: ADMIN_EMAIL } });
+  if (!admin) {
+    await db.user.create({
+      data: {
+        email: ADMIN_EMAIL,
+        passwordHash: await hashPassword(adminPassword),
+        fullName: 'Dokyu Admin',
+        role: 'SUPER_ADMIN',
+        consentAt: new Date(),
+        emailVerifiedAt: new Date(),
+        onboardedAt: new Date(),
+      },
+    });
+    if (!process.env.SEED_ADMIN_PASSWORD)
+      console.log(`Super Admin ${ADMIN_EMAIL} password (shown once): ${adminPassword}`);
+  }
+
+  console.log(
+    `Seeded ${GUIDES.length} guides, ${OFFICES.length} offices, demo user ${DEMO_USER_EMAIL} and admin ${ADMIN_EMAIL}.`,
+  );
 }
 
 main()

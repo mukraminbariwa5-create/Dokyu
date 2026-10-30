@@ -8,11 +8,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// v1.6 is citizen-first: anyone who signs up is a USER; SUPER_ADMIN is the owner.
+// Barangay staff roles come back with the barangay system (docs/PLAN.md §3.2 "Later").
 enum Role {
-  RESIDENT
-  STAFF
-  BRGY_ADMIN
+  USER
   SUPER_ADMIN
+}
+
+enum EmailTokenType {
+  VERIFY_EMAIL
+  RESET_PASSWORD
 }
 
 enum BarangayStatus {
@@ -44,47 +49,72 @@ enum Scope {
 }
 
 model User {
-  id              String    @id @default(cuid())
-  email           String    @unique
-  passwordHash    String
-  fullName        String
-  phone           String?
-  language        String    @default("en")
-  textSize        String    @default("normal")
-  role            Role      @default(RESIDENT)
-  barangayId      String?
-  barangay        Barangay? @relation(fields: [barangayId], references: [id])
-  province        String? // general area only, never GPS
-  municipality    String?
-  emailVerifiedAt DateTime?
-  consentAt       DateTime?
-  failedLogins    Int       @default(0)
-  lockedUntil     DateTime?
-  createdAt       DateTime  @default(now())
-  deletedAt       DateTime?
+  id                String    @id @default(cuid())
+  email             String    @unique
+  passwordHash      String
+  fullName          String
+  phone             String?
+  language          String    @default("en")
+  textSize          String    @default("normal")
+  role              Role      @default(USER)
+  barangayId        String? // unused until the barangay system returns
+  barangay          Barangay? @relation(fields: [barangayId], references: [id])
+  province          String? // general area only, never GPS
+  municipality      String?
+  goals             String[]  @default([]) // goal slugs picked during onboarding
+  onboardedAt       DateTime?
+  emailVerifiedAt   DateTime?
+  consentAt         DateTime?
+  failedLogins      Int       @default(0)
+  lockedUntil       DateTime?
+  passwordChangedAt DateTime?
+  createdAt         DateTime  @default(now())
+  deletedAt         DateTime?
 
-  refreshTokens   RefreshToken[]
-  family          FamilyMember[]
-  tracked         TrackedDocument[]
-  requests        BrgyRequest[]     @relation("Resident")
-  events          RequestEvent[]
-  savedOffices    SavedOffice[]
-  notifications   Notification[]
-  pushTokens      PushToken[]
-  authLetters     AuthLetter[]
-  chatSessions    ChatSession[]
+  refreshTokens RefreshToken[]
+  emailTokens   EmailToken[]
+  family        FamilyMember[]
+  tracked       TrackedDocument[]
+  requests      BrgyRequest[]     @relation("Resident")
+  events        RequestEvent[]
+  savedOffices  SavedOffice[]
+  notifications Notification[]
+  pushTokens    PushToken[]
+  authLetters   AuthLetter[]
+  chatSessions  ChatSession[]
 
   @@index([barangayId])
 }
 
+/// One row per refresh token. Every refresh revokes the old row and creates a new one in the same family
+/// (one family = one signed-in device). Reusing a revoked token revokes the whole family.
 model RefreshToken {
-  id        String    @id @default(cuid())
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  familyId    String
+  tokenHash   String    @unique // SHA-256 of the token; the token itself is never stored
+  deviceLabel String? // e.g. "Chrome on Windows", shown on the sessions list
+  expiresAt   DateTime
+  revokedAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([userId])
+  @@index([familyId])
+}
+
+/// Single-use links for email verification and password reset. Only the hash is stored.
+model EmailToken {
+  id        String         @id @default(cuid())
   userId    String
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tokenHash String    @unique // stored hashed, rotated on every refresh
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      EmailTokenType
+  tokenHash String         @unique
   expiresAt DateTime
-  revokedAt DateTime?
-  createdAt DateTime  @default(now())
+  usedAt    DateTime?
+  createdAt DateTime       @default(now())
+
+  @@index([userId, type])
 }
 
 model Barangay {
@@ -370,15 +400,15 @@ model Announcement {
 }
 
 model Notification {
-  id     String    @id @default(cuid())
-  userId String
-  user   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type   String
-  title  String
-  body   String
-  data   Json?
-  readAt DateTime?
-  createdAt DateTime @default(now())
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  title     String
+  body      String
+  data      Json?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
 }
 
 model Reminder {
@@ -414,6 +444,7 @@ model AuditLog {
   createdAt DateTime @default(now())
 
   @@index([entity, entityId])
+  @@index([actorId])
 }
 
 model ChatSession {
