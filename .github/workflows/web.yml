@@ -1,0 +1,51 @@
+name: Web app (GitHub Pages)
+# Publishes the web app to https://mukraminbariwa5-create.github.io/Dokyu/ on every push to main.
+# Guides, checklists and Doki work there; sign-in needs the API, which is not hosted yet.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build for the /Dokyu/ address
+        working-directory: apps/mobile-web
+        run: |
+          node -e "const f='app.json',j=require('./'+f);j.expo.experiments.baseUrl='/Dokyu';require('fs').writeFileSync(f,JSON.stringify(j,null,2))"
+          EXPO_OFFLINE=1 npx expo export --platform web --output-dir dist
+          cp dist/index.html dist/404.html
+          touch dist/.nojekyll
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/mobile-web/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
