@@ -14,7 +14,13 @@ export interface GuideSeed {
   title: string;
   agency: string;
   mono: string;
-  category: 'Identity' | 'Clearances' | 'Civil registry' | 'Work & benefits' | 'Travel' | 'Barangay';
+  category:
+    | 'Identity'
+    | 'Clearances'
+    | 'Civil registry'
+    | 'Work & benefits'
+    | 'Travel'
+    | 'Barangay';
   fees: GuideFee[];
   validity: string;
   requirements: string[];
@@ -39,10 +45,18 @@ export const GUIDES: GuideSeed[] = [
     fees: [
       { label: 'PSA CRS outlet', amount: 15500 },
       { label: 'PSAHelpline (delivered)', amount: 36500 },
-      { label: 'Pasig, Caloocan, Muntinlupa, Valenzuela outlets', amount: null, note: 'Extra city fee under local revenue code' },
+      {
+        label: 'Pasig, Caloocan, Muntinlupa, Valenzuela outlets',
+        amount: null,
+        note: 'Extra city fee under local revenue code',
+      },
     ],
     validity: 'No expiry (some offices ask for a recent copy)',
-    requirements: ['Appointment slip (booking is free)', 'Valid ID matching the appointment name', 'Authorization letter and IDs if requesting for someone else'],
+    requirements: [
+      'Appointment slip (booking is free)',
+      'Valid ID matching the appointment name',
+      'Authorization letter and IDs if requesting for someone else',
+    ],
     steps: [
       'Book a free slot at appointment.psa.gov.ph (National ID holders may use the Special Lane)',
       'Arrive 30 minutes early with your valid ID',
@@ -65,7 +79,11 @@ export const GUIDES: GuideSeed[] = [
     category: 'Identity',
     fees: [{ label: 'Registration and card', amount: 0, note: 'Free under RA 11055' }],
     validity: 'No expiry',
-    requirements: ['PSA birth certificate + 1 government ID, or', 'Passport, UMID or driver’s license', 'Secondary documents list: philsys.gov.ph/supporting-documents'],
+    requirements: [
+      'PSA birth certificate + 1 government ID, or',
+      'Passport, UMID or driver’s license',
+      'Secondary documents list: philsys.gov.ph/supporting-documents',
+    ],
     steps: [
       'Check philsys.gov.ph: some areas need an online appointment first',
       'Go to a registration center with your documents',
@@ -75,7 +93,9 @@ export const GUIDES: GuideSeed[] = [
     ],
     firstTimeJobseekerFree: false,
     officialUrl: 'https://philsys.gov.ph',
-    sources: ['https://rsso04a.psa.gov.ph/sites/default/files/RSSO/Citizens-Charter_PhilSys-Registration-Process.pdf'],
+    sources: [
+      'https://rsso04a.psa.gov.ph/sites/default/files/RSSO/Citizens-Charter_PhilSys-Registration-Process.pdf',
+    ],
     warnings: ['Anyone charging a registration fee is breaking the law.'],
     lastVerified: VERIFIED_ON,
     verified: true,
@@ -91,7 +111,11 @@ export const GUIDES: GuideSeed[] = [
       { label: 'E-payment fee', amount: 2500 },
     ],
     validity: '1 year from release',
-    requirements: ['2 valid government IDs', 'Online appointment reference number', 'Proof of payment'],
+    requirements: [
+      '2 valid government IDs',
+      'Online appointment reference number',
+      'Proof of payment',
+    ],
     steps: [
       'Register on clearance.nbi.gov.ph (no walk-ins)',
       'Pick a branch and date',
@@ -101,7 +125,9 @@ export const GUIDES: GuideSeed[] = [
     ],
     firstTimeJobseekerFree: true,
     officialUrl: 'https://clearance.nbi.gov.ph',
-    sources: ['https://tokyo.philembassy.net/consular-section/services/notarial-services/nbi-clearance/'],
+    sources: [
+      'https://tokyo.philembassy.net/consular-section/services/notarial-services/nbi-clearance/',
+    ],
     warnings: ['Look-alike sites exist. Only use clearance.nbi.gov.ph.'],
     lastVerified: VERIFIED_ON,
     verified: true,
@@ -127,7 +153,10 @@ export const GUIDES: GuideSeed[] = [
     ],
     firstTimeJobseekerFree: true,
     officialUrl: 'https://pnpclearance.ph',
-    sources: ['https://pnpclearance.ph/landing/AppPonsive/doc/how_to_apply_v2.pdf', 'https://sannicolaspangasinan.gov.ph/sannicolas2/?p=4317'],
+    sources: [
+      'https://pnpclearance.ph/landing/AppPonsive/doc/how_to_apply_v2.pdf',
+      'https://sannicolaspangasinan.gov.ph/sannicolas2/?p=4317',
+    ],
     warnings: [],
     lastVerified: VERIFIED_ON,
     verified: true,
@@ -166,7 +195,11 @@ export const GUIDES: GuideSeed[] = [
       { label: 'Rush', amount: 65000 },
     ],
     validity: '3 years',
-    requirements: ['Application form', 'Proof of identity (PSA birth certificate works)', 'Proof of address'],
+    requirements: [
+      'Application form',
+      'Proof of identity (PSA birth certificate works)',
+      'Proof of address',
+    ],
     steps: [
       'Get the form at a post office or phlpost.gov.ph',
       'Submit it at a capturing station',
@@ -189,7 +222,11 @@ export const GUIDES: GuideSeed[] = [
     category: 'Work & benefits',
     fees: [{ label: 'Registration', amount: 0, note: 'No fee listed in the Citizen’s Charter' }],
     validity: 'For life',
-    requirements: ['BIR Form 1904 (2 copies if walk-in)', 'Government ID', 'First-Time Jobseeker Barangay Certification, if applicable'],
+    requirements: [
+      'BIR Form 1904 (2 copies if walk-in)',
+      'Government ID',
+      'First-Time Jobseeker Barangay Certification, if applicable',
+    ],
     steps: [
       'Create an account on orus.bir.gov.ph',
       'Choose “Get TIN – E.O. 98 / One-Time Taxpayer”',
@@ -216,7 +253,11 @@ export const GUIDES: GuideSeed[] = [
       { label: 'Payment center fee', amount: 5000 },
     ],
     validity: '10 years (adults)',
-    requirements: ['Confirmed appointment from passport.gov.ph', 'PSA birth certificate', 'Valid ID'],
+    requirements: [
+      'Confirmed appointment from passport.gov.ph',
+      'PSA birth certificate',
+      'Valid ID',
+    ],
     steps: [
       'Book on passport.gov.ph only (anyone else is a fixer)',
       'Pay the fee online',
@@ -227,7 +268,9 @@ export const GUIDES: GuideSeed[] = [
     firstTimeJobseekerFree: false,
     officialUrl: 'https://www.passport.gov.ph',
     sources: ['https://consular.dfa.gov.ph/passport-faq/'],
-    warnings: ['Seniors, PWDs, solo parents and OFWs can use the priority lane without an appointment.'],
+    warnings: [
+      'Seniors, PWDs, solo parents and OFWs can use the priority lane without an appointment.',
+    ],
     lastVerified: VERIFIED_ON,
     verified: true,
   },

@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { canTransition, formatPeso, formatTicketNo, nextStaffStatus } from '../src/requests.js';
-import { GUIDES } from '../src/seed/guides.js';
-import { DEMO_BARANGAY_DOCS } from '../src/seed/barangay.js';
+import { canTransition, formatPeso, formatTicketNo, nextStaffStatus } from '../src/requests';
+import { GUIDES } from '../src/seed/guides';
+import { DEMO_BARANGAY_DOCS } from '../src/seed/barangay';
 
 test('staff move a request forward one step at a time', () => {
   assert.deepEqual(canTransition('SUBMITTED', 'UNDER_REVIEW', 'STAFF'), { ok: true });
@@ -13,12 +13,17 @@ test('staff move a request forward one step at a time', () => {
 
 test('release requires an ID check', () => {
   assert.equal(canTransition('READY_FOR_PICKUP', 'RELEASED', 'STAFF').ok, false);
-  assert.deepEqual(canTransition('READY_FOR_PICKUP', 'RELEASED', 'STAFF', { idChecked: true }), { ok: true });
+  assert.deepEqual(canTransition('READY_FOR_PICKUP', 'RELEASED', 'STAFF', { idChecked: true }), {
+    ok: true,
+  });
 });
 
 test('rejection requires a reason', () => {
   assert.equal(canTransition('UNDER_REVIEW', 'REJECTED', 'BRGY_ADMIN', { reason: '  ' }).ok, false);
-  assert.equal(canTransition('UNDER_REVIEW', 'REJECTED', 'BRGY_ADMIN', { reason: 'Blurry ID' }).ok, true);
+  assert.equal(
+    canTransition('UNDER_REVIEW', 'REJECTED', 'BRGY_ADMIN', { reason: 'Blurry ID' }).ok,
+    true,
+  );
 });
 
 test('residents can only cancel a submitted request', () => {

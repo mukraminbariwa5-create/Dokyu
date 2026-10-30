@@ -19,9 +19,27 @@ export const DEMO_BARANGAY = {
 } as const;
 
 export const DEMO_BARANGAY_DOCS: BarangayDocSeed[] = [
-  { code: 'CLEARANCE', name: 'Barangay Clearance', fee: 5000, processing: '1 day', requirements: ['Valid ID', 'Proof of residency', 'Cedula (Community Tax Certificate)'] },
-  { code: 'RESIDENCY', name: 'Certificate of Residency', fee: 3000, processing: 'Same day', requirements: ['Valid ID', 'Proof of residency'] },
-  { code: 'INDIGENCY', name: 'Certificate of Indigency', fee: 0, processing: 'Same day', requirements: ['Valid ID'] },
+  {
+    code: 'CLEARANCE',
+    name: 'Barangay Clearance',
+    fee: 5000,
+    processing: '1 day',
+    requirements: ['Valid ID', 'Proof of residency', 'Cedula (Community Tax Certificate)'],
+  },
+  {
+    code: 'RESIDENCY',
+    name: 'Certificate of Residency',
+    fee: 3000,
+    processing: 'Same day',
+    requirements: ['Valid ID', 'Proof of residency'],
+  },
+  {
+    code: 'INDIGENCY',
+    name: 'Certificate of Indigency',
+    fee: 0,
+    processing: 'Same day',
+    requirements: ['Valid ID'],
+  },
   {
     code: 'FTJ',
     name: 'First-Time Jobseeker Certification',

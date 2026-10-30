@@ -23,7 +23,10 @@ export function createApp(env: Env, db: PrismaClient) {
     app.use(
       pinoHttp({
         redact: REDACT_PATHS,
-        serializers: { req: (req) => ({ method: req.method, url: redactUrl(req.url) }) },
+        serializers: {
+          req: (req) => ({ method: req.method, url: redactUrl(req.url) }),
+          res: (res) => ({ statusCode: res.statusCode }),
+        },
       }),
     );
   }

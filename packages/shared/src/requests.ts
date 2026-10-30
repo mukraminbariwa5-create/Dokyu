@@ -66,7 +66,8 @@ export function nextStaffStatus(from: RequestStatus): RequestStatus | null {
 
 /** Ticket number shown to residents, e.g. BRGY-0241. */
 export function formatTicketNo(seq: number): string {
-  if (!Number.isInteger(seq) || seq < 1) throw new RangeError('Ticket sequence must be a positive integer');
+  if (!Number.isInteger(seq) || seq < 1)
+    throw new RangeError('Ticket sequence must be a positive integer');
   return `BRGY-${String(seq).padStart(4, '0')}`;
 }
 
@@ -74,5 +75,11 @@ export function formatTicketNo(seq: number): string {
 export function formatPeso(centavos: number): string {
   if (centavos === 0) return 'Free';
   const pesos = centavos / 100;
-  return '₱' + pesos.toLocaleString('en-PH', { minimumFractionDigits: pesos % 1 ? 2 : 0, maximumFractionDigits: 2 });
+  return (
+    '₱' +
+    pesos.toLocaleString('en-PH', {
+      minimumFractionDigits: pesos % 1 ? 2 : 0,
+      maximumFractionDigits: 2,
+    })
+  );
 }
