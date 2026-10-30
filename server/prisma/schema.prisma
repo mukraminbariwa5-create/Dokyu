@@ -1,0 +1,442 @@
+// Dokyu data model — docs/PLAN.md §5.2. Phase 0 creates every table; features fill them in phase by phase.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  RESIDENT
+  STAFF
+  BRGY_ADMIN
+  SUPER_ADMIN
+}
+
+enum BarangayStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+}
+
+enum RequestStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  READY_FOR_PICKUP
+  RELEASED
+  REJECTED
+  CANCELLED
+}
+
+enum HolidayType {
+  REGULAR
+  SPECIAL_NON_WORKING
+  SPECIAL_WORKING
+}
+
+enum Scope {
+  NATIONAL
+  PROVINCE
+  MUNICIPALITY
+}
+
+model User {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  passwordHash    String
+  fullName        String
+  phone           String?
+  language        String    @default("en")
+  textSize        String    @default("normal")
+  role            Role      @default(RESIDENT)
+  barangayId      String?
+  barangay        Barangay? @relation(fields: [barangayId], references: [id])
+  province        String? // general area only, never GPS
+  municipality    String?
+  emailVerifiedAt DateTime?
+  consentAt       DateTime?
+  failedLogins    Int       @default(0)
+  lockedUntil     DateTime?
+  createdAt       DateTime  @default(now())
+  deletedAt       DateTime?
+
+  refreshTokens   RefreshToken[]
+  family          FamilyMember[]
+  tracked         TrackedDocument[]
+  requests        BrgyRequest[]     @relation("Resident")
+  events          RequestEvent[]
+  savedOffices    SavedOffice[]
+  notifications   Notification[]
+  pushTokens      PushToken[]
+  authLetters     AuthLetter[]
+  chatSessions    ChatSession[]
+
+  @@index([barangayId])
+}
+
+model RefreshToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique // stored hashed, rotated on every refresh
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model Barangay {
+  id               String         @id @default(cuid())
+  slug             String         @unique
+  name             String
+  municipality     String
+  province         String
+  status           BarangayStatus @default(PENDING)
+  isDemo           Boolean        @default(false)
+  inviteCode       String         @unique
+  officeHours      Json
+  contactNumber    String?
+  logoUrl          String?
+  lat              Float?
+  lng              Float?
+  landmark         String?
+  buildingPhotoUrl String?
+  createdAt        DateTime       @default(now())
+
+  users         User[]
+  documentTypes BrgyDocumentType[]
+  requests      BrgyRequest[]
+  announcements Announcement[]
+  closures      Closure[]
+}
+
+model DocumentGuide {
+  id             String   @id @default(cuid())
+  slug           String   @unique
+  category       String
+  mono           String
+  titleEn        String
+  titleTl        String?
+  summaryEn      String?
+  summaryTl      String?
+  agency         String
+  officialUrl    String?
+  fees           Json
+  validity       String
+  requirements   Json
+  steps          Json
+  warnings       Json
+  sources        Json
+  ftjFree        Boolean  @default(false)
+  verified       Boolean  @default(false)
+  lastVerifiedAt DateTime
+  published      Boolean  @default(true)
+
+  goalSteps GoalStep[]
+  services  OfficeService[]
+  tracked   TrackedDocument[]
+  reports   OutdatedReport[]
+}
+
+model Goal {
+  id          String     @id @default(cuid())
+  slug        String     @unique
+  titleEn     String
+  titleTl     String?
+  description String?
+  steps       GoalStep[]
+}
+
+model GoalStep {
+  id       String        @id @default(cuid())
+  goalId   String
+  goal     Goal          @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  guideId  String
+  guide    DocumentGuide @relation(fields: [guideId], references: [id])
+  order    Int
+  reasonEn String?
+  reasonTl String?
+
+  @@unique([goalId, order])
+}
+
+model FamilyMember {
+  id           String            @id @default(cuid())
+  userId       String
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName     String
+  relationship String
+  birthYear    Int?
+  createdAt    DateTime          @default(now())
+  tracked      TrackedDocument[]
+}
+
+model Agency {
+  id                 String   @id @default(cuid())
+  code               String   @unique
+  name               String
+  officialUrl        String?
+  branchDirectoryUrl String?
+  offices            Office[]
+}
+
+model Office {
+  id               String    @id @default(cuid())
+  slug             String    @unique
+  agencyId         String
+  agency           Agency    @relation(fields: [agencyId], references: [id])
+  branchName       String
+  address          String
+  province         String
+  municipality     String
+  lat              Float?
+  lng              Float?
+  landmark         String?
+  buildingName     String?
+  floor            String?
+  buildingPhotoUrl String?
+  hours            Json
+  contactNumber    String?
+  notes            String?
+  pinVerifiedAt    DateTime?
+  lastVerifiedAt   DateTime
+  sourceUrl        String
+  active           Boolean   @default(true)
+
+  services OfficeService[]
+  saved    SavedOffice[]
+  closures Closure[]
+  reports  OfficeReport[]
+
+  @@index([province, municipality])
+}
+
+model OfficeService {
+  id       String        @id @default(cuid())
+  officeId String
+  office   Office        @relation(fields: [officeId], references: [id], onDelete: Cascade)
+  guideId  String
+  guide    DocumentGuide @relation(fields: [guideId], references: [id])
+
+  @@unique([officeId, guideId])
+}
+
+model SavedOffice {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  officeId  String
+  office    Office   @relation(fields: [officeId], references: [id], onDelete: Cascade)
+  label     String?
+  createdAt DateTime @default(now())
+
+  @@unique([userId, officeId])
+}
+
+model Holiday {
+  id           String      @id @default(cuid())
+  date         DateTime    @db.Date
+  name         String
+  type         HolidayType
+  scope        Scope
+  province     String?
+  municipality String?
+  sourceUrl    String
+}
+
+model Closure {
+  id          String    @id @default(cuid())
+  officeId    String?
+  office      Office?   @relation(fields: [officeId], references: [id], onDelete: Cascade)
+  barangayId  String?
+  barangay    Barangay? @relation(fields: [barangayId], references: [id], onDelete: Cascade)
+  startDate   DateTime  @db.Date
+  endDate     DateTime  @db.Date
+  reason      String
+  createdById String
+}
+
+model OfficeReport {
+  id        String   @id @default(cuid())
+  officeId  String
+  office    Office   @relation(fields: [officeId], references: [id], onDelete: Cascade)
+  userId    String?
+  message   String
+  status    String   @default("OPEN")
+  createdAt DateTime @default(now())
+}
+
+model AuthLetter {
+  id                 String   @id @default(cuid())
+  userId             String
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  guideId            String?
+  principalName      String
+  representativeName String
+  details            Json
+  createdAt          DateTime @default(now())
+}
+
+model TrackedDocument {
+  id               String                 @id @default(cuid())
+  userId           String
+  user             User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  familyMemberId   String?
+  familyMember     FamilyMember?          @relation(fields: [familyMemberId], references: [id], onDelete: SetNull)
+  guideId          String?
+  guide            DocumentGuide?         @relation(fields: [guideId], references: [id])
+  customTitle      String?
+  status           String                 @default("PREPARING")
+  referenceNo      String?
+  appointmentAt    DateTime?
+  appointmentPlace String?
+  releasedAt       DateTime?
+  expiresAt        DateTime?
+  notes            String?
+  checklist        TrackedChecklistItem[]
+  reminders        Reminder[]
+}
+
+model TrackedChecklistItem {
+  id                String          @id @default(cuid())
+  trackedDocumentId String
+  trackedDocument   TrackedDocument @relation(fields: [trackedDocumentId], references: [id], onDelete: Cascade)
+  label             String
+  done              Boolean         @default(false)
+}
+
+model BrgyDocumentType {
+  id           String        @id @default(cuid())
+  barangayId   String
+  barangay     Barangay      @relation(fields: [barangayId], references: [id], onDelete: Cascade)
+  code         String
+  name         String
+  description  String?
+  fee          Int // centavos, per the barangay's Citizen's Charter
+  requirements Json
+  processing   String
+  legalBasis   String?
+  active       Boolean       @default(true)
+  requests     BrgyRequest[]
+
+  @@unique([barangayId, code])
+}
+
+model BrgyRequest {
+  id             String           @id @default(cuid())
+  requestNo      Int
+  barangayId     String
+  barangay       Barangay         @relation(fields: [barangayId], references: [id])
+  residentId     String
+  resident       User             @relation("Resident", fields: [residentId], references: [id])
+  familyMemberId String?
+  documentTypeId String
+  documentType   BrgyDocumentType @relation(fields: [documentTypeId], references: [id])
+  purpose        String
+  status         RequestStatus    @default(SUBMITTED)
+  rejectReason   String?
+  qrTokenHash    String?          @unique // single-use; cleared on release
+  feeAtRequest   Int
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  events         RequestEvent[]
+
+  @@unique([barangayId, requestNo])
+  @@index([barangayId, status])
+}
+
+model RequestEvent {
+  id         String         @id @default(cuid())
+  requestId  String
+  request    BrgyRequest    @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  actorId    String
+  actor      User           @relation(fields: [actorId], references: [id])
+  fromStatus RequestStatus?
+  toStatus   RequestStatus
+  note       String?
+  createdAt  DateTime       @default(now())
+}
+
+model Announcement {
+  id          String    @id @default(cuid())
+  barangayId  String
+  barangay    Barangay  @relation(fields: [barangayId], references: [id], onDelete: Cascade)
+  title       String
+  body        String
+  publishedAt DateTime  @default(now())
+  expiresAt   DateTime?
+}
+
+model Notification {
+  id     String    @id @default(cuid())
+  userId String
+  user   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type   String
+  title  String
+  body   String
+  data   Json?
+  readAt DateTime?
+  createdAt DateTime @default(now())
+}
+
+model Reminder {
+  id                String          @id @default(cuid())
+  userId            String
+  trackedDocumentId String
+  trackedDocument   TrackedDocument @relation(fields: [trackedDocumentId], references: [id], onDelete: Cascade)
+  remindAt          DateTime
+  type              String
+  sentAt            DateTime?
+
+  @@index([remindAt, sentAt])
+}
+
+model OutdatedReport {
+  id        String        @id @default(cuid())
+  guideId   String
+  guide     DocumentGuide @relation(fields: [guideId], references: [id], onDelete: Cascade)
+  userId    String?
+  message   String
+  status    String        @default("OPEN")
+  createdAt DateTime      @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  action    String
+  entity    String
+  entityId  String?
+  meta      Json?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([entity, entityId])
+}
+
+model ChatSession {
+  id        String        @id @default(cuid())
+  userId    String?
+  user      User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime      @default(now())
+  messages  ChatMessage[]
+}
+
+model ChatMessage {
+  id        String      @id @default(cuid())
+  sessionId String
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  role      String
+  content   String
+  createdAt DateTime    @default(now())
+}
+
+model PushToken {
+  id       String @id @default(cuid())
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token    String @unique
+  platform String
+}

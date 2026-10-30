@@ -1,0 +1,15 @@
+# Local development only. Never use these credentials in production.
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: dokyu
+      POSTGRES_PASSWORD: dokyu_dev_only
+      POSTGRES_DB: dokyu
+    ports:
+      - '5432:5432'
+    volumes:
+      - dokyu-db:/var/lib/postgresql/data
+volumes:
+  dokyu-db:

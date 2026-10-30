@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "Dokyu",
+    "slug": "dokyu",
+    "scheme": "dokyu",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "android": { "package": "ph.dokyu.app" },
+    "web": { "bundler": "metro", "output": "single" },
+    "plugins": ["expo-router", "expo-font"],
+    "experiments": { "typedRoutes": true }
+  }
+}
