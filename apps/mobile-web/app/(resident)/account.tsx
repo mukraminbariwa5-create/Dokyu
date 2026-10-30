@@ -99,6 +99,18 @@ export default function Account() {
         />
       </Card>
 
+      <Button
+        label={t('tour.replay')}
+        accessibilityHint={t('tour.replayHint')}
+        variant="secondary"
+        size="md"
+        icon={<Icon name="sparkle" size={18} color={colors.primaryDark} />}
+        onPress={() => {
+          settings.update({ tourSeen: false });
+          router.navigate('/');
+        }}
+      />
+
       <DisplaySettings />
 
       {status === 'signedIn' ? <Devices /> : null}

@@ -12,6 +12,7 @@ import { Icon } from '../../../components/ui/Icon';
 import { useGuides } from '../../../lib/guides';
 import { useSettings } from '../../../lib/settings';
 import { formatDate, formatFee } from '../../../lib/format';
+import { FadeIn } from '../../../lib/motion';
 import { useLayout } from '../../../lib/useLayout';
 
 export default function Guides() {
@@ -94,9 +95,15 @@ export default function Guides() {
       ) : null}
 
       <View className={isDesktop ? 'flex-row flex-wrap gap-3' : 'gap-3'}>
-        {shown.map((g) => (
+        {shown.map((g, n) => (
           // The width lives on a wrapper: Link asChild replaces the child's style.
-          <View key={g.slug} style={isDesktop ? { width: '49%', flexGrow: 1 } : undefined}>
+          // Keyed by the filter too, so the list cascades in again when the category changes.
+          <FadeIn
+            key={`${g.slug}-${category}`}
+            delay={Math.min(n, 8) * 45}
+            distance={16}
+            style={isDesktop ? { width: '49%', flexGrow: 1 } : undefined}
+          >
             <Link href={{ pathname: '/guides/[slug]', params: { slug: g.slug } }} asChild>
               <PressableCard className="flex-row items-center gap-4">
                 <AgencyTile mono={g.mono} />
@@ -111,7 +118,7 @@ export default function Guides() {
                 <Icon name="chevronRight" size={20} color={colors.textSubtle} />
               </PressableCard>
             </Link>
-          </View>
+          </FadeIn>
         ))}
       </View>
     </Screen>

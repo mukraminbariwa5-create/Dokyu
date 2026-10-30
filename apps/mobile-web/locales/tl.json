@@ -248,5 +248,20 @@
     "empty": "Wala pang checklist. Magbukas ng gabay at pindutin ang “Gawin ang Bago ka umalis checklist ko”.",
     "ready": "Handa na",
     "notStarted": "Hindi pa nasisimulan"
+  },
+  "tour": {
+    "hello": "Hi, ako si Doki! Tutulungan kitang makuha ang papeles mo sa isang punta lang. Ipapakita ko sa'yo ang app. 20 segundo lang.",
+    "services": "Dito ka magsimula. Piliin ang kailangan mo, gaya ng ID o clearance, at ipapakita ko kung ano mismo ang dadalhin.",
+    "forYou": "Nagbabago ang card na ito para sa'yo. Naaalala nito ang checklist mo at ipinapakita ang susunod na gagawin.",
+    "ask": "Nalilito? I-tap mo lang ako kahit kailan. Sasagot ako sa Tagalog o English.",
+    "guides": "Nandito ang lahat ng gabay: requirements, bayad, at ang opisyal na link para mag-register online.",
+    "done": "Ayan na! Maghanda sa bahay, isang punta lang sa opisina. Tara na!",
+    "counter": "{{n}} sa {{total}}",
+    "skip": "Laktawan",
+    "next": "Susunod",
+    "finish": "Tara na!",
+    "dokiLabel": "Si Doki, ang gabay mo",
+    "replay": "Ipakita ulit ang app",
+    "replayHint": "Mabilis na tour ni Doki"
   }
 }

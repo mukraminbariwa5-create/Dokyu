@@ -1,5 +1,6 @@
 /** Home, following the locked Bayan Blue prototype (plan §4.2), adapted to the citizen-first scope (v1.6). */
 import { useCallback, useState } from 'react';
+import { HOME_TOUR, useTour, useTourTarget } from '../../lib/tour';
 import { Link, useFocusEffect, useRouter } from 'expo-router';
 import { Pressable, ScrollView, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -36,7 +37,20 @@ export default function Home() {
   const router = useRouter();
   const { isDesktop } = useLayout();
   const { user } = useAuth();
-  const { language, goals } = useSettings();
+  const { language, goals, tourSeen, ready } = useSettings();
+  const tour = useTour();
+  const servicesRef = useTourTarget('home.services');
+  const forYouRef = useTourTarget('home.forYou');
+  const startTour = tour.start;
+  const touring = tour.steps !== null;
+  // First visit: Doki shows the user around once.
+  useFocusEffect(
+    useCallback(() => {
+      if (!ready || tourSeen || touring) return;
+      const timer = setTimeout(() => startTour(HOME_TOUR), 900);
+      return () => clearTimeout(timer);
+    }, [ready, tourSeen, touring, startTour]),
+  );
   const { data: guides } = useGuides();
   const [soonNote, setSoonNote] = useState('');
 
@@ -106,7 +120,7 @@ export default function Home() {
   ];
 
   return (
-    <Screen>
+    <Screen tourScroll>
       {!isDesktop && (
         <FadeIn>
           <View className="flex-row items-center justify-between">
@@ -137,7 +151,9 @@ export default function Home() {
       <FadeIn delay={100}>
         <View className="gap-3 rounded-[22px] py-2">
           <AppText variant="title">{t('home.whatToDo')}</AppText>
-          <ServiceGrid tiles={tiles} />
+          <View ref={servicesRef} collapsable={false}>
+            <ServiceGrid tiles={tiles} />
+          </View>
           {soonNote ? (
             <FadeIn key={soonNote} distance={4}>
               <AppText
@@ -156,7 +172,9 @@ export default function Home() {
       <FadeIn delay={160}>
         <View className="gap-2.5">
           <AppText variant="title">{t('home.forYou')}</AppText>
-          <ForYouCard item={next} />
+          <View ref={forYouRef} collapsable={false}>
+            <ForYouCard item={next} />
+          </View>
         </View>
       </FadeIn>
 

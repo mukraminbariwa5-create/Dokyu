@@ -248,5 +248,20 @@
     "empty": "No checklist yet. Open any guide and tap “Make my Before you go checklist”.",
     "ready": "Ready",
     "notStarted": "Not started"
+  },
+  "tour": {
+    "hello": "Hi, I'm Doki! I'll help you get your papers in one trip. Let me show you around. It takes 20 seconds.",
+    "services": "Start here. Pick what you need, like an ID or a clearance, and I'll show you exactly what to bring.",
+    "forYou": "This card changes for you. It remembers your checklists and shows what to do next.",
+    "ask": "Stuck? Tap me anytime. I'll answer in English or Tagalog.",
+    "guides": "Every guide lives here: requirements, fees, and the official link to register online.",
+    "done": "That's it! Prepare at home, visit the office once. Let's go!",
+    "counter": "{{n}} of {{total}}",
+    "skip": "Skip",
+    "next": "Next",
+    "finish": "Let's go!",
+    "dokiLabel": "Doki, your guide",
+    "replay": "Show me around again",
+    "replayHint": "Doki's quick tour of the app"
   }
 }

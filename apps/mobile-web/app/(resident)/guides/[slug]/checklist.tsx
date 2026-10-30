@@ -1,4 +1,5 @@
 /** "Before you go" checklist (plan v1.6 §3.1 A): tick off each requirement the night before. */
+import { useEffect, useRef, useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Pressable, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +13,9 @@ import { RequirementCard } from '../../../../components/guide/parts';
 import { useGuide } from '../../../../lib/guides';
 import { useChecklist } from '../../../../lib/checklist';
 import { useSettings } from '../../../../lib/settings';
+import { Confetti } from '../../../../components/doki/Confetti';
+import { FadeIn, PopOnChange, useAnimatedProgress } from '../../../../lib/motion';
+import { Animated } from 'react-native';
 
 export default function Checklist() {
   const { t } = useTranslation();
@@ -20,6 +24,17 @@ export default function Checklist() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const g = useGuide(slug);
   const { ticked, toggle, clear } = useChecklist(slug);
+  const [burst, setBurst] = useState(0);
+  const wasAllSet = useRef<boolean | null>(null);
+  const required0 = g ? g.requirements.filter((r) => !r.onlyIf).length : 0;
+  const done0 = g ? g.requirements.filter((r, i) => !r.onlyIf && ticked.includes(i)).length : 0;
+  const allSet0 = required0 > 0 && done0 === required0;
+  const progress = useAnimatedProgress(required0 ? done0 / required0 : 0);
+  // Confetti only when the last item gets ticked, not when opening an already-finished list.
+  useEffect(() => {
+    if (wasAllSet.current === false && allSet0) setBurst((b) => b + 1);
+    wasAllSet.current = allSet0;
+  }, [allSet0]);
   if (!g) return null;
 
   const required = g.requirements.map((r, i) => ({ r, i })).filter(({ r }) => !r.onlyIf);
@@ -56,10 +71,11 @@ export default function Checklist() {
           {t('checklist.progress', { done, total })}
         </AppText>
         <View className="h-2.5 overflow-hidden rounded-full bg-surface-alt">
-          <View
-            className="h-full rounded-full"
+          <Animated.View
             style={{
-              width: `${(done / Math.max(total, 1)) * 100}%`,
+              height: '100%',
+              borderRadius: 999,
+              width: progress,
               backgroundColor: allSet ? colors.success : colors.primary,
             }}
           />
@@ -67,22 +83,23 @@ export default function Checklist() {
       </View>
 
       {allSet ? (
-        <View className="flex-row items-center gap-3 rounded-card bg-success-soft p-4">
-          <Doki size={56} pose="happy" />
-          <AppText variant="body" weight="semibold" tone="success" className="flex-1">
-            {t('checklist.allSet')}
-          </AppText>
-        </View>
+        <FadeIn>
+          <View className="flex-row items-center gap-3 rounded-card bg-success-soft p-4">
+            <PopOnChange value={burst} from={0.3}>
+              <Doki size={56} pose="happy" />
+            </PopOnChange>
+            <AppText variant="body" weight="semibold" tone="success" className="flex-1">
+              {t('checklist.allSet')}
+            </AppText>
+          </View>
+        </FadeIn>
       ) : null}
 
       <View className="gap-3">
-        {required.map(({ r, i }) => (
-          <RequirementCard
-            key={i}
-            req={r}
-            checked={ticked.includes(i)}
-            onToggle={() => toggle(i)}
-          />
+        {required.map(({ r, i }, n) => (
+          <FadeIn key={i} delay={Math.min(n, 8) * 50}>
+            <RequirementCard req={r} checked={ticked.includes(i)} onToggle={() => toggle(i)} />
+          </FadeIn>
         ))}
       </View>
       {optional.length ? (
@@ -103,6 +120,7 @@ export default function Checklist() {
       {ticked.length ? (
         <Button label={t('checklist.reset')} variant="ghost" onPress={clear} />
       ) : null}
+      <Confetti fire={burst} count={44} spread={200} />
     </Screen>
   );
 }

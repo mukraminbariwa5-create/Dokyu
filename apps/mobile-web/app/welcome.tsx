@@ -11,6 +11,7 @@ import { Doki } from '../components/ui/Doki';
 import { Wordmark } from '../components/ui/Wordmark';
 import { Disclaimer } from '../components/ui/Disclaimer';
 import { useSettings } from '../lib/settings';
+import { Float, PopOnChange } from '../lib/motion';
 
 const SLIDES = [1, 2, 3] as const;
 
@@ -53,7 +54,11 @@ export default function Welcome() {
             className="items-center justify-center rounded-full bg-primary-soft"
             style={{ width: 220, height: 220 }}
           >
-            <Doki size={150} pose={slide === 1 ? 'wave' : slide === 2 ? 'point' : 'happy'} />
+            <PopOnChange value={slide}>
+              <Float amount={6} duration={1500}>
+                <Doki size={150} pose={slide === 1 ? 'wave' : slide === 2 ? 'point' : 'happy'} />
+              </Float>
+            </PopOnChange>
           </View>
           <View className="gap-3" accessibilityLiveRegion="polite">
             <AppText variant="h1" style={{ textAlign: 'center' }}>

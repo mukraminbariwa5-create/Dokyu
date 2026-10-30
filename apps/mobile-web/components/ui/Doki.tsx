@@ -22,7 +22,8 @@ import Svg, {
 } from 'react-native-svg';
 import { useReducedMotion } from '../../lib/motion';
 
-export type DokiPose = 'idle' | 'walk' | 'walk2' | 'point' | 'wave' | 'happy';
+export type DokiPose =
+  'idle' | 'walk' | 'walk2' | 'point' | 'wave' | 'happy' | 'talk' | 'worried' | 'pointDown';
 
 const C = {
   folderLight: '#3D66F2',
@@ -55,7 +56,7 @@ function rig(pose: DokiPose): {
   armR: Limb;
   legL: Limb;
   legR: Limb;
-  fingerR?: boolean;
+  finger?: [number, number];
 } {
   const legsStill = {
     legL: { from: [84, 180], to: [80, 212] } as Limb,
@@ -80,7 +81,7 @@ function rig(pose: DokiPose): {
       return {
         armL: { from: [50, 122], to: [36, 152] },
         armR: { from: [150, 118], to: [186, 96] },
-        fingerR: true,
+        finger: [10, -6],
         ...legsStill,
       };
     case 'wave':
@@ -88,6 +89,28 @@ function rig(pose: DokiPose): {
         armL: { from: [50, 122], to: [36, 152] },
         armR: { from: [150, 114], to: [174, 72] },
         ...legsStill,
+      };
+    case 'pointDown':
+      return {
+        armL: { from: [50, 122], to: [36, 152] },
+        armR: { from: [150, 124], to: [182, 156] },
+        finger: [8, 9],
+        ...legsStill,
+      };
+    case 'talk':
+      // explaining: one hand open at chest height
+      return {
+        armL: { from: [50, 122], to: [36, 152] },
+        armR: { from: [150, 120], to: [176, 120] },
+        ...legsStill,
+      };
+    case 'worried':
+      // hands up near the face
+      return {
+        armL: { from: [50, 120], to: [40, 98] },
+        armR: { from: [150, 120], to: [160, 98] },
+        legL: { from: [84, 180], to: [86, 212] },
+        legR: { from: [116, 180], to: [114, 212] },
       };
     case 'happy':
       return {
@@ -129,6 +152,8 @@ export interface DokiProps {
   facing?: 'left' | 'right';
   /** Blinks now and then (off with reduce motion). */
   alive?: boolean;
+  /** Open mouth, for talking (toggle it while a speech bubble types). */
+  mouthOpen?: boolean;
   /** Read by screen readers. */
   label?: string;
 }
@@ -139,6 +164,7 @@ export function Doki({
   pose = 'idle',
   facing = 'right',
   alive = true,
+  mouthOpen = false,
   label = 'Doki, your Dokyu guide',
 }: DokiProps) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
@@ -161,8 +187,11 @@ export function Doki({
 
   const r = rig(pose);
   const happy = pose === 'happy' || pose === 'wave';
+  const worried = pose === 'worried';
   // Pupils look where he is going or pointing.
-  const look = pose === 'point' || pose === 'walk' || pose === 'walk2' ? 3 : 0;
+  const look =
+    pose === 'point' || pose === 'pointDown' || pose === 'walk' || pose === 'walk2' ? 3 : 0;
+  const lookY = pose === 'pointDown' ? 3 : pose === 'point' ? -2 : 0;
   const hand = (l: Limb) => (
     <Circle cx={l.to[0]} cy={l.to[1]} r={7.5} fill={`url(#${id('hand')})`} />
   );
@@ -302,6 +331,19 @@ export function Doki({
             <Circle cx={64} cy={136} r={11} fill={`url(#${id('cheek')})`} />
             <Circle cx={136} cy={136} r={11} fill={`url(#${id('cheek')})`} />
 
+            {worried ? (
+              <>
+                <Path d="M70 94 L90 99" stroke={C.pupil} strokeWidth={3.5} strokeLinecap="round" />
+                <Path
+                  d="M130 94 L110 99"
+                  stroke={C.pupil}
+                  strokeWidth={3.5}
+                  strokeLinecap="round"
+                />
+                <Path d="M146 80 Q152 90 146 96 Q140 90 146 80 Z" fill="#9FD3FF" />
+              </>
+            ) : null}
+
             {/* eyes */}
             {blink || happy ? (
               <>
@@ -324,17 +366,30 @@ export function Doki({
               <>
                 <Ellipse cx={82} cy={112} rx={13} ry={15} fill={`url(#${id('eye')})`} />
                 <Ellipse cx={118} cy={112} rx={13} ry={15} fill={`url(#${id('eye')})`} />
-                <Circle cx={84 + look} cy={115} r={7.5} fill={`url(#${id('pupil')})`} />
-                <Circle cx={120 + look} cy={115} r={7.5} fill={`url(#${id('pupil')})`} />
-                <Circle cx={81.5 + look} cy={111.5} r={2.6} fill="#FFFFFF" />
-                <Circle cx={117.5 + look} cy={111.5} r={2.6} fill="#FFFFFF" />
-                <Circle cx={86.5 + look} cy={118} r={1.2} fill="#FFFFFF" opacity={0.8} />
-                <Circle cx={122.5 + look} cy={118} r={1.2} fill="#FFFFFF" opacity={0.8} />
+                <Circle cx={84 + look} cy={115 + lookY} r={7.5} fill={`url(#${id('pupil')})`} />
+                <Circle cx={120 + look} cy={115 + lookY} r={7.5} fill={`url(#${id('pupil')})`} />
+                <Circle cx={81.5 + look} cy={111.5 + lookY} r={2.6} fill="#FFFFFF" />
+                <Circle cx={117.5 + look} cy={111.5 + lookY} r={2.6} fill="#FFFFFF" />
+                <Circle cx={86.5 + look} cy={118 + lookY} r={1.2} fill="#FFFFFF" opacity={0.8} />
+                <Circle cx={122.5 + look} cy={118 + lookY} r={1.2} fill="#FFFFFF" opacity={0.8} />
               </>
             )}
 
             {/* mouth */}
-            {happy ? (
+            {mouthOpen && !happy ? (
+              <>
+                <Ellipse cx={100} cy={138} rx={8} ry={6.5} fill={C.pupil} />
+                <Ellipse cx={100} cy={141} rx={5} ry={2.6} fill={C.cheek} />
+              </>
+            ) : worried ? (
+              <Path
+                d="M89 139 Q94 134 100 139 Q106 144 111 139"
+                stroke={C.pupil}
+                strokeWidth={3.5}
+                strokeLinecap="round"
+                fill="none"
+              />
+            ) : happy ? (
               <>
                 <Path d="M88 132 Q100 148 112 132 Z" fill={C.pupil} />
                 <Path d="M93 139 Q100 146 107 139 Q100 136 93 139 Z" fill={C.cheek} />
@@ -377,9 +432,9 @@ export function Doki({
             {/* front arm */}
             <Tube limb={r.armR} />
             {hand(r.armR)}
-            {r.fingerR ? (
+            {r.finger ? (
               <Path
-                d={`M${r.armR.to[0]} ${r.armR.to[1]} L${r.armR.to[0] + 10} ${r.armR.to[1] - 6}`}
+                d={`M${r.armR.to[0]} ${r.armR.to[1]} L${r.armR.to[0] + r.finger[0]} ${r.armR.to[1] + r.finger[1]}`}
                 stroke={C.limb}
                 strokeWidth={5}
                 strokeLinecap="round"

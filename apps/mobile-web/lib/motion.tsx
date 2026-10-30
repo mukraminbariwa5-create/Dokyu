@@ -141,3 +141,50 @@ export function useAnimatedProgress(value: number) {
   }, [v, value, reduced]);
   return v.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] });
 }
+
+/**
+ * Springs its children in (small → slightly too big → settle) whenever `value` changes to something truthy.
+ * Used for ticks, the active tab icon and Doki popping up.
+ */
+export function PopOnChange({
+  value,
+  children,
+  from = 0.6,
+  style,
+}: {
+  value: unknown;
+  children: ReactNode;
+  from?: number;
+  style?: StyleProp<ViewStyle>;
+}) {
+  const reduced = useReducedMotion();
+  const scale = useRef(new Animated.Value(1)).current;
+  const first = useRef(true);
+  useEffect(() => {
+    if (first.current) {
+      first.current = false;
+      return;
+    }
+    if (!value || reduced) return;
+    scale.setValue(from);
+    Animated.spring(scale, {
+      toValue: 1,
+      speed: 18,
+      bounciness: 14,
+      useNativeDriver: native,
+    }).start();
+  }, [value, reduced, scale, from]);
+  return <Animated.View style={[{ transform: [{ scale }] }, style]}>{children}</Animated.View>;
+}
+
+/** Cycles through poses on a timer, e.g. Doki waving every few seconds. Stays on the first with reduce motion. */
+export function usePoseCycle<T>(poses: Array<{ pose: T; ms: number }>): T {
+  const reduced = useReducedMotion();
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    if (reduced || poses.length < 2) return;
+    const timer = setTimeout(() => setI((n) => (n + 1) % poses.length), poses[i]?.ms ?? 2000);
+    return () => clearTimeout(timer);
+  }, [i, reduced, poses]);
+  return (poses[reduced ? 0 : i] ?? poses[0])!.pose;
+}

@@ -6,7 +6,15 @@ import { colors } from '@dokyu/shared';
 import { AppText } from '../ui/AppText';
 import { Doki } from '../ui/Doki';
 import { Icon } from '../ui/Icon';
-import { Float } from '../../lib/motion';
+import { Float, usePoseCycle } from '../../lib/motion';
+import type { DokiPose } from '../ui/Doki';
+
+const GREETING_POSES: Array<{ pose: DokiPose; ms: number }> = [
+  { pose: 'wave', ms: 1800 },
+  { pose: 'idle', ms: 5200 },
+  { pose: 'happy', ms: 1200 },
+  { pose: 'idle', ms: 6000 },
+];
 import { useSettings } from '../../lib/settings';
 
 function timeGreeting(hour: number) {
@@ -21,6 +29,7 @@ export function GreetingCard({ name }: { name?: string }) {
   const router = useRouter();
   const { municipality, province } = useSettings();
   const area = [municipality, province].filter(Boolean).join(', ');
+  const pose = usePoseCycle(GREETING_POSES);
 
   return (
     <View
@@ -71,7 +80,7 @@ export function GreetingCard({ name }: { name?: string }) {
         </Svg>
         <View style={{ position: 'absolute', left: 14, top: 22 }}>
           <Float>
-            <Doki size={86} pose="wave" label="Doki" />
+            <Doki size={86} pose={pose} label="Doki" />
           </Float>
         </View>
       </View>

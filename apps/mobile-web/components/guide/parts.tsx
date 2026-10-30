@@ -5,6 +5,7 @@ import { colors, pick, type GuideAction, type GuideStep, type Requirement } from
 import { AppText } from '../ui/AppText';
 import { Icon, type IconName } from '../ui/Icon';
 import { useSettings } from '../../lib/settings';
+import { PopOnChange } from '../../lib/motion';
 import { cn } from '../../lib/cn';
 
 const ACTION_ICON: Record<GuideAction['kind'], IconName> = {
@@ -102,15 +103,17 @@ export function RequirementCard({
   const body = (
     <>
       {onToggle ? (
-        <View
-          className={cn(
-            'mt-0.5 h-6 w-6 items-center justify-center border-2',
-            checked ? 'border-success bg-success' : 'bg-surface',
-          )}
-          style={{ borderRadius: 6, borderColor: checked ? colors.success : colors.textSubtle }}
-        >
-          {checked ? <Icon name="check" size={16} color="#FFFFFF" strokeWidth={3} /> : null}
-        </View>
+        <PopOnChange value={checked} from={0.5}>
+          <View
+            className={cn(
+              'mt-0.5 h-6 w-6 items-center justify-center border-2',
+              checked ? 'border-success bg-success' : 'bg-surface',
+            )}
+            style={{ borderRadius: 6, borderColor: checked ? colors.success : colors.textSubtle }}
+          >
+            {checked ? <Icon name="check" size={16} color="#FFFFFF" strokeWidth={3} /> : null}
+          </View>
+        </PopOnChange>
       ) : (
         <View className="h-10 w-10 items-center justify-center rounded-md bg-primary-soft">
           <Icon name={BRING_ICON[req.bring]} size={20} color={colors.primary} />
