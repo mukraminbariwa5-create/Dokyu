@@ -1,6 +1,6 @@
 /**
- * App-wide display settings: language and large-text mode (plan §3.1 G and H.3).
- * Saved on the device so they survive restarts; synced to the profile in Phase 2.
+ * Settings kept on the device: language, large text and the onboarding answers (plan §3.1 G and H.3).
+ * Guests keep them only here; for signed-in users they are also saved to the profile (lib/auth.tsx).
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
@@ -12,49 +12,72 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { font, type TextVariant } from '@dokyu/shared';
+import { font, type GoalSlug, type TextVariant } from '@dokyu/shared';
 import { i18n, type Language, detectLanguage } from './i18n';
 
 const STORAGE_KEY = 'dokyu.settings.v1';
 
-interface Settings {
+export interface Settings {
   language: Language;
   largeText: boolean;
+  /** The intro slides were shown (or skipped). */
+  introSeen: boolean;
+  /** Language, area and goals were answered (or skipped). */
+  setupDone: boolean;
+  province: string | null;
+  municipality: string | null;
+  goals: GoalSlug[];
 }
 
 interface SettingsContextValue extends Settings {
   ready: boolean;
   setLanguage: (language: Language) => void;
   setLargeText: (largeText: boolean) => void;
+  update: (patch: Partial<Settings>) => void;
   /** Font size for a text variant, honouring large-text mode. */
   textSize: (variant: TextVariant) => number;
 }
 
 const SettingsContext = createContext<SettingsContextValue | null>(null);
 
-function isSettings(value: unknown): value is Partial<Settings> {
-  return typeof value === 'object' && value !== null;
+function readSaved(raw: string | null, fallback: Settings): Settings {
+  if (!raw) return fallback;
+  let saved: unknown;
+  try {
+    saved = JSON.parse(raw);
+  } catch {
+    return fallback;
+  }
+  if (typeof saved !== 'object' || saved === null) return fallback;
+  const s = saved as Record<string, unknown>;
+  return {
+    language: s.language === 'tl' || s.language === 'en' ? s.language : fallback.language,
+    largeText: typeof s.largeText === 'boolean' ? s.largeText : fallback.largeText,
+    introSeen: s.introSeen === true,
+    setupDone: s.setupDone === true,
+    province: typeof s.province === 'string' ? s.province : null,
+    municipality: typeof s.municipality === 'string' ? s.municipality : null,
+    goals: Array.isArray(s.goals)
+      ? (s.goals.filter((g) => typeof g === 'string') as GoalSlug[])
+      : [],
+  };
 }
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<Settings>({
     language: detectLanguage(),
     largeText: false,
+    introSeen: false,
+    setupDone: false,
+    province: null,
+    municipality: null,
+    goals: [],
   });
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEY)
-      .then((raw) => {
-        if (!raw) return;
-        const saved: unknown = JSON.parse(raw);
-        if (!isSettings(saved)) return;
-        setSettings((s) => ({
-          language:
-            saved.language === 'tl' || saved.language === 'en' ? saved.language : s.language,
-          largeText: typeof saved.largeText === 'boolean' ? saved.largeText : s.largeText,
-        }));
-      })
+      .then((raw) => setSettings((s) => readSaved(raw, s)))
       .catch(() => {})
       .finally(() => setReady(true));
   }, []);
@@ -64,14 +87,12 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     if (ready) AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(settings)).catch(() => {});
   }, [settings, ready]);
 
-  const setLanguage = useCallback(
-    (language: Language) => setSettings((s) => ({ ...s, language })),
+  const update = useCallback(
+    (patch: Partial<Settings>) => setSettings((s) => ({ ...s, ...patch })),
     [],
   );
-  const setLargeText = useCallback(
-    (largeText: boolean) => setSettings((s) => ({ ...s, largeText })),
-    [],
-  );
+  const setLanguage = useCallback((language: Language) => update({ language }), [update]);
+  const setLargeText = useCallback((largeText: boolean) => update({ largeText }), [update]);
 
   const value = useMemo<SettingsContextValue>(
     () => ({
@@ -79,9 +100,10 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       ready,
       setLanguage,
       setLargeText,
+      update,
       textSize: (variant) => (settings.largeText ? font.sizeLarge : font.size)[variant],
     }),
-    [settings, ready, setLanguage, setLargeText],
+    [settings, ready, setLanguage, setLargeText, update],
   );
 
   return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;

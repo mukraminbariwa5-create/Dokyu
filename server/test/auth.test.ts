@@ -26,15 +26,12 @@ describe.skipIf(!hasTestDb)('auth (database)', () => {
   describe('sign-up', () => {
     it('creates an unverified account, records consent and emails a one-time confirmation link', async () => {
       const { app, mailer } = makeApp();
-      const res = await request(app)
-        .post('/api/v1/auth/signup')
-        .set(native)
-        .send({
-          email: ' Ana@Example.com ',
-          password: PASSWORD,
-          fullName: 'Ana Reyes',
-          consent: true,
-        });
+      const res = await request(app).post('/api/v1/auth/signup').set(native).send({
+        email: ' Ana@Example.com ',
+        password: PASSWORD,
+        fullName: 'Ana Reyes',
+        consent: true,
+      });
       expect(res.status).toBe(202);
 
       const user = await db.user.findUniqueOrThrow({ where: { email: 'ana@example.com' } });
@@ -74,15 +71,12 @@ describe.skipIf(!hasTestDb)('auth (database)', () => {
     it('does not reveal whether an email is already registered', async () => {
       const { app, mailer } = makeApp();
       await createUser('taken@example.com');
-      const res = await request(app)
-        .post('/api/v1/auth/signup')
-        .set(native)
-        .send({
-          email: 'taken@example.com',
-          password: 'another-password-123',
-          fullName: 'Someone Else',
-          consent: true,
-        });
+      const res = await request(app).post('/api/v1/auth/signup').set(native).send({
+        email: 'taken@example.com',
+        password: 'another-password-123',
+        fullName: 'Someone Else',
+        consent: true,
+      });
       expect(res.status).toBe(202);
       expect(await db.user.count()).toBe(1);
       expect(mailer.outbox.at(-1)?.subject).toMatch(/already have/);

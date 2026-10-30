@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import { TextInput, View, type TextInputProps } from 'react-native';
 import { colors } from '@dokyu/shared';
 import { AppText } from './AppText';
@@ -10,10 +10,21 @@ export interface InputProps extends TextInputProps {
   hint?: string;
   error?: string;
   className?: string;
+  /** Small control inside the right edge of the field, e.g. a show-password button. */
+  accessory?: ReactNode;
 }
 
 /** Labelled text field. The label, hint and error are read out by screen readers. */
-export function Input({ label, hint, error, className, onFocus, onBlur, ...rest }: InputProps) {
+export function Input({
+  label,
+  hint,
+  error,
+  className,
+  accessory,
+  onFocus,
+  onBlur,
+  ...rest
+}: InputProps) {
   const { textSize } = useSettings();
   const [focused, setFocused] = useState(false);
   const id = useId();
@@ -23,30 +34,34 @@ export function Input({ label, hint, error, className, onFocus, onBlur, ...rest 
       <AppText variant="small" weight="medium" nativeID={`${id}-label`}>
         {label}
       </AppText>
-      <TextInput
-        accessibilityLabel={label}
-        accessibilityLabelledBy={`${id}-label`}
-        accessibilityHint={describedBy}
-        aria-invalid={!!error}
-        placeholderTextColor={colors.textSubtle}
-        onFocus={(e) => {
-          setFocused(true);
-          onFocus?.(e);
-        }}
-        onBlur={(e) => {
-          setFocused(false);
-          onBlur?.(e);
-        }}
-        className={cn(
-          'min-h-[52px] rounded-lg border bg-surface px-4 font-poppins text-ink',
-          error ? 'border-danger' : focused ? 'border-primary' : 'border-line',
-        )}
-        style={[
-          { fontSize: textSize('bodyLg') },
-          focused && !error ? { boxShadow: `0 0 0 3px ${colors.primaryTint}` } : null,
-        ]}
-        {...rest}
-      />
+      <View className="justify-center">
+        <TextInput
+          accessibilityLabel={label}
+          accessibilityLabelledBy={`${id}-label`}
+          accessibilityHint={describedBy}
+          aria-invalid={!!error}
+          placeholderTextColor={colors.textSubtle}
+          onFocus={(e) => {
+            setFocused(true);
+            onFocus?.(e);
+          }}
+          onBlur={(e) => {
+            setFocused(false);
+            onBlur?.(e);
+          }}
+          className={cn(
+            'min-h-[52px] rounded-lg border bg-surface px-4 font-poppins text-ink',
+            accessory ? 'pr-14' : null,
+            error ? 'border-danger' : focused ? 'border-primary' : 'border-line',
+          )}
+          style={[
+            { fontSize: textSize('bodyLg') },
+            focused && !error ? { boxShadow: `0 0 0 3px ${colors.primaryTint}` } : null,
+          ]}
+          {...rest}
+        />
+        {accessory ? <View className="absolute right-1">{accessory}</View> : null}
+      </View>
       {error ? (
         <AppText variant="small" tone="danger" accessibilityLiveRegion="polite">
           {error}

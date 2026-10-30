@@ -17,7 +17,8 @@
 |---|---|---|
 | 0 | Setup: monorepo, app, API, database schema, lint, CI | ✅ Done |
 | 1 | Design system: NativeWind theme from shared tokens, components, phone tabs + desktop sidebar, English/Tagalog, large-text mode, `/showcase` | ✅ Done |
-| 2–8 | Auth → guides & offices → tracker → AI → mascot → polish | Planned ([docs/PLAN.md](docs/PLAN.md)) |
+| 2 | Accounts + onboarding: sign-up with privacy consent, sign-in, email confirmation, password reset, signed-in devices, intro slides and setup (language, area, goals) | ✅ Done |
+| 3–8 | Guides & offices → tracker → AI → mascot → polish | Planned ([docs/PLAN.md](docs/PLAN.md)) |
 
 The design is locked in the **Bayan Blue** prototype (light, royal blue `#2042C4`, gold accent, Poppins).
 
@@ -46,13 +47,22 @@ pnpm install
 cp server/.env.example server/.env      # then change the secrets
 pnpm db:up                              # Postgres in Docker
 pnpm db:migrate                         # create tables
-pnpm db:seed                            # 8 guides, offices, demo barangay
+pnpm db:seed                            # 8 guides, offices, demo accounts
 pnpm dev:api                            # http://localhost:4000/api/v1/health
 pnpm dev:web                            # app in the browser (or pnpm dev:app for Android)
-pnpm test                               # unit + API tests
+pnpm test                               # unit + API tests (uses the separate dokyu_test database)
 pnpm lint && pnpm typecheck             # what CI runs
 ```
 Open http://localhost:8081/showcase to see every UI component. Toggle **Large text** and **Tagalog** there or on Account.
+
+## Demo accounts
+After `pnpm db:seed`:
+| Account | Email | Password |
+|---|---|---|
+| User (sample data) | `demo@example.com` | `Dokyu-demo-2026` |
+| Super Admin | `admin@example.com` | set `SEED_ADMIN_PASSWORD` in `server/.env`, or use the random one the seed prints once |
+
+In development, confirmation and password-reset emails are printed in the API's terminal instead of being sent.
 
 ## Security
 See [SECURITY.md](SECURITY.md): input validation, rate limiting, log redaction of location data, per-user data ownership checks, audit log.

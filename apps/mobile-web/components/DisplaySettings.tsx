@@ -6,11 +6,22 @@ import { Card } from './ui/Card';
 import { SegmentedControl } from './ui/SegmentedControl';
 import { LANGUAGES } from '../lib/i18n';
 import { useSettings } from '../lib/settings';
+import { useAuth } from '../lib/auth';
 
 /** Language and large-text switches. Lives on Account and on the showcase screen. */
 export function DisplaySettings() {
   const { t } = useTranslation();
   const { language, setLanguage, largeText, setLargeText } = useSettings();
+  const { updateProfile } = useAuth();
+  // Signed-in users keep these on their profile too, so a new phone starts the same way.
+  const changeLanguage = (l: typeof language) => {
+    setLanguage(l);
+    updateProfile({ language: l }).catch(() => {});
+  };
+  const changeLargeText = (on: boolean) => {
+    setLargeText(on);
+    updateProfile({ textSize: on ? 'large' : 'normal' }).catch(() => {});
+  };
   return (
     <Card className="gap-4">
       <AppText variant="title">{t('settings.title')}</AppText>
@@ -21,7 +32,7 @@ export function DisplaySettings() {
         <SegmentedControl
           label={t('settings.language')}
           value={language}
-          onChange={setLanguage}
+          onChange={changeLanguage}
           options={LANGUAGES.map((l) => ({ value: l.code, label: l.label }))}
         />
       </View>
@@ -37,7 +48,7 @@ export function DisplaySettings() {
         <Switch
           accessibilityLabel={t('settings.largeText')}
           value={largeText}
-          onValueChange={setLargeText}
+          onValueChange={changeLargeText}
           trackColor={{ false: colors.border, true: colors.primary }}
           thumbColor="#FFFFFF"
           {...({ activeThumbColor: '#FFFFFF' } as object)}

@@ -1,11 +1,15 @@
-import { Tabs } from 'expo-router';
+import { Redirect, Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { AppTabBar } from '../../components/navigation/AppTabBar';
 import { useLayout } from '../../lib/useLayout';
+import { useSettings } from '../../lib/settings';
 
 export default function ResidentTabs() {
   const { t } = useTranslation();
   const { isDesktop } = useLayout();
+  const { introSeen } = useSettings();
+  // First launch: show the intro slides once (plan §3.1 H.12).
+  if (!introSeen) return <Redirect href="/welcome" />;
   return (
     <Tabs
       tabBar={(props) => <AppTabBar {...props} />}

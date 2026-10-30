@@ -15,7 +15,8 @@ Read this first, then `docs/PLAN.md` (the full plan) and `docs/CONTENT.md` (veri
 | Design | Locked: "Bayan Blue". Prototype: https://claude.ai/artifact/XvFGTnhEmNFipg2UTstJ1u |
 | Phase 0 | ✅ Done. Pushed to https://github.com/mukraminbariwa5-create/dokyu, CI green (lint, typecheck, tests against Postgres) |
 | Phase 1 | ✅ Design system done, checked at 390px (phone) and 1440px (desktop), English + Tagalog, large text |
-| Tests | 19 pass (shared 11, server 8). Lint and typecheck clean |
+| Phase 2 | ✅ Accounts + onboarding done and tested in the browser (see below) |
+| Tests | 37 pass (shared 11, server 26 incl. 18 auth integration tests). Lint and typecheck clean |
 
 ## Versions (upgraded this session)
 Expo SDK **58** (RN 0.88, React 19.3), Expo Router 58, NativeWind **4.2** + Tailwind 3.4, Reanimated 4.7, i18next 26, Prisma 6.19, Express 5. NativeWind 5 is still a release candidate; move to it only once it's stable.
@@ -37,8 +38,18 @@ Expo SDK **58** (RN 0.88, React 19.3), Expo Router 58, NativeWind **4.2** + Tail
 - The API and seed script load `server/.env` with Node's `--env-file`.
 - Guide titles and steps are still English-only seed data; Tagalog guide text arrives with the DB guides in Phase 3.
 
-## Next: Phase 2 (Auth + onboarding), `docs/PLAN.md` §12
-Roles are only **Guest** (no account), **User** (anyone who signs up; renamed from "Resident") and **Super Admin** (the owner). Build sign up / login / verify / reset, argon2 + short JWT + rotating refresh tokens, lockout and rate limits, consent checkbox (RA 10173), onboarding (language → area → goals, static Doki), demo user + demo Super Admin. Remove STAFF and BRGY_ADMIN from the Role enum. In development, verification and reset emails print to the server log. Done when both roles can log in and the access-control and ownership tests pass.
+## What Phase 2 added
+- **API:** `/auth` (signup, login, refresh, logout, verify-email, resend-verification, forgot, reset), `/me` (profile, onboarding answers), `/me/sessions` (own devices), `/super/audit` (owner only). Details in SECURITY.md.
+- **Schema:** migration `auth`. Roles are USER and SUPER_ADMIN; `EmailToken` table; refresh tokens grouped in families (one per device). Barangay tables are still there, unused.
+- **Tests:** `server/test/auth.test.ts` runs against `TEST_DATABASE_URL` (the `dokyu_test` database, created by `docker/init-test-db.sql`). It refuses to run against the dev database.
+- **App:** `lib/api.ts` (renews the access token automatically), `lib/auth.tsx` (AuthProvider), screens `/sign-in`, `/sign-up`, `/forgot-password`, `/reset-password`, `/verify-email`, `/welcome` (3 intro slides, shown once) and `/setup` (language → area → goals). Guests do onboarding too; their answers move to the account when they sign up.
+- **Account tab:** guest card or profile, email-confirmation banner, area and goals, display settings (saved to the profile), signed-in devices, sign out.
+- **Seed:** `demo@example.com` / `Dokyu-demo-2026`; `admin@example.com` (password from `SEED_ADMIN_PASSWORD` or printed once).
+- **Dev email:** links are printed in the API terminal.
+- Android: set `EXPO_PUBLIC_API_URL` to your PC's LAN address (e.g. `http://192.168.1.10:4000`), since `localhost` on a phone is the phone itself.
+
+## Next: Phase 3 (Guides + goals + offices), `docs/PLAN.md` §12
+Move the guides to the database, then add exact requirement details, "Do at home" / "At the office" steps, the "Before you go" checklist, search, the goal helper with cost/time estimate, an offline cache, the Super Admin guide editor, the Office Finder with location or manual area, the MapLibre map, saved offices, and holidays/closures with "Closed today" badges. It's the biggest phase, so split it into sub-steps: guides first, then offices, then the map, then holidays.
 
 ## Rules to keep
 - One phase at a time. New ideas go to `docs/PLAN.md` §3.2 "Later".
@@ -48,4 +59,4 @@ Roles are only **Guest** (no account), **User** (anyone who signs up; renamed fr
 - Commit author: Mukramin Bariwa Ansao <mukraminansao@gmail.com>. MIT license.
 
 ## Prompt to paste in the new session
-> I'm continuing my project Dokyu. The folder is attached/connected. Read HANDOFF.md, then docs/PLAN.md and docs/CONTENT.md. Start Phase 2 (auth + onboarding). Don't ask me to do things you can do yourself.
+> I'm continuing my project Dokyu. The folder is attached/connected. Read HANDOFF.md, then docs/PLAN.md and docs/CONTENT.md. Start Phase 3 (guides, goals and offices). Don't ask me to do things you can do yourself.

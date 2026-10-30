@@ -13,6 +13,7 @@ import {
   Poppins_700Bold,
 } from '@expo-google-fonts/poppins';
 import { SettingsProvider, useSettings } from '../lib/settings';
+import { AuthProvider } from '../lib/auth';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -43,7 +44,9 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <SettingsProvider>
-        <Root />
+        <AuthProvider>
+          <Root />
+        </AuthProvider>
       </SettingsProvider>
     </SafeAreaProvider>
   );
