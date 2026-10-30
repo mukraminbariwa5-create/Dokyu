@@ -1,15 +1,26 @@
+/**
+ * /api/v1/guides — public document guides (no sign-in needed, plan §2).
+ * Every guide is checked against the shared schema before it is sent, so the app never gets a broken guide.
+ */
 import { Router } from 'express';
 import { z } from 'zod';
 import type { PrismaClient } from '@prisma/client';
+import { GUIDE_CATEGORIES, guideSchema, type Guide } from '@dokyu/shared';
 
 const listQuery = z.object({
   q: z.string().trim().max(60).optional(),
-  category: z.string().trim().max(40).optional(),
+  category: z.enum(GUIDE_CATEGORIES).optional(),
 });
+
+function toGuide(content: unknown): Guide | null {
+  const parsed = guideSchema.safeParse(content);
+  return parsed.success ? parsed.data : null;
+}
 
 export function guidesRouter(db: PrismaClient) {
   const r = Router();
 
+  /** All published guides with their full content (small enough to cache whole on the phone for offline use). */
   r.get('/', async (req, res) => {
     const parsed = listQuery.safeParse(req.query);
     if (!parsed.success) {
@@ -17,7 +28,7 @@ export function guidesRouter(db: PrismaClient) {
       return;
     }
     const { q, category } = parsed.data;
-    const guides = await db.documentGuide.findMany({
+    const rows = await db.documentGuide.findMany({
       where: {
         published: true,
         ...(category ? { category } : {}),
@@ -25,23 +36,18 @@ export function guidesRouter(db: PrismaClient) {
           ? {
               OR: [
                 { titleEn: { contains: q, mode: 'insensitive' } },
+                { titleTl: { contains: q, mode: 'insensitive' } },
                 { agency: { contains: q, mode: 'insensitive' } },
               ],
             }
           : {}),
       },
-      select: {
-        slug: true,
-        titleEn: true,
-        agency: true,
-        mono: true,
-        category: true,
-        fees: true,
-        lastVerifiedAt: true,
-      },
+      select: { content: true },
       orderBy: { titleEn: 'asc' },
     });
-    res.json({ data: guides });
+    const data = rows.map((r) => toGuide(r.content)).filter((g): g is Guide => g !== null);
+    res.set('Cache-Control', 'public, max-age=300');
+    res.json({ data });
   });
 
   r.get('/:slug', async (req, res) => {
@@ -53,7 +59,11 @@ export function guidesRouter(db: PrismaClient) {
       res.status(400).json({ error: 'Invalid slug' });
       return;
     }
-    const guide = await db.documentGuide.findFirst({ where: { slug: slug.data, published: true } });
+    const row = await db.documentGuide.findFirst({
+      where: { slug: slug.data, published: true },
+      select: { content: true },
+    });
+    const guide = row ? toGuide(row.content) : null;
     if (!guide) {
       res.status(404).json({ error: 'Guide not found' });
       return;

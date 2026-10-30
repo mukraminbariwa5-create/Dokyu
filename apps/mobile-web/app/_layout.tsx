@@ -14,6 +14,8 @@ import {
 } from '@expo-google-fonts/poppins';
 import { SettingsProvider, useSettings } from '../lib/settings';
 import { AuthProvider } from '../lib/auth';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from '../lib/queryClient';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -43,11 +45,13 @@ function Root() {
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
-      <SettingsProvider>
-        <AuthProvider>
-          <Root />
-        </AuthProvider>
-      </SettingsProvider>
+      <QueryClientProvider client={queryClient}>
+        <SettingsProvider>
+          <AuthProvider>
+            <Root />
+          </AuthProvider>
+        </SettingsProvider>
+      </QueryClientProvider>
     </SafeAreaProvider>
   );
 }

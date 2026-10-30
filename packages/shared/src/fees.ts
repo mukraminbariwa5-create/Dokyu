@@ -1,4 +1,4 @@
-import type { GuideFee } from './seed/guides';
+import type { GuideFee } from './guides';
 
 export type FeeSummary =
   | { kind: 'free' }

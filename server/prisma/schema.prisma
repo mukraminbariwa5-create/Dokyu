@@ -142,27 +142,22 @@ model Barangay {
   closures      Closure[]
 }
 
+/// A document guide. The full content (requirements, steps, links, tips in English and Tagalog) lives in
+/// `content` and always matches guideSchema in packages/shared/src/guides.ts; the plain columns are for search and sorting.
 model DocumentGuide {
   id             String   @id @default(cuid())
   slug           String   @unique
   category       String
   mono           String
   titleEn        String
-  titleTl        String?
-  summaryEn      String?
-  summaryTl      String?
+  titleTl        String
   agency         String
-  officialUrl    String?
-  fees           Json
-  validity       String
-  requirements   Json
-  steps          Json
-  warnings       Json
-  sources        Json
+  content        Json
   ftjFree        Boolean  @default(false)
   verified       Boolean  @default(false)
   lastVerifiedAt DateTime
   published      Boolean  @default(true)
+  updatedAt      DateTime @updatedAt
 
   goalSteps GoalStep[]
   services  OfficeService[]

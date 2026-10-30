@@ -11,6 +11,7 @@ import {
 } from '../src/requests';
 import { startingFee } from '../src/fees';
 import { GUIDES } from '../src/seed/guides';
+import { guideSchema, mainAction } from '../src/guides';
 import { DEMO_BARANGAY_DOCS } from '../src/seed/barangay';
 
 test('staff move a request forward one step at a time', () => {
@@ -59,10 +60,36 @@ test('seed data is complete', () => {
     assert.ok(g.steps.length >= 3, `${g.slug} has steps`);
     assert.ok(g.requirements.length >= 1, `${g.slug} has requirements`);
     assert.ok(g.lastVerified, `${g.slug} has a verification date`);
-    if (g.officialUrl) assert.match(g.officialUrl, /^https:\/\//);
+    assert.ok(guideSchema.safeParse(g).success, `${g.slug} matches the guide schema`);
   }
   assert.equal(new Set(GUIDES.map((g) => g.slug)).size, 8, 'slugs are unique');
   assert.ok(DEMO_BARANGAY_DOCS.some((d) => d.code === 'FTJ' && d.fee === 0));
+});
+
+// Anti-fixer rule (plan §3.1 H.2): guides link only to official sites or channels the agency itself names.
+const OFFICIAL_HOSTS = [/\.gov\.ph$/, /^psahelpline\.ph$/, /^pnpclearance\.ph$/];
+
+test('every guide link goes to an official site', () => {
+  for (const g of GUIDES) {
+    for (const step of g.steps) {
+      if (!step.action) continue;
+      const host = new URL(step.action.url).hostname;
+      assert.ok(
+        OFFICIAL_HOSTS.some((re) => re.test(host)),
+        `${g.slug}: ${host} is not an official host`,
+      );
+    }
+  }
+});
+
+test('every guide has an online step people can do from home', () => {
+  for (const g of GUIDES.filter((x) => x.slug !== 'barangay-clearance')) {
+    assert.ok(mainAction(g), `${g.slug} has an official link on a step`);
+  }
+  assert.equal(
+    mainAction(GUIDES.find((g) => g.slug === 'passport')!)?.url,
+    'https://www.passport.gov.ph/appointment',
+  );
 });
 
 test('starting fee adds add-ons and says "from" when options differ', () => {

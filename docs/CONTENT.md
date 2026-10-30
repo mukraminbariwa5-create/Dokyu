@@ -214,3 +214,19 @@ Sources: [PSA — Metro Manila CRS outlets (Pasig)](https://rssomimaropa.psa.gov
   - First-Time Jobseeker Certification (RA 11261): valid ID, proof of 6+ months residency, Oath of Undertaking. **Free** · same day
   - Real barangays replace these with their own Citizen's Charter values in the admin panel.
 - **App rule added:** every barangay document type shows **"Fee per Citizen's Charter"** and a "Report an overcharge" link to the barangay's complaint desk (RA 11032).
+
+---
+
+## 7. Requirements re-check (30 Oct 2026, session 3)
+
+Done to make every guide say exactly what to bring. The content now lives in `packages/shared/src/seed/guides.ts` (English + Tagalog) and is checked by `guideSchema`.
+
+- **Links fixed:** Passport → `passport.gov.ph/appointment` (book) ✅ · National ID → `register.philsys.gov.ph` (Step 1 online registration, named by PSA) ⚠️ site not opened from the workspace · Postal ID → the PHLPost application form PDF (there is no online application) ✅ · PSA → online order (PSAHelpline) and outlet booking ✅. NBI, NPCS and ORUS already pointed to the real registration portals.
+- **Photos:** none of the 8 national documents need you to bring a photo; NBI, PNP, DFA, PhilSys and PHLPost take it on site. Some barangays ask for 1x1/2x2: the guide says "ask first".
+- **NBI / Police:** original IDs only, no photocopies; company IDs and barangay clearance not accepted (NBI). The official NPCS PDF asks for 1 valid ID; older guidance and many stations ask for 2, so the app says "bring 2 if you have them". ⚠️ (NBI ID rules from independent guides)
+- **Passport:** PSA birth certificate and valid ID, **original + photocopy**; printed appointment packet; National ID, ePhilID and printed Digital National ID are on DFA's accepted list ✅ (consular.dfa.gov.ph).
+- **Postal ID:** no other valid ID needed. A PSA birth certificate + proof of address (barangay certificate or bill) + form ✅ (PHLPost clarification, July 2026).
+- **PSA outlets:** book an appointment even with a National ID (reports say the appointment system covers National ID holders since March 2026) ⚠️.
+- **First-Time Jobseeker (RA 11261):** barangay certification + Oath of Undertaking signed at the hall, 6+ months residency, valid 1 year ✅.
+
+Sources: [DFA — acceptable IDs](https://consular.dfa.gov.ph/reminders/10-passport) · [PNA via Journal — passport.gov.ph/appointment](https://journalnews.com.ph/?p=2025) · [PSA — register.philsys.gov.ph](https://psa.gov.ph/content/psa-data-reveals-common-identification-documents-used-public-attests-need-philid) · [CDN — Cebu online appointment](https://cebudailynews.inquirer.net/?p=709288) · [PHLPost — how to apply](https://phlpost.gov.ph/?p=124) · [Tribune — no valid ID needed](https://tribune.net.ph/2026/07/23/phlpost-no-valid-id-needed-to-get-a-postal-id) · [NPCS how to apply (PDF)](https://pnpclearance.ph/landing/AppPonsive/doc/how_to_apply_v2.pdf) · [Moneymax — NBI IDs](https://www.moneymax.ph/government-services/articles/nbi-clearance-online) ⚠️ · [Alburo Law — RA 11261 Sec. 8](https://www.alburolaw.com/what-is-the-first-time-jobseekers-assistance-act/)

@@ -1,31 +1,94 @@
+import { useMemo, useState } from 'react';
 import { Link } from 'expo-router';
-import { View } from 'react-native';
+import { ScrollView, TextInput, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { GUIDES, colors } from '@dokyu/shared';
+import { GUIDE_CATEGORIES, colors, pick, startingFee, type GuideCategory } from '@dokyu/shared';
 import { Screen } from '../../../components/ui/Screen';
 import { AgencyTile } from '../../../components/ui/AgencyTile';
 import { AppText } from '../../../components/ui/AppText';
 import { PressableCard } from '../../../components/ui/Card';
+import { ChoiceChip } from '../../../components/ui/ChoiceChip';
 import { Icon } from '../../../components/ui/Icon';
+import { useGuides } from '../../../lib/guides';
 import { useSettings } from '../../../lib/settings';
-import { formatDate } from '../../../lib/format';
+import { formatDate, formatFee } from '../../../lib/format';
 import { useLayout } from '../../../lib/useLayout';
 
 export default function Guides() {
   const { t } = useTranslation();
-  const { language } = useSettings();
+  const { language, textSize } = useSettings();
   const { isDesktop } = useLayout();
+  const { data: guides } = useGuides();
+  const [q, setQ] = useState('');
+  const [focused, setFocused] = useState(false);
+  const [category, setCategory] = useState<GuideCategory | 'all'>('all');
+
+  const shown = useMemo(() => {
+    const needle = q.trim().toLowerCase();
+    return guides.filter(
+      (g) =>
+        (category === 'all' || g.category === category) &&
+        (!needle ||
+          [g.title.en, g.title.tl, g.agency.en, g.mono].some((s) =>
+            s.toLowerCase().includes(needle),
+          )),
+    );
+  }, [guides, q, category]);
+  const usedCategories = GUIDE_CATEGORIES.filter((c) => guides.some((g) => g.category === c));
+
   return (
     <Screen wide={isDesktop}>
       <View className="gap-1">
         <AppText variant="h1">{t('guides.title')}</AppText>
         <AppText variant="small" tone="muted">
           {t('guides.intro')}{' '}
-          {t('guides.lastVerified', { date: formatDate(GUIDES[0]?.lastVerified ?? '', language) })}.
+          {t('guides.lastVerified', { date: formatDate(guides[0]?.lastVerified ?? '', language) })}.
         </AppText>
       </View>
+
+      <View
+        className={`min-h-[52px] flex-row items-center gap-2 rounded-lg border bg-surface px-4 ${focused ? 'border-primary' : 'border-line'}`}
+        style={focused ? { boxShadow: `0 0 0 3px ${colors.primaryTint}` } : undefined}
+      >
+        <Icon name="search" size={20} color={colors.textMuted} />
+        <TextInput
+          accessibilityLabel={t('guide.searchPlaceholder')}
+          placeholder={t('guide.searchPlaceholder')}
+          placeholderTextColor={colors.textSubtle}
+          value={q}
+          onChangeText={setQ}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          className="flex-1 font-poppins text-ink"
+          // The box above shows focus, so the browser's own outline is turned off.
+          style={{ fontSize: textSize('bodyLg'), minHeight: 48, outlineStyle: 'none' } as object}
+          autoCorrect={false}
+        />
+      </View>
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerClassName="gap-2"
+      >
+        {(['all', ...usedCategories] as const).map((c) => (
+          <ChoiceChip
+            key={c}
+            label={t(`categories.${c}`)}
+            selected={category === c}
+            onPress={() => setCategory(c)}
+          />
+        ))}
+      </ScrollView>
+
+      {shown.length === 0 ? (
+        <AppText variant="body" tone="muted">
+          {t('guide.noResults', { q })}
+        </AppText>
+      ) : null}
+
       <View className={isDesktop ? 'flex-row flex-wrap gap-3' : 'gap-3'}>
-        {GUIDES.map((g) => (
+        {shown.map((g) => (
           // The width lives on a wrapper: Link asChild replaces the child's style.
           <View key={g.slug} style={isDesktop ? { width: '49%', flexGrow: 1 } : undefined}>
             <Link href={{ pathname: '/guides/[slug]', params: { slug: g.slug } }} asChild>
@@ -33,10 +96,10 @@ export default function Guides() {
                 <AgencyTile mono={g.mono} />
                 <View className="flex-1">
                   <AppText variant="bodyLg" weight="semibold">
-                    {g.title}
+                    {pick(g.title, language)}
                   </AppText>
                   <AppText variant="small" tone="muted">
-                    {g.category}
+                    {t(`categories.${g.category}`)} · {formatFee(startingFee(g.fees), t)}
                   </AppText>
                 </View>
                 <Icon name="chevronRight" size={20} color={colors.textSubtle} />

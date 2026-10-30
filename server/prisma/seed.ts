@@ -2,7 +2,7 @@
  * Seeds verified content (docs/CONTENT.md) plus a demo user and the Super Admin.
  * Run: pnpm db:seed
  */
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, type Prisma } from '@prisma/client';
 import { randomBytes } from 'node:crypto';
 import { GUIDES, OFFICES } from '@dokyu/shared';
 import { hashPassword } from '../src/lib/passwords.js';
@@ -23,15 +23,10 @@ async function main() {
     const data = {
       category: g.category,
       mono: g.mono,
-      titleEn: g.title,
-      agency: g.agency,
-      officialUrl: g.officialUrl || null,
-      fees: g.fees as object[],
-      validity: g.validity,
-      requirements: g.requirements,
-      steps: g.steps,
-      warnings: g.warnings,
-      sources: g.sources,
+      titleEn: g.title.en,
+      titleTl: g.title.tl,
+      agency: g.agency.en,
+      content: g as unknown as Prisma.InputJsonValue,
       ftjFree: g.firstTimeJobseekerFree,
       verified: g.verified,
       lastVerifiedAt: new Date(g.lastVerified),

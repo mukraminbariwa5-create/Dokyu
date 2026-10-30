@@ -16,6 +16,7 @@ Read this first, then `docs/PLAN.md` (the full plan) and `docs/CONTENT.md` (veri
 | Phase 0 | ✅ Done. Pushed to https://github.com/mukraminbariwa5-create/dokyu, CI green (lint, typecheck, tests against Postgres) |
 | Phase 1 | ✅ Design system done, checked at 390px (phone) and 1440px (desktop), English + Tagalog, large text |
 | Phase 2 | ✅ Accounts + onboarding done and tested in the browser (see below) |
+| Phase 3 | 🟡 Step 1 done: guides rebuilt (exact requirements, Do at home / At the office, labelled official links, Before you go checklist, served from the database, English + Tagalog). Next: Home to match the prototype |
 | Tests | 37 pass (shared 11, server 26 incl. 18 auth integration tests). Lint and typecheck clean |
 
 ## Versions (upgraded this session)
@@ -48,7 +49,13 @@ Expo SDK **58** (RN 0.88, React 19.3), Expo Router 58, NativeWind **4.2** + Tail
 - **Dev email:** links are printed in the API terminal.
 - Android: set `EXPO_PUBLIC_API_URL` to your PC's LAN address (e.g. `http://192.168.1.10:4000`), since `localhost` on a phone is the phone itself.
 
-## Next: Phase 3 (Guides + goals + offices), `docs/PLAN.md` §12
+## Phase 3 so far (audit follow-up, 30 Oct)
+- Guide format: `packages/shared/src/guides.ts` (`guideSchema`). Every requirement has qty + how to bring it (original, original + photocopy, print, phone OK, form); every step is `home` or `office` and may carry a labelled official link; tips are `tip` or `warning`. A test fails if any link leaves the official domains.
+- DB: migration `guide_content` keeps the whole guide in `DocumentGuide.content`; the API validates each guide before sending it.
+- App: `lib/guides.ts` (TanStack Query, bundled guides as instant offline fallback), guide page in `components/guide/parts.tsx`, `/guides/[slug]/checklist` (ticks saved on the device), search + category chips on Guides.
+- Still open from the audit: Home to match the prototype + basic motion (next), delete account / download my data, About/Terms/Help, Android test, hide nothing else.
+
+## Next: rest of Phase 3 (Guides + goals + offices), `docs/PLAN.md` §12
 Move the guides to the database, then add exact requirement details, "Do at home" / "At the office" steps, the "Before you go" checklist, search, the goal helper with cost/time estimate, an offline cache, the Super Admin guide editor, the Office Finder with location or manual area, the MapLibre map, saved offices, and holidays/closures with "Closed today" badges. It's the biggest phase, so split it into sub-steps: guides first, then offices, then the map, then holidays.
 
 ## Rules to keep

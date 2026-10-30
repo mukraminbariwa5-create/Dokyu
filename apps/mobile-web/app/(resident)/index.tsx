@@ -1,7 +1,9 @@
 import { Link } from 'expo-router';
 import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { GUIDES, startingFee } from '@dokyu/shared';
+import { pick, startingFee } from '@dokyu/shared';
+import { useGuides } from '../../lib/guides';
+import { useSettings } from '../../lib/settings';
 import { Screen, Section } from '../../components/ui/Screen';
 import { Wordmark } from '../../components/ui/Wordmark';
 import { AgencyTile } from '../../components/ui/AgencyTile';
@@ -18,6 +20,8 @@ export default function Home() {
   const { t } = useTranslation();
   const { isDesktop } = useLayout();
   const { user } = useAuth();
+  const { language } = useSettings();
+  const { data: guides } = useGuides();
   const firstName = user?.fullName.split(' ')[0];
   return (
     <Screen>
@@ -44,21 +48,21 @@ export default function Home() {
           </Link>
         </View>
         {POPULAR.map((slug) => {
-          const g = GUIDES.find((x) => x.slug === slug);
+          const g = guides.find((x) => x.slug === slug);
           if (!g) return null;
           return (
             <Link key={slug} href={{ pathname: '/guides/[slug]', params: { slug } }} asChild>
               <PressableCard
                 className="flex-row items-center gap-4"
-                accessibilityLabel={`${g.title}, ${formatFee(startingFee(g.fees), t)}`}
+                accessibilityLabel={`${pick(g.title, language)}, ${formatFee(startingFee(g.fees), t)}`}
               >
                 <AgencyTile mono={g.mono} />
                 <View className="flex-1">
                   <AppText variant="bodyLg" weight="semibold">
-                    {g.title}
+                    {pick(g.title, language)}
                   </AppText>
                   <AppText variant="small" tone="muted">
-                    {g.agency}
+                    {pick(g.agency, language)}
                   </AppText>
                 </View>
                 <AppText variant="body" weight="semibold" tone="primary">

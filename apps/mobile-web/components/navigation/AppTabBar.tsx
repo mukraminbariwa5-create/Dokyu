@@ -170,12 +170,15 @@ function Sidebar(props: BottomTabBarProps) {
         </View>
       </View>
       <View className="gap-3">
-        <SidebarItem
-          label={t('nav.showcase')}
-          icon="palette"
-          focused={showcaseActive}
-          onPress={() => router.navigate('/(resident)/showcase')}
-        />
+        {/* Developer page: only in development builds, never in the real app. */}
+        {__DEV__ ? (
+          <SidebarItem
+            label={t('nav.showcase')}
+            icon="palette"
+            focused={showcaseActive}
+            onPress={() => router.navigate('/(resident)/showcase')}
+          />
+        ) : null}
         <Disclaimer align="left" />
       </View>
     </View>
