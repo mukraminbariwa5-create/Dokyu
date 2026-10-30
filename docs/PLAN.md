@@ -207,7 +207,7 @@ Reading and finding never need an account. An account is only for saving things 
   - Text `#172033`, muted `#5B6478`, borders `#E6EAF4`, background `#FFFFFF`
 - **Type:** Poppins (all UI). Minimum body size 14–16px; large-text mode at 20px.
 - **Shapes:** 18–22px rounded cards, rounded-square icon tiles (60px, 18px radius), soft blue-tinted shadows, generous spacing.
-- **Doki:** blue folder body, red tab, white paper top, pink cheeks, gold lanyard. Moods: idle, waving, talking, pointing, celebrating.
+- **Doki:** a living document: blue folder body with thickness, red tab, white paper with a folded corner and checklist, pink cheeks, gold lanyard + ID card, little arms and legs. Built in code (SVG parts, not Rive), soft almost-3D shading. Poses: idle, walking, pointing, waving, celebrating (talking and worried still to add). He walks across the screen and points at buttons during the tour.
 - **Motion:** quick, purposeful transitions (150–250 ms); status changes animate; the mascot carries the personality so the UI can stay clean.
 - **Status colors are consistent everywhere:** gray = not started, blue = in progress, yellow = ready, green = done, red = rejected or expired.
 - **Responsive layout:** on mobile, a bottom tab bar. On desktop web, a left sidebar + wider content.

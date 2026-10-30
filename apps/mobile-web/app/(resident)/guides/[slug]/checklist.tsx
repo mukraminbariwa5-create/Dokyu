@@ -68,7 +68,7 @@ export default function Checklist() {
 
       {allSet ? (
         <View className="flex-row items-center gap-3 rounded-card bg-success-soft p-4">
-          <Doki size={64} />
+          <Doki size={56} pose="happy" />
           <AppText variant="body" weight="semibold" tone="success" className="flex-1">
             {t('checklist.allSet')}
           </AppText>

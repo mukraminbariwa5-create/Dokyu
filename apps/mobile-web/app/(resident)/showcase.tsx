@@ -15,6 +15,7 @@ import { AgencyTile } from '../../components/ui/AgencyTile';
 import { StatusTimeline } from '../../components/ui/StatusTimeline';
 import { TicketCard } from '../../components/ui/TicketCard';
 import { Doki } from '../../components/ui/Doki';
+import { DokiStroll } from '../../components/ui/DokiStroll';
 import { Icon } from '../../components/ui/Icon';
 import { Disclaimer } from '../../components/ui/Disclaimer';
 import { DisplaySettings } from '../../components/DisplaySettings';
@@ -187,11 +188,18 @@ export default function Showcase() {
     ],
     [
       t('showcase.doki'),
-      <View key="dk" className="flex-row items-center gap-4">
-        <Doki size={120} />
-        <AppText variant="small" tone="muted" className="flex-1">
-          Static placeholder. The animated Rive character arrives in Phase 7.
-        </AppText>
+      <View key="dk" className="gap-4">
+        <View className="flex-row flex-wrap items-end gap-2">
+          {(['idle', 'walk', 'point', 'wave', 'happy'] as const).map((p) => (
+            <View key={p} className="items-center">
+              <Doki size={96} pose={p} />
+              <AppText variant="small" tone="muted">
+                {p}
+              </AppText>
+            </View>
+          ))}
+        </View>
+        <DokiStroll />
       </View>,
     ],
   ];

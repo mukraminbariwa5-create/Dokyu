@@ -71,7 +71,7 @@ export function GreetingCard({ name }: { name?: string }) {
         </Svg>
         <View style={{ position: 'absolute', left: 14, top: 22 }}>
           <Float>
-            <Doki size={96} label="Doki" />
+            <Doki size={86} pose="wave" label="Doki" />
           </Float>
         </View>
       </View>

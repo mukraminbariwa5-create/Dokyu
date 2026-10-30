@@ -53,7 +53,7 @@ export default function Welcome() {
             className="items-center justify-center rounded-full bg-primary-soft"
             style={{ width: 220, height: 220 }}
           >
-            <Doki size={170} />
+            <Doki size={150} pose={slide === 1 ? 'wave' : slide === 2 ? 'point' : 'happy'} />
           </View>
           <View className="gap-3" accessibilityLiveRegion="polite">
             <AppText variant="h1" style={{ textAlign: 'center' }}>
