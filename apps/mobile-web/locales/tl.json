@@ -1,1 +1,86 @@
-{ "greeting": "Magandang araw,", "disclaimer": "Independiyenteng gabay · hindi kaugnay ng anumang ahensya ng gobyerno" }
+{
+  "nav": {
+    "home": "Home",
+    "guides": "Gabay",
+    "ask": "Itanong",
+    "docs": "Mga Papeles",
+    "account": "Account",
+    "showcase": "Design system"
+  },
+  "common": {
+    "greeting": "Magandang araw,",
+    "disclaimer": "Independiyenteng gabay · hindi kaugnay ng anumang ahensya ng gobyerno",
+    "comingInPhase": "Darating sa Phase {{phase}} (tingnan ang docs/PLAN.md §12).",
+    "free": "Libre",
+    "varies": "Iba-iba",
+    "from": "mula {{amount}}"
+  },
+  "home": {
+    "welcome": "Maligayang pagdating sa Dokyu",
+    "tagline": "Alamin, ihanda, at i-track ang lahat ng papeles mo — sa isang app.",
+    "popular": "Mga sikat na gabay",
+    "seeAll": "Tingnan lahat"
+  },
+  "guides": {
+    "title": "Mga Gabay",
+    "intro": "Bayad, requirements at mga hakbang mula sa opisyal na sources.",
+    "lastVerified": "Huling sinuri {{date}}",
+    "confirmOfficial": "Kumpirmahin sa opisyal na site",
+    "fees": "Bayad",
+    "validFor": "Bisa: {{validity}}",
+    "firstJob": "Unang trabaho? Libre nang isang beses sa ilalim ng RA 11261 gamit ang First-Time Jobseeker Barangay Certification.",
+    "whatToBring": "Mga dadalhin",
+    "steps": "Mga hakbang",
+    "officialSite": "Opisyal na site · dito lang mag-apply",
+    "notFound": "Hindi nahanap ang gabay",
+    "back": "Bumalik sa mga gabay"
+  },
+  "settings": {
+    "title": "Display",
+    "language": "Wika",
+    "largeText": "Malaking letra",
+    "largeTextHint": "Mas malaking letra sa bawat screen (20px na body text)."
+  },
+  "status": {
+    "notStarted": "Hindi pa nasisimulan",
+    "inProgress": "Inaasikaso",
+    "ready": "Handa na",
+    "done": "Tapos na",
+    "problem": "Kailangang tingnan",
+    "SUBMITTED": "Naipasa",
+    "UNDER_REVIEW": "Sinusuri",
+    "APPROVED": "Aprubado",
+    "READY_FOR_PICKUP": "Handa nang kunin",
+    "RELEASED": "Nakuha na",
+    "REJECTED": "Hindi inaprubahan",
+    "CANCELLED": "Kinansela"
+  },
+  "ticket": {
+    "requestNo": "Request no.",
+    "fee": "Babayaran sa barangay",
+    "showAtCounter": "Ipakita ang ticket na ito at isang valid ID sa counter.",
+    "qrSoon": "Lalabas dito ang QR claim code mo kapag naaprubahan na ang request."
+  },
+  "showcase": {
+    "title": "Design system",
+    "intro": "Lahat ng Phase 1 components sa iisang lugar. Tingnan sa phone at sa desktop browser.",
+    "colors": "Mga kulay",
+    "type": "Letra",
+    "buttons": "Mga button",
+    "badges": "Status badges",
+    "inputs": "Inputs",
+    "cards": "Cards at tiles",
+    "timeline": "Status timeline",
+    "ticket": "Ticket card",
+    "doki": "Doki",
+    "sampleLabel": "Buong pangalan",
+    "sampleHint": "Gaya ng nakasulat sa valid ID mo",
+    "sampleError": "Pakilagay ang buong pangalan mo",
+    "primary": "Mag-request ng clearance",
+    "secondary": "I-save muna",
+    "ghost": "Kanselahin",
+    "danger": "Tanggihan ang request",
+    "loading": "Ipinapadala",
+    "disabled": "Hindi available"
+  }
+}

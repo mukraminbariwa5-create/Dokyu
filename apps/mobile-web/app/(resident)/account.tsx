@@ -1,13 +1,18 @@
-import { Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Screen } from '../../components/ui/Screen';
+import { AppText } from '../../components/ui/AppText';
 import { Disclaimer } from '../../components/ui/Disclaimer';
-import { type } from '../../lib/theme';
+import { DisplaySettings } from '../../components/DisplaySettings';
 
-export default function Placeholder() {
+export default function Account() {
+  const { t } = useTranslation();
   return (
     <Screen>
-      <Text style={type.h1}>Account</Text>
-      <Text style={type.body}>Coming in Phase 2 (see docs/PLAN.md §12).</Text>
+      <AppText variant="h1">{t('nav.account')}</AppText>
+      <DisplaySettings />
+      <AppText variant="body" tone="muted">
+        {t('common.comingInPhase', { phase: 2 })}
+      </AppText>
       <Disclaimer />
     </Screen>
   );

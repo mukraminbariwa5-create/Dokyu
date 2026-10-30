@@ -1,6 +1,15 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { canTransition, formatPeso, formatTicketNo, nextStaffStatus } from '../src/requests';
+import {
+  REQUEST_STATUSES,
+  canTransition,
+  formatPeso,
+  formatTicketNo,
+  nextStaffStatus,
+  requestStatusTone,
+  timelineSteps,
+} from '../src/requests';
+import { startingFee } from '../src/fees';
 import { GUIDES } from '../src/seed/guides';
 import { DEMO_BARANGAY_DOCS } from '../src/seed/barangay';
 
@@ -54,4 +63,36 @@ test('seed data is complete', () => {
   }
   assert.equal(new Set(GUIDES.map((g) => g.slug)).size, 8, 'slugs are unique');
   assert.ok(DEMO_BARANGAY_DOCS.some((d) => d.code === 'FTJ' && d.fee === 0));
+});
+
+test('starting fee adds add-ons and says "from" when options differ', () => {
+  const fee = (slug: string) => startingFee(GUIDES.find((g) => g.slug === slug)!.fees);
+  assert.deepEqual(fee('nbi-clearance'), { kind: 'exact', amount: 15500 });
+  assert.deepEqual(fee('psa-birth-certificate'), { kind: 'from', amount: 15500 });
+  assert.deepEqual(fee('passport'), { kind: 'from', amount: 100000 });
+  assert.deepEqual(fee('police-clearance'), { kind: 'from', amount: 15000 });
+  assert.deepEqual(fee('national-id'), { kind: 'free' });
+  assert.deepEqual(fee('barangay-clearance'), { kind: 'varies' });
+});
+
+test('every request status has a status color', () => {
+  assert.equal(requestStatusTone('UNDER_REVIEW'), 'inProgress');
+  assert.equal(requestStatusTone('READY_FOR_PICKUP'), 'ready');
+  assert.equal(requestStatusTone('RELEASED'), 'done');
+  assert.equal(requestStatusTone('REJECTED'), 'problem');
+  for (const s of REQUEST_STATUSES) assert.ok(requestStatusTone(s));
+});
+
+test('timeline marks done, current and upcoming steps', () => {
+  const states = timelineSteps('APPROVED').map((s) => s.state);
+  assert.deepEqual(states, ['done', 'done', 'current', 'upcoming', 'upcoming']);
+  assert.ok(timelineSteps('RELEASED').every((s) => s.state === 'done'));
+});
+
+test('timeline ends with the stop for a rejected request', () => {
+  const steps = timelineSteps('REJECTED', new Set(['SUBMITTED', 'UNDER_REVIEW', 'REJECTED']));
+  assert.deepEqual(
+    steps.map((s) => `${s.status}:${s.state}`),
+    ['SUBMITTED:done', 'UNDER_REVIEW:done', 'REJECTED:stopped'],
+  );
 });

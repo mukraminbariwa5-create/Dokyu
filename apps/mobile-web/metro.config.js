@@ -1,5 +1,6 @@
-// Lets Metro resolve the shared workspace package in the pnpm monorepo.
+// Metro config: resolves the shared workspace package in the pnpm monorepo and runs NativeWind.
 const { getDefaultConfig } = require('expo/metro-config');
+const { withNativeWind } = require('nativewind/metro');
 const path = require('path');
 
 const projectRoot = __dirname;
@@ -11,4 +12,8 @@ config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, 'node_modules'),
   path.resolve(workspaceRoot, 'node_modules'),
 ];
-module.exports = config;
+
+module.exports = withNativeWind(config, {
+  input: './global.css',
+  configPath: './tailwind.config.ts',
+});

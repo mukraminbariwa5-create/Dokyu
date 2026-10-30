@@ -1,51 +1,71 @@
 import { Link } from 'expo-router';
-import { Pressable, Text, View } from 'react-native';
-import { GUIDES, formatPeso } from '@dokyu/shared';
-import { Screen } from '../../components/ui/Screen';
+import { View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { GUIDES, startingFee } from '@dokyu/shared';
+import { Screen, Section } from '../../components/ui/Screen';
 import { Wordmark } from '../../components/ui/Wordmark';
 import { AgencyTile } from '../../components/ui/AgencyTile';
+import { AppText } from '../../components/ui/AppText';
+import { Card, PressableCard } from '../../components/ui/Card';
 import { Disclaimer } from '../../components/ui/Disclaimer';
-import { colors, fonts, type } from '../../lib/theme';
+import { useLayout } from '../../lib/useLayout';
+import { formatFee } from '../../lib/format';
 
 const POPULAR = ['nbi-clearance', 'psa-birth-certificate', 'national-id'];
 
-function totalFee(slug: string) {
-  const g = GUIDES.find((x) => x.slug === slug);
-  if (!g) return '';
-  const amounts = g.fees.map((f) => f.amount);
-  if (amounts.some((a) => a === null)) return 'Varies';
-  // Show the first (main) option; add-on fees like e-payment are summed for NBI.
-  return slug === 'nbi-clearance' ? formatPeso(amounts.reduce<number>((s, a) => s + (a ?? 0), 0)) : formatPeso(amounts[0] ?? 0);
-}
-
 export default function Home() {
+  const { t } = useTranslation();
+  const { isDesktop } = useLayout();
   return (
     <Screen>
-      <Wordmark />
-      <View style={{ borderRadius: 22, backgroundColor: colors.primarySoft, padding: 18, gap: 2 }}>
-        <Text style={type.small}>Magandang araw,</Text>
-        <Text style={{ fontFamily: fonts.bold, fontSize: 22, color: colors.primaryDark }}>Welcome to Dokyu</Text>
-        <Text style={[type.small, { marginTop: 6 }]}>Government papers, made easier. Phase 0 build.</Text>
-      </View>
+      {!isDesktop && <Wordmark />}
+      <Card tone="soft" className="gap-1 p-5">
+        <AppText variant="small" tone="muted">
+          {t('common.greeting')}
+        </AppText>
+        <AppText variant="h2" weight="bold" tone="primaryDark">
+          {t('home.welcome')}
+        </AppText>
+        <AppText variant="small" tone="muted" className="mt-1">
+          {t('home.tagline')}
+        </AppText>
+      </Card>
 
-      <Text style={type.title}>Popular guides</Text>
-      <View style={{ gap: 10 }}>
+      <Section>
+        <View className="flex-row items-center justify-between">
+          <AppText variant="title">{t('home.popular')}</AppText>
+          <Link href="/guides">
+            <AppText variant="small" weight="semibold" tone="primary">
+              {t('home.seeAll')}
+            </AppText>
+          </Link>
+        </View>
         {POPULAR.map((slug) => {
-          const g = GUIDES.find((x) => x.slug === slug)!;
+          const g = GUIDES.find((x) => x.slug === slug);
+          if (!g) return null;
           return (
             <Link key={slug} href={{ pathname: '/guides/[slug]', params: { slug } }} asChild>
-              <Pressable accessibilityRole="button" style={{ flexDirection: 'row', alignItems: 'center', gap: 14, padding: 14, borderRadius: 16, borderWidth: 1, borderColor: colors.border }}>
+              <PressableCard
+                className="flex-row items-center gap-4"
+                accessibilityLabel={`${g.title}, ${formatFee(startingFee(g.fees), t)}`}
+              >
                 <AgencyTile mono={g.mono} />
-                <View style={{ flex: 1 }}>
-                  <Text style={{ fontFamily: fonts.semibold, fontSize: 15, color: colors.text }}>{g.title}</Text>
-                  <Text style={type.small}>{g.agency}</Text>
+                <View className="flex-1">
+                  <AppText variant="bodyLg" weight="semibold">
+                    {g.title}
+                  </AppText>
+                  <AppText variant="small" tone="muted">
+                    {g.agency}
+                  </AppText>
                 </View>
-                <Text style={{ fontFamily: fonts.semibold, color: colors.primary }}>{totalFee(slug)}</Text>
-              </Pressable>
+                <AppText variant="body" weight="semibold" tone="primary">
+                  {formatFee(startingFee(g.fees), t)}
+                </AppText>
+              </PressableCard>
             </Link>
           );
         })}
-      </View>
+      </Section>
       <Disclaimer />
     </Screen>
   );

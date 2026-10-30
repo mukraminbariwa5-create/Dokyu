@@ -7,6 +7,8 @@ export interface GuideFee {
   /** centavos; null = varies */
   amount: number | null;
   note?: string;
+  /** Paid on top of the main fee (e.g. an e-payment or payment-center fee), not an alternative to it. */
+  addOn?: boolean;
 }
 
 export interface GuideSeed {
@@ -108,7 +110,7 @@ export const GUIDES: GuideSeed[] = [
     category: 'Clearances',
     fees: [
       { label: 'Clearance fee', amount: 13000 },
-      { label: 'E-payment fee', amount: 2500 },
+      { label: 'E-payment fee', amount: 2500, addOn: true },
     ],
     validity: '1 year from release',
     requirements: [
@@ -140,7 +142,12 @@ export const GUIDES: GuideSeed[] = [
     category: 'Clearances',
     fees: [
       { label: 'Clearance fee', amount: 15000 },
-      { label: 'Payment channel fee', amount: null, note: '₱10–₱30 depending on channel' },
+      {
+        label: 'Payment channel fee',
+        amount: null,
+        note: '₱10–₱30 depending on channel',
+        addOn: true,
+      },
     ],
     validity: '6 months',
     requirements: ['Valid government ID', 'Account on pnpclearance.ph', 'Payment reference number'],
@@ -250,7 +257,7 @@ export const GUIDES: GuideSeed[] = [
     fees: [
       { label: 'Regular', amount: 95000 },
       { label: 'Expedited', amount: 120000 },
-      { label: 'Payment center fee', amount: 5000 },
+      { label: 'Payment center fee', amount: 5000, addOn: true },
     ],
     validity: '10 years (adults)',
     requirements: [

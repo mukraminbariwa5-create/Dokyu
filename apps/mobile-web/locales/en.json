@@ -1,1 +1,86 @@
-{ "greeting": "Good day,", "disclaimer": "Independent guide · not affiliated with any government agency" }
+{
+  "nav": {
+    "home": "Home",
+    "guides": "Guides",
+    "ask": "Ask Doki",
+    "docs": "My Docs",
+    "account": "Account",
+    "showcase": "Design system"
+  },
+  "common": {
+    "greeting": "Good day,",
+    "disclaimer": "Independent guide · not affiliated with any government agency",
+    "comingInPhase": "Coming in Phase {{phase}} (see docs/PLAN.md §12).",
+    "free": "Free",
+    "varies": "Varies",
+    "from": "from {{amount}}"
+  },
+  "home": {
+    "welcome": "Welcome to Dokyu",
+    "tagline": "Know it, prepare it, and track all your documents in one app.",
+    "popular": "Popular guides",
+    "seeAll": "See all"
+  },
+  "guides": {
+    "title": "Guides",
+    "intro": "Fees, requirements and steps from official sources.",
+    "lastVerified": "Last verified {{date}}",
+    "confirmOfficial": "Confirm on the official site",
+    "fees": "Fees",
+    "validFor": "Valid for: {{validity}}",
+    "firstJob": "First job? Free once under RA 11261 with a First-Time Jobseeker Barangay Certification.",
+    "whatToBring": "What to bring",
+    "steps": "Steps",
+    "officialSite": "Official site · the only place to apply",
+    "notFound": "Guide not found",
+    "back": "Back to guides"
+  },
+  "settings": {
+    "title": "Display",
+    "language": "Language",
+    "largeText": "Large text",
+    "largeTextHint": "Bigger letters on every screen (20px body text)."
+  },
+  "status": {
+    "notStarted": "Not started",
+    "inProgress": "In progress",
+    "ready": "Ready",
+    "done": "Done",
+    "problem": "Needs attention",
+    "SUBMITTED": "Submitted",
+    "UNDER_REVIEW": "Under review",
+    "APPROVED": "Approved",
+    "READY_FOR_PICKUP": "Ready for pickup",
+    "RELEASED": "Released",
+    "REJECTED": "Rejected",
+    "CANCELLED": "Cancelled"
+  },
+  "ticket": {
+    "requestNo": "Request no.",
+    "fee": "Fee to pay at the barangay",
+    "showAtCounter": "Show this ticket and a valid ID at the counter.",
+    "qrSoon": "Your QR claim code appears here when the request is approved."
+  },
+  "showcase": {
+    "title": "Design system",
+    "intro": "Every Phase 1 component in one place. Check it on a phone and a desktop browser.",
+    "colors": "Colors",
+    "type": "Type",
+    "buttons": "Buttons",
+    "badges": "Status badges",
+    "inputs": "Inputs",
+    "cards": "Cards and tiles",
+    "timeline": "Status timeline",
+    "ticket": "Ticket card",
+    "doki": "Doki",
+    "sampleLabel": "Full name",
+    "sampleHint": "As written on your valid ID",
+    "sampleError": "Please enter your full name",
+    "primary": "Request clearance",
+    "secondary": "Save for later",
+    "ghost": "Cancel",
+    "danger": "Reject request",
+    "loading": "Sending",
+    "disabled": "Not available"
+  }
+}

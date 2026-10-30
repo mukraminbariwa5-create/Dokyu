@@ -39,7 +39,11 @@ describe('API', () => {
   });
 
   it('refuses bad environment without printing secrets', () => {
-    expect(() => loadEnv({ DATABASE_URL: 'nope', JWT_ACCESS_SECRET: 'short-secret' })).toThrow(/DATABASE_URL/);
-    expect(() => loadEnv({ DATABASE_URL: 'nope', JWT_ACCESS_SECRET: 'short-secret' })).not.toThrow(/short-secret/);
+    expect(() => loadEnv({ DATABASE_URL: 'nope', JWT_ACCESS_SECRET: 'short-secret' })).toThrow(
+      /DATABASE_URL/,
+    );
+    expect(() => loadEnv({ DATABASE_URL: 'nope', JWT_ACCESS_SECRET: 'short-secret' })).not.toThrow(
+      /short-secret/,
+    );
   });
 });

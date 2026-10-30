@@ -13,19 +13,20 @@
 ## Status
 | Phase | | Status |
 |---|---|---|
-| 0 | Setup: monorepo, app, API, database schema, CI | 🟡 In progress |
-| 1–8 | Design system → auth → guides & offices → tracker → barangay → AI → mascot → polish | Planned ([docs/PLAN.md](docs/PLAN.md)) |
+| 0 | Setup: monorepo, app, API, database schema, lint, CI | ✅ Done (CI runs on first push) |
+| 1 | Design system: NativeWind theme from shared tokens, components, phone tabs + desktop sidebar, English/Tagalog, large-text mode, `/showcase` | ✅ Done |
+| 2–8 | Auth → guides & offices → tracker → barangay → AI → mascot → polish | Planned ([docs/PLAN.md](docs/PLAN.md)) |
 
 The design is locked in the **Bayan Blue** prototype (light, royal blue `#2042C4`, gold accent, Poppins).
 
 ## Tech stack
 | Part | Tech |
 |---|---|
-| App (Android + web, one codebase) | Expo · React Native · Expo Router · react-native-web · TypeScript |
+| App (Android + web, one codebase) | Expo SDK 58 · React Native 0.88 · Expo Router · react-native-web · NativeWind · i18next · TypeScript |
 | API | Node.js · Express 5 · TypeScript · Zod |
 | Database | PostgreSQL · Prisma |
 | Shared | `@dokyu/shared`: design tokens, request rules, verified seed content |
-| Later phases | NativeWind · TanStack Query · MapLibre + OpenStreetMap · Rive · Expo Notifications |
+| Later phases | TanStack Query · MapLibre + OpenStreetMap · Rive · Expo Notifications |
 
 ## Project structure
 ```
@@ -47,7 +48,9 @@ pnpm db:seed                            # 8 guides, offices, demo barangay
 pnpm dev:api                            # http://localhost:4000/api/v1/health
 pnpm dev:web                            # app in the browser (or pnpm dev:app for Android)
 pnpm test                               # unit + API tests
+pnpm lint && pnpm typecheck             # what CI runs
 ```
+Open http://localhost:8081/showcase to see every UI component. Toggle **Large text** and **Tagalog** there or on Account.
 
 ## Security
 See [SECURITY.md](SECURITY.md): input validation, rate limiting, log redaction of location data, barangay-scoped access, ID check before release, audit log.

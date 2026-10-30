@@ -7,27 +7,43 @@ Read this first, then `docs/PLAN.md` (the full plan) and `docs/CONTENT.md` (veri
 - **Dokyu:** Filipino government-documents guide + barangay request/queue/QR-claim system. Android + web from one Expo codebase. Animated AI guide mascot **Doki**.
 - **Name:** kept as "Dokyu". No PH trademark conflict in Classes 9/42/45. Public handle "DokyuPH".
 
-## Status (2026-10-30)
+## Status (2026-10-30, end of session 2)
 | Item | State |
 |---|---|
-| Plan | v1.5, scope frozen, all open decisions closed (`docs/PLAN.md` §11) |
-| Content | 8 guides + first-batch offices verified (`docs/CONTENT.md`, last verified 2026-10-30). ⚠️ items still to re-check before launch |
-| Design | **Locked: "Bayan Blue"** (`docs/PLAN.md` §4.2). Prototype: https://claude.ai/artifact/XvFGTnhEmNFipg2UTstJ1u (resident app clickable, home + guided tour, onboarding, sign-in, staff counter board) |
-| Phase 0 | Code written and committed locally (1 commit). **Not pushed yet**: create an empty public repo `Dokyu` on `mukraminbariwa5-create`, then `git remote add origin https://github.com/mukraminbariwa5-create/Dokyu.git && git push -u origin main` |
-| Tests | `packages/shared`: 7/7 pass. Server and app tests written but **never run** (the last session had no package registry access) |
+| Plan | v1.5, scope frozen (`docs/PLAN.md`) |
+| Content | 8 guides + first-batch offices verified (`docs/CONTENT.md`). ⚠️ items still to re-check before launch |
+| Design | Locked: "Bayan Blue". Prototype: https://claude.ai/artifact/XvFGTnhEmNFipg2UTstJ1u |
+| Phase 0 | ✅ Installed, migrated (`init`), seeded, API + web run, ESLint + CI written. **Not pushed:** the GitHub repo doesn't exist yet |
+| Phase 1 | ✅ Design system done, checked at 390px (phone) and 1440px (desktop), English + Tagalog, large text |
+| Tests | 19 pass (shared 11, server 8). Lint and typecheck clean |
 
-## First things to do in the new session
-1. `pnpm install` at the repo root (Node 22+, pnpm 10). Fix any version mismatches. Expo SDK pinned to `~54.0.0`. If a newer SDK is current, run `npx expo install --fix` in `apps/mobile-web`.
-2. `cp server/.env.example server/.env`, set real secrets, `pnpm db:up`, `pnpm db:migrate` (name the migration `init`), `pnpm db:seed`.
-3. `pnpm test` and `pnpm typecheck`. Fix anything red.
-4. `pnpm dev:api` → open http://localhost:4000/api/v1/health. `pnpm dev:web` → check Home, Guides, a guide page.
-5. Push to GitHub (see above). Then finish Phase 0: ESLint config + CI green.
-6. Start **Phase 1: Design system** (`docs/PLAN.md` §12):
-   - Add NativeWind wired to `packages/shared/src/tokens.ts`
-   - Components: Button, Card, Input, Badge (status colors), StatusTimeline, TicketCard, AgencyTile, Doki tab, Screen
-   - Responsive layout: bottom tabs on phones, left sidebar on desktop web
-   - i18next with `locales/en.json` + `tl.json`; large-text mode (20px body)
-   - A `/showcase` screen. Done when it looks right on a phone and desktop browser.
+## Versions (upgraded this session)
+Expo SDK **58** (RN 0.88, React 19.3), Expo Router 58, NativeWind **4.2** + Tailwind 3.4, Reanimated 4.7, i18next 26, Prisma 6.19, Express 5. NativeWind 5 is still a release candidate; move to it only once it's stable.
+
+## Push to GitHub (first thing next session)
+1. Create an empty public repo `Dokyu` on `mukraminbariwa5-create` (no README, no license; they're in the repo).
+2. `git remote add origin https://github.com/mukraminbariwa5-create/Dokyu.git && git push -u origin main`
+3. Check that CI goes green (lint, typecheck, tests against Postgres).
+
+## What Phase 1 added
+- `apps/mobile-web/tailwind.config.ts` builds the NativeWind theme from `packages/shared/src/tokens.ts`. Change tokens there, never in the config.
+- `components/ui/`: AppText, Button, Card/PressableCard, Input, Badge/NewTag, StatusTimeline, TicketCard, AgencyTile, Icon, Doki/DokiFace, Screen/Section, SegmentedControl, Wordmark, Disclaimer.
+- `components/navigation/AppTabBar.tsx`: one tab bar, two layouts. Phones (<900px) get a bottom bar with a raised Doki button; desktop gets a left sidebar.
+- `lib/settings.tsx`: language + large text, saved on the device. `lib/i18n.ts` + `locales/en.json`, `tl.json` (same keys).
+- Shared helpers with tests: `startingFee` (fees marked `addOn` are added on top, e.g. NBI ₱130 + ₱25), `requestStatusTone`, `timelineSteps`.
+- `/showcase` (also linked from the desktop sidebar).
+
+## Gotchas found this session
+- **All text goes through `<AppText>`**, otherwise large-text mode misses it.
+- **Expo Router 58:** `href: null` on a tab now *redirects away* from that route instead of just hiding its button, and tab routes that aren't declared as `<Tabs.Screen>` also redirect to Home. Declare every route in `app/(resident)/_layout.tsx`; `AppTabBar` decides which ones get a button.
+- `Link asChild` replaces the child's `style`. Put widths on a wrapping `View`.
+- Don't run Expo with `CI=1`: it turns off file watching, so edits don't reload.
+- Shared package imports are extensionless (`'./tokens'`), so Metro, tsx and Vitest all resolve them.
+- The API and seed script load `server/.env` with Node's `--env-file`.
+- Guide titles and steps are still English-only seed data; Tagalog guide text arrives with the DB guides in Phase 3.
+
+## Next: Phase 2 (Auth + onboarding), `docs/PLAN.md` §12
+Sign up / login / verify / reset, roles, consent checkbox (RA 10173), onboarding screens with a static Doki, RBAC tests. Done when all roles can log in and the RBAC tests pass.
 
 ## Rules to keep
 - One phase at a time. New ideas go to `docs/PLAN.md` §3.2 "Later".
@@ -37,4 +53,4 @@ Read this first, then `docs/PLAN.md` (the full plan) and `docs/CONTENT.md` (veri
 - Commit author: Mukramin Bariwa Ansao <mukraminansao@gmail.com>. MIT license.
 
 ## Prompt to paste in the new session
-> I'm continuing my project Dokyu. The folder is attached/connected. Read HANDOFF.md, then docs/PLAN.md and docs/CONTENT.md. Do the "First things to do" list in HANDOFF.md in order: install, set up the database, run tests and fix failures, run the API and web app, then start Phase 1 (design system). Don't ask me to do things you can do yourself.
+> I'm continuing my project Dokyu. The folder is attached/connected. Read HANDOFF.md, then docs/PLAN.md and docs/CONTENT.md. Push to GitHub if the repo exists, then start Phase 2 (auth + onboarding). Don't ask me to do things you can do yourself.

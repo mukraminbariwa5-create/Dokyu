@@ -1,13 +1,14 @@
-import { Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Screen } from '../../components/ui/Screen';
+import { AppText } from '../../components/ui/AppText';
 import { Disclaimer } from '../../components/ui/Disclaimer';
-import { type } from '../../lib/theme';
 
 export default function Placeholder() {
+  const { t } = useTranslation();
   return (
     <Screen>
-      <Text style={type.h1}>Ask Doki</Text>
-      <Text style={type.body}>Coming in Phase 6 (see docs/PLAN.md §12).</Text>
+      <AppText variant="h1">{t('nav.ask')}</AppText>
+      <AppText variant="body">{t('common.comingInPhase', { phase: 6 })}</AppText>
       <Disclaimer />
     </Screen>
   );

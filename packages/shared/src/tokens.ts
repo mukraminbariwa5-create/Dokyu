@@ -25,7 +25,7 @@ export const colors = {
   scrim: 'rgba(10, 18, 44, 0.66)',
 } as const;
 
-/** Status colors are the same everywhere (plan §4.2). */
+/** Status colors are the same everywhere (plan §4.2): gray, blue, yellow, green, red. */
 export const statusColors = {
   notStarted: { fg: colors.textMuted, bg: colors.surfaceAlt },
   inProgress: { fg: colors.primary, bg: colors.primarySoft },
@@ -34,12 +34,27 @@ export const statusColors = {
   problem: { fg: colors.red, bg: colors.redSoft },
 } as const;
 
+export type StatusTone = keyof typeof statusColors;
+
 export const font = {
   family: 'Poppins',
   weights: { regular: '400', medium: '500', semibold: '600', bold: '700' },
   size: { caption: 11, small: 12, body: 14, bodyLg: 16, title: 17, h2: 20, h1: 24, display: 88 },
+  /** Large-text mode for seniors (plan §3.1 H.3): body text is 20px, everything else scales with it. */
+  sizeLarge: {
+    caption: 15,
+    small: 17,
+    body: 20,
+    bodyLg: 22,
+    title: 23,
+    h2: 26,
+    h1: 30,
+    display: 96,
+  },
   largeTextBody: 20,
 } as const;
+
+export type TextVariant = keyof typeof font.size;
 
 export const radius = { sm: 8, md: 12, lg: 14, tile: 18, card: 20, sheet: 26, pill: 999 } as const;
 export const space = { 1: 4, 2: 8, 3: 12, 4: 16, 5: 20, 6: 24, 8: 32 } as const;

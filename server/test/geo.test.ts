@@ -33,7 +33,9 @@ describe('geo', () => {
 
 describe('log redaction', () => {
   it('never logs coordinates or tokens', () => {
-    expect(redactUrl('/api/v1/offices?agency=psa&lat=6.05&lng=121.0')).toBe('/api/v1/offices?agency=psa&lat=[redacted]&lng=[redacted]');
+    expect(redactUrl('/api/v1/offices?agency=psa&lat=6.05&lng=121.0')).toBe(
+      '/api/v1/offices?agency=psa&lat=[redacted]&lng=[redacted]',
+    );
     expect(redactUrl('/release?qr=abc123')).toBe('/release?qr=[redacted]');
   });
 });

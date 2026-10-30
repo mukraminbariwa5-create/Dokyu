@@ -524,8 +524,8 @@ Use **Rive** (rive.app), not a GIF or a looping video. Rive makes a real vector 
 
 | Phase | What | Done when |
 |---|---|---|
-| **0. Setup** ✅ *started 2026-10-30* | Monorepo, Expo app, Express server, Postgres (Docker), Prisma, shared package, lint/format, GitHub repo | App and API both run locally; CI runs lint |
-| **1. Design system** | Colors, fonts, UI components, layouts (mobile tabs + web sidebar), i18n, large-text mode | A component showcase screen looks right on phone and desktop |
+| **0. Setup** ✅ *done 2026-10-30 (push pending)* | Monorepo, Expo app, Express server, Postgres (Docker), Prisma, shared package, lint/format, GitHub repo | App and API both run locally; CI runs lint |
+| **1. Design system** ✅ *done 2026-10-30* | Colors, fonts, UI components, layouts (mobile tabs + web sidebar), i18n, large-text mode | A component showcase screen looks right on phone and desktop |
 | **2. Auth + onboarding** | Sign up/login/verify/reset, roles, consent, onboarding screens (static mascot placeholder) | All roles can log in; RBAC tests pass |
 | **3. Guides + goals + offices** | Guide DB + seed 8 guides, search, detail, goal helper with cost/time estimate, offline cache, Super Admin guide editor, **Office Finder** (agencies, offices, services, location + manual area, distance sort, directions), **office map** (MapLibre on web + Android, pins, clustering, landmarks, building photos), **saved offices offline**, **holidays and closures** with open/closed badges, offices + holidays editors | A guest can browse guides offline, find the nearest office on the list and the map, and sees "Closed today" correctly on a holiday |
 | **4. Tracker + reminders** | My Documents, **family members**, checklists, reminders, expiry jobs, push notifications, **authorization letter generator** | Reminders fire on a real phone; a letter prints correctly |

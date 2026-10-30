@@ -1,57 +1,151 @@
-import { useLocalSearchParams } from 'expo-router';
-import { Linking, Pressable, Text, View } from 'react-native';
-import { GUIDES, formatPeso } from '@dokyu/shared';
-import { Screen } from '../../../components/ui/Screen';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Linking, Pressable, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { GUIDES, colors, formatPeso } from '@dokyu/shared';
+import { Screen, Section } from '../../../components/ui/Screen';
 import { AgencyTile } from '../../../components/ui/AgencyTile';
-import { colors, fonts, type } from '../../../lib/theme';
+import { AppText } from '../../../components/ui/AppText';
+import { Button } from '../../../components/ui/Button';
+import { Card } from '../../../components/ui/Card';
+import { Icon } from '../../../components/ui/Icon';
+import { useSettings } from '../../../lib/settings';
+import { formatDate } from '../../../lib/format';
 
 export default function GuideDetail() {
+  const { t } = useTranslation();
+  const router = useRouter();
+  const { language } = useSettings();
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const g = GUIDES.find((x) => x.slug === slug);
-  if (!g) return <Screen><Text style={type.h2}>Guide not found</Text></Screen>;
+
+  const back = (
+    <Pressable
+      accessibilityRole="link"
+      onPress={() => (router.canGoBack() ? router.back() : router.replace('/guides'))}
+      className="min-h-[44px] flex-row items-center gap-1 self-start"
+    >
+      <Icon name="chevronLeft" size={20} color={colors.primary} />
+      <AppText variant="body" weight="medium" tone="primary">
+        {t('guides.back')}
+      </AppText>
+    </Pressable>
+  );
+
+  if (!g) {
+    return (
+      <Screen>
+        {back}
+        <AppText variant="h2">{t('guides.notFound')}</AppText>
+      </Screen>
+    );
+  }
+
+  const verified = t('guides.lastVerified', { date: formatDate(g.lastVerified, language) });
 
   return (
     <Screen>
-      <View style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+      {back}
+      <View className="flex-row items-center gap-4">
         <AgencyTile mono={g.mono} size={60} />
-        <View style={{ flex: 1 }}>
-          <Text style={type.h2}>{g.title}</Text>
-          <Text style={type.small}>{g.agency}</Text>
+        <View className="flex-1">
+          <AppText variant="h2">{g.title}</AppText>
+          <AppText variant="small" tone="muted">
+            {g.agency}
+          </AppText>
         </View>
       </View>
 
-      <View style={{ borderRadius: 18, backgroundColor: colors.primary, padding: 16, gap: 6 }}>
-        <Text style={{ fontFamily: fonts.semibold, fontSize: 11, letterSpacing: 0.6, color: colors.goldBright }}>FEES</Text>
+      <Card tone="primary" className="gap-2">
+        <AppText
+          variant="caption"
+          weight="semibold"
+          style={{ color: colors.goldBright, letterSpacing: 0.6 }}
+        >
+          {t('guides.fees').toUpperCase()}
+        </AppText>
         {g.fees.map((f) => (
-          <Text key={f.label} style={{ fontFamily: fonts.medium, color: '#FFFFFF' }}>
-            {f.label}: {f.amount === null ? (f.note ?? 'Varies') : formatPeso(f.amount)}
-          </Text>
+          <View key={f.label} className="flex-row justify-between gap-4">
+            <AppText variant="body" tone="inverse" className="flex-1">
+              {f.addOn ? '+ ' : ''}
+              {f.label}
+            </AppText>
+            <AppText
+              variant="body"
+              weight="semibold"
+              tone="inverse"
+              style={{ textAlign: 'right', flexShrink: 1 }}
+            >
+              {f.amount === null ? (f.note ?? t('common.varies')) : formatPeso(f.amount)}
+            </AppText>
+          </View>
         ))}
-        <Text style={{ fontFamily: fonts.regular, fontSize: 12, color: colors.primaryTint }}>Valid for: {g.validity}</Text>
-      </View>
+        <AppText variant="small" style={{ color: colors.primaryTint }}>
+          {t('guides.validFor', { validity: g.validity })}
+        </AppText>
+      </Card>
 
       {g.firstTimeJobseekerFree && (
-        <View style={{ borderRadius: 16, backgroundColor: colors.goldSoft, padding: 14 }}>
-          <Text style={[type.small, { color: '#5C4300' }]}>First job? Free once under RA 11261 with a First-Time Jobseeker Barangay Certification.</Text>
-        </View>
+        <Card tone="gold">
+          <AppText variant="small" style={{ color: '#5C4300' }}>
+            {t('guides.firstJob')}
+          </AppText>
+        </Card>
       )}
 
-      <Text style={type.title}>What to bring</Text>
-      {g.requirements.map((r) => <Text key={r} style={type.body}>• {r}</Text>)}
+      <Section>
+        <AppText variant="title">{t('guides.whatToBring')}</AppText>
+        {g.requirements.map((r) => (
+          <View key={r} className="flex-row gap-3">
+            <View className="mt-2 h-2 w-2 rounded-full bg-primary" />
+            <AppText variant="body" className="flex-1">
+              {r}
+            </AppText>
+          </View>
+        ))}
+      </Section>
 
-      <Text style={type.title}>Steps</Text>
-      {g.steps.map((s, i) => <Text key={s} style={type.body}>{i + 1}. {s}</Text>)}
+      <Section>
+        <AppText variant="title">{t('guides.steps')}</AppText>
+        {g.steps.map((s, i) => (
+          <View key={s} className="flex-row gap-3">
+            <View className="h-7 w-7 items-center justify-center rounded-full bg-primary-soft">
+              <AppText variant="small" weight="bold" tone="primary">
+                {i + 1}
+              </AppText>
+            </View>
+            <AppText variant="body" className="flex-1" style={{ paddingTop: 2 }}>
+              {s}
+            </AppText>
+          </View>
+        ))}
+      </Section>
 
       {g.warnings.map((w) => (
-        <Text key={w} style={[type.small, { color: colors.danger }]}>⚠ {w}</Text>
+        <View key={w} className="flex-row gap-2 rounded-lg bg-red-soft p-3">
+          <Icon name="alert" size={20} color={colors.danger} />
+          <AppText variant="small" tone="danger" className="flex-1">
+            {w}
+          </AppText>
+        </View>
       ))}
 
       {!!g.officialUrl && (
-        <Pressable accessibilityRole="link" onPress={() => Linking.openURL(g.officialUrl)} style={{ borderRadius: 16, borderWidth: 1, borderColor: colors.border, padding: 14, gap: 4 }}>
-          <Text style={type.small}>Official site · the only place to apply</Text>
-          <Text style={{ fontFamily: fonts.semibold, color: colors.primary }}>{g.officialUrl.replace('https://', '')} ↗</Text>
-          <Text style={type.caption}>Last verified {g.lastVerified}{g.verified ? '' : ' · confirm on the official site'}</Text>
-        </Pressable>
+        <Card className="gap-3">
+          <AppText variant="small" tone="muted">
+            {t('guides.officialSite')}
+          </AppText>
+          <Button
+            label={`${g.officialUrl.replace('https://', '')}`}
+            variant="secondary"
+            icon={<Icon name="external" size={18} color={colors.primaryDark} />}
+            accessibilityRole="link"
+            onPress={() => Linking.openURL(g.officialUrl)}
+          />
+          <AppText variant="caption" tone="subtle">
+            {verified}
+            {g.verified ? '' : ` · ${t('guides.confirmOfficial')}`}
+          </AppText>
+        </Card>
       )}
     </Screen>
   );
