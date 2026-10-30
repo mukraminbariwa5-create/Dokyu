@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/mukraminbariwa5-create/dokyu/actions/workflows/ci.yml/badge.svg)](https://github.com/mukraminbariwa5-create/dokyu/actions/workflows/ci.yml)
 
+**Try it:** https://mukraminbariwa5-create.github.io/Dokyu/ (web app, updated on every push; sign-in needs the API, which is not hosted yet)
+
 **Dokyu** helps anyone in the Philippines who needs government papers (students, job seekers, teachers, employees, workers, parents, seniors) get them in **one trip instead of three**: know exactly what to bring, do the online part at home, and go to the office only to submit and claim.
 
 - **Document guides:** exact requirements (how many copies, original or photocopy, photo size), fees, and steps split into "Do at home" and "At the office", for the PSA birth certificate, National ID, NBI and Police clearance, Postal ID, TIN, passport and barangay clearance. Each one links only to the official site and shows a "last verified" date.
