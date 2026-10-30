@@ -13,17 +13,12 @@ Read this first, then `docs/PLAN.md` (the full plan) and `docs/CONTENT.md` (veri
 | Plan | v1.5, scope frozen (`docs/PLAN.md`) |
 | Content | 8 guides + first-batch offices verified (`docs/CONTENT.md`). ⚠️ items still to re-check before launch |
 | Design | Locked: "Bayan Blue". Prototype: https://claude.ai/artifact/XvFGTnhEmNFipg2UTstJ1u |
-| Phase 0 | ✅ Installed, migrated (`init`), seeded, API + web run, ESLint + CI written. **Not pushed:** the GitHub repo doesn't exist yet |
+| Phase 0 | ✅ Done. Pushed to https://github.com/mukraminbariwa5-create/dokyu, CI green (lint, typecheck, tests against Postgres) |
 | Phase 1 | ✅ Design system done, checked at 390px (phone) and 1440px (desktop), English + Tagalog, large text |
 | Tests | 19 pass (shared 11, server 8). Lint and typecheck clean |
 
 ## Versions (upgraded this session)
 Expo SDK **58** (RN 0.88, React 19.3), Expo Router 58, NativeWind **4.2** + Tailwind 3.4, Reanimated 4.7, i18next 26, Prisma 6.19, Express 5. NativeWind 5 is still a release candidate; move to it only once it's stable.
-
-## Push to GitHub (first thing next session)
-1. Create an empty public repo `Dokyu` on `mukraminbariwa5-create` (no README, no license; they're in the repo).
-2. `git remote add origin https://github.com/mukraminbariwa5-create/Dokyu.git && git push -u origin main`
-3. Check that CI goes green (lint, typecheck, tests against Postgres).
 
 ## What Phase 1 added
 - `apps/mobile-web/tailwind.config.ts` builds the NativeWind theme from `packages/shared/src/tokens.ts`. Change tokens there, never in the config.
@@ -53,4 +48,4 @@ Sign up / login / verify / reset, roles, consent checkbox (RA 10173), onboarding
 - Commit author: Mukramin Bariwa Ansao <mukraminansao@gmail.com>. MIT license.
 
 ## Prompt to paste in the new session
-> I'm continuing my project Dokyu. The folder is attached/connected. Read HANDOFF.md, then docs/PLAN.md and docs/CONTENT.md. Push to GitHub if the repo exists, then start Phase 2 (auth + onboarding). Don't ask me to do things you can do yourself.
+> I'm continuing my project Dokyu. The folder is attached/connected. Read HANDOFF.md, then docs/PLAN.md and docs/CONTENT.md. Start Phase 2 (auth + onboarding). Don't ask me to do things you can do yourself.

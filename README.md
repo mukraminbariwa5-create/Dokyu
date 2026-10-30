@@ -1,5 +1,7 @@
 # Dokyu
 
+[![CI](https://github.com/mukraminbariwa5-create/dokyu/actions/workflows/ci.yml/badge.svg)](https://github.com/mukraminbariwa5-create/dokyu/actions/workflows/ci.yml)
+
 **Dokyu** helps Filipinos get government documents without the guesswork, and gives barangays a simple digital request and queue system.
 
 - **National document guides:** fees, requirements and steps for the PSA birth certificate, National ID, NBI and Police clearance, Postal ID, TIN, passport and barangay clearance, checked against official sources with a "last verified" date.
@@ -13,7 +15,7 @@
 ## Status
 | Phase | | Status |
 |---|---|---|
-| 0 | Setup: monorepo, app, API, database schema, lint, CI | ✅ Done (CI runs on first push) |
+| 0 | Setup: monorepo, app, API, database schema, lint, CI | ✅ Done |
 | 1 | Design system: NativeWind theme from shared tokens, components, phone tabs + desktop sidebar, English/Tagalog, large-text mode, `/showcase` | ✅ Done |
 | 2–8 | Auth → guides & offices → tracker → barangay → AI → mascot → polish | Planned ([docs/PLAN.md](docs/PLAN.md)) |
 
