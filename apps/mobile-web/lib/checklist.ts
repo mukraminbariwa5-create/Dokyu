@@ -33,3 +33,28 @@ export function useChecklist(slug: string | undefined) {
 
   return { ticked, toggle, clear: () => save([]) };
 }
+
+/** Ticks for many guides at once (Home and the Checklists page). Re-reads whenever `refreshKey` changes. */
+export function useAllChecklists(slugs: string[], refreshKey?: unknown) {
+  const [bySlug, setBySlug] = useState<Record<string, number[]>>({});
+  const joined = slugs.join(',');
+  useEffect(() => {
+    const list = joined ? joined.split(',') : [];
+    AsyncStorage.multiGet(list.map(key))
+      .then((pairs) => {
+        const next: Record<string, number[]> = {};
+        pairs.forEach(([, raw], i) => {
+          try {
+            const saved: unknown = raw ? JSON.parse(raw) : [];
+            if (Array.isArray(saved))
+              next[list[i]!] = saved.filter((n): n is number => typeof n === 'number');
+          } catch {
+            /* ignore a damaged entry */
+          }
+        });
+        setBySlug(next);
+      })
+      .catch(() => {});
+  }, [joined, refreshKey]);
+  return bySlug;
+}

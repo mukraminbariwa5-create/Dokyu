@@ -20,7 +20,26 @@
     "tagline": "Know it, prepare it, and track all your documents in one app.",
     "popular": "Popular guides",
     "seeAll": "See all",
-    "greetingName": "Good day, {{name}}!"
+    "greetingName": "Good day, {{name}}!",
+    "morning": "Good morning,",
+    "afternoon": "Good afternoon,",
+    "evening": "Good evening,",
+    "friend": "friend",
+    "setArea": "Set your area",
+    "whatToDo": "What would you like to do?",
+    "forYou": "For you today",
+    "continueLabel": "KEEP PACKING",
+    "continueText": "{{done}} of {{total}} ready",
+    "continueCta": "Open checklist →",
+    "goalLabel": "YOUR GOAL: {{goal}}",
+    "goalCta": "Start with {{title}} →",
+    "pickLabel": "NOT SURE WHERE TO START?",
+    "pickTitle": "Tell Doki your goal",
+    "pickText": "First job, passport, scholarship… we’ll show what to get first.",
+    "pickCta": "Pick a goal →",
+    "soon": "Soon",
+    "steps": "{{n}} steps",
+    "comingSoon": "Coming soon in Dokyu"
   },
   "guides": {
     "title": "Guides",
@@ -212,5 +231,22 @@
     "allSet": "All set! You have everything for this trip.",
     "reset": "Clear all ticks",
     "optional": "If it applies to you"
+  },
+  "tiles": {
+    "guides": "Guides",
+    "checklists": "Checklists",
+    "ids": "IDs",
+    "clearances": "Clearances",
+    "travel": "Travel",
+    "offices": "Offices",
+    "holidays": "Holidays",
+    "myDocs": "My Docs"
+  },
+  "checklists": {
+    "title": "My checklists",
+    "intro": "Your “Before you go” lists. Open a guide to start one.",
+    "empty": "No checklist yet. Open any guide and tap “Make my Before you go checklist”.",
+    "ready": "Ready",
+    "notStarted": "Not started"
   }
 }

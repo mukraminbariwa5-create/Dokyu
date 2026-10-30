@@ -22,6 +22,7 @@ export default function ResidentTabs() {
       <Tabs.Screen name="account" options={{ title: t('nav.account') }} />
       {/* Not in the tab list (AppTabBar draws a fixed set), but reachable at /showcase and from the desktop sidebar. */}
       <Tabs.Screen name="showcase" options={{ title: t('nav.showcase') }} />
+      <Tabs.Screen name="checklists" options={{ title: t('checklists.title') }} />
     </Tabs>
   );
 }

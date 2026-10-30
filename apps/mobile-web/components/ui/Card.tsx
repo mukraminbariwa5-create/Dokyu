@@ -1,6 +1,7 @@
-import { Pressable, View, type PressableProps, type ViewProps } from 'react-native';
+import { Animated, Pressable, View, type PressableProps, type ViewProps } from 'react-native';
 import { shadow } from '@dokyu/shared';
 import { cn } from '../../lib/cn';
+import { usePressScale } from '../../lib/motion';
 
 type Tone = 'plain' | 'soft' | 'primary' | 'gold';
 
@@ -32,16 +33,35 @@ interface PressableCardProps extends PressableProps {
   className?: string;
 }
 
-export function PressableCard({ tone = 'plain', className, style, ...rest }: PressableCardProps) {
+/** A card you can tap. It shrinks slightly while pressed. */
+export function PressableCard({
+  tone = 'plain',
+  className,
+  style,
+  onPressIn,
+  onPressOut,
+  ...rest
+}: PressableCardProps) {
+  const press = usePressScale(0.98);
   return (
-    <Pressable
-      accessibilityRole="button"
-      className={cn('rounded-card p-4 active:opacity-80', TONE[tone], className)}
-      style={(state) => [
-        tone === 'plain' ? { boxShadow: shadow.card } : null,
-        typeof style === 'function' ? style(state) : style,
-      ]}
-      {...rest}
-    />
+    <Animated.View style={press.style}>
+      <Pressable
+        onPressIn={(e) => {
+          press.handlers.onPressIn();
+          onPressIn?.(e);
+        }}
+        onPressOut={(e) => {
+          press.handlers.onPressOut();
+          onPressOut?.(e);
+        }}
+        accessibilityRole="button"
+        className={cn('rounded-card p-4', TONE[tone], className)}
+        style={(state) => [
+          tone === 'plain' ? { boxShadow: shadow.card } : null,
+          typeof style === 'function' ? style(state) : style,
+        ]}
+        {...rest}
+      />
+    </Animated.View>
   );
 }

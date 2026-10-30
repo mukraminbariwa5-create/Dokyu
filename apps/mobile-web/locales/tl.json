@@ -20,7 +20,26 @@
     "tagline": "Alamin, ihanda, at i-track ang lahat ng papeles mo — sa isang app.",
     "popular": "Mga sikat na gabay",
     "seeAll": "Tingnan lahat",
-    "greetingName": "Magandang araw, {{name}}!"
+    "greetingName": "Magandang araw, {{name}}!",
+    "morning": "Magandang umaga,",
+    "afternoon": "Magandang hapon,",
+    "evening": "Magandang gabi,",
+    "friend": "kaibigan",
+    "setArea": "Itakda ang lugar mo",
+    "whatToDo": "Ano ang gusto mong gawin?",
+    "forYou": "Para sa iyo ngayon",
+    "continueLabel": "ITULOY ANG PAGHAHANDA",
+    "continueText": "{{done}} sa {{total}} handa na",
+    "continueCta": "Buksan ang checklist →",
+    "goalLabel": "LAYUNIN MO: {{goal}}",
+    "goalCta": "Magsimula sa {{title}} →",
+    "pickLabel": "HINDI ALAM KUNG SAAN MAGSISIMULA?",
+    "pickTitle": "Sabihin kay Doki ang layunin mo",
+    "pickText": "Unang trabaho, pasaporte, scholarship… ipapakita namin kung ano ang uunahin.",
+    "pickCta": "Pumili ng layunin →",
+    "soon": "Malapit na",
+    "steps": "{{n}} hakbang",
+    "comingSoon": "Malapit na sa Dokyu"
   },
   "guides": {
     "title": "Mga Gabay",
@@ -212,5 +231,22 @@
     "allSet": "Handa ka na! Kumpleto ka para sa lakad na ito.",
     "reset": "Alisin lahat ng tsek",
     "optional": "Kung tugma sa iyo"
+  },
+  "tiles": {
+    "guides": "Gabay",
+    "checklists": "Checklist",
+    "ids": "ID",
+    "clearances": "Clearance",
+    "travel": "Biyahe",
+    "offices": "Opisina",
+    "holidays": "Holiday",
+    "myDocs": "Papeles"
+  },
+  "checklists": {
+    "title": "Mga checklist ko",
+    "intro": "Ang mga “Bago ka umalis” list mo. Magbukas ng gabay para magsimula.",
+    "empty": "Wala pang checklist. Magbukas ng gabay at pindutin ang “Gawin ang Bago ka umalis checklist ko”.",
+    "ready": "Handa na",
+    "notStarted": "Hindi pa nasisimulan"
   }
 }

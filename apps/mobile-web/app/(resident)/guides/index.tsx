@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { Link } from 'expo-router';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useLocalSearchParams } from 'expo-router';
 import { ScrollView, TextInput, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { GUIDE_CATEGORIES, colors, pick, startingFee, type GuideCategory } from '@dokyu/shared';
@@ -21,7 +21,13 @@ export default function Guides() {
   const { data: guides } = useGuides();
   const [q, setQ] = useState('');
   const [focused, setFocused] = useState(false);
-  const [category, setCategory] = useState<GuideCategory | 'all'>('all');
+  // Home's tiles open this page on a category (e.g. ?category=identity).
+  const params = useLocalSearchParams<{ category?: string }>();
+  const fromParam = (GUIDE_CATEGORIES as readonly string[]).includes(params.category ?? '')
+    ? (params.category as GuideCategory)
+    : 'all';
+  const [category, setCategory] = useState<GuideCategory | 'all'>(fromParam);
+  useEffect(() => setCategory(fromParam), [fromParam]);
 
   const shown = useMemo(() => {
     const needle = q.trim().toLowerCase();
