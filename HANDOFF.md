@@ -4,13 +4,13 @@ Read this first, then `docs/PLAN.md` (the full plan) and `docs/CONTENT.md` (veri
 
 ## Who and what
 - **Owner:** Mukramin Bariwa Ansao ("fairy"). GitHub: `mukraminbariwa5-create`. Email: mukraminansao@gmail.com.
-- **Dokyu:** Filipino government-documents guide + barangay request/queue/QR-claim system. Android + web from one Expo codebase. Animated AI guide mascot **Doki**.
+- **Dokyu:** government-documents guide for anyone who processes papers (students, job seekers, teachers, employees, workers, parents, seniors). Tells them exactly what to bring and links the official online registration, so they do the prep at home and visit the office once. Android + web from one Expo codebase. Animated AI guide mascot **Doki**.
 - **Name:** kept as "Dokyu". No PH trademark conflict in Classes 9/42/45. Public handle "DokyuPH".
 
 ## Status (2026-10-30, end of session 2)
 | Item | State |
 |---|---|
-| Plan | v1.5, scope frozen (`docs/PLAN.md`) |
+| Plan | **v1.6, citizen-first** (`docs/PLAN.md`). The barangay request system and staff roles moved to §3.2 "Later"; Phase 5 is skipped |
 | Content | 8 guides + first-batch offices verified (`docs/CONTENT.md`). ⚠️ items still to re-check before launch |
 | Design | Locked: "Bayan Blue". Prototype: https://claude.ai/artifact/XvFGTnhEmNFipg2UTstJ1u |
 | Phase 0 | ✅ Done. Pushed to https://github.com/mukraminbariwa5-create/dokyu, CI green (lint, typecheck, tests against Postgres) |
@@ -38,7 +38,7 @@ Expo SDK **58** (RN 0.88, React 19.3), Expo Router 58, NativeWind **4.2** + Tail
 - Guide titles and steps are still English-only seed data; Tagalog guide text arrives with the DB guides in Phase 3.
 
 ## Next: Phase 2 (Auth + onboarding), `docs/PLAN.md` §12
-Sign up / login / verify / reset, roles, consent checkbox (RA 10173), onboarding screens with a static Doki, RBAC tests. Done when all roles can log in and the RBAC tests pass.
+Roles are only **Guest** (no account), **User** (anyone who signs up; renamed from "Resident") and **Super Admin** (the owner). Build sign up / login / verify / reset, argon2 + short JWT + rotating refresh tokens, lockout and rate limits, consent checkbox (RA 10173), onboarding (language → area → goals, static Doki), demo user + demo Super Admin. Remove STAFF and BRGY_ADMIN from the Role enum. In development, verification and reset emails print to the server log. Done when both roles can log in and the access-control and ownership tests pass.
 
 ## Rules to keep
 - One phase at a time. New ideas go to `docs/PLAN.md` §3.2 "Later".

@@ -2,12 +2,12 @@
 
 [![CI](https://github.com/mukraminbariwa5-create/dokyu/actions/workflows/ci.yml/badge.svg)](https://github.com/mukraminbariwa5-create/dokyu/actions/workflows/ci.yml)
 
-**Dokyu** helps Filipinos get government documents without the guesswork, and gives barangays a simple digital request and queue system.
+**Dokyu** helps anyone in the Philippines who needs government papers (students, job seekers, teachers, employees, workers, parents, seniors) get them in **one trip instead of three**: know exactly what to bring, do the online part at home, and go to the office only to submit and claim.
 
-- **National document guides:** fees, requirements and steps for the PSA birth certificate, National ID, NBI and Police clearance, Postal ID, TIN, passport and barangay clearance, checked against official sources with a "last verified" date.
-- **Office Finder with map:** the nearest PSA, NBI, DFA, PhilHealth and other offices, with landmarks and hours.
-- **Barangay requests:** request a clearance or certificate online, track it, and claim it with a QR code. Staff manage the queue on a counter board and check a valid ID before release.
-- **My Docs:** track documents for you and your family, with expiry reminders.
+- **Document guides:** exact requirements (how many copies, original or photocopy, photo size), fees, and steps split into "Do at home" and "At the office", for the PSA birth certificate, National ID, NBI and Police clearance, Postal ID, TIN, passport and barangay clearance. Each one links only to the official site and shows a "last verified" date.
+- **Before you go:** turn a guide's requirements into a checklist to tick off the night before.
+- **Office Finder with map:** the nearest PSA, NBI, DFA, PhilHealth and other offices, with landmarks, hours and "Closed today" on holidays.
+- **My Docs:** track documents for you and your family, with appointment and expiry reminders.
 - **Doki,** an animated AI guide who answers in Tagalog or English from Dokyu's checked guides.
 
 > Dokyu is an **independent** project and is **not affiliated with any government agency**. Always confirm on the official site linked in each guide.
@@ -17,7 +17,7 @@
 |---|---|---|
 | 0 | Setup: monorepo, app, API, database schema, lint, CI | ✅ Done |
 | 1 | Design system: NativeWind theme from shared tokens, components, phone tabs + desktop sidebar, English/Tagalog, large-text mode, `/showcase` | ✅ Done |
-| 2–8 | Auth → guides & offices → tracker → barangay → AI → mascot → polish | Planned ([docs/PLAN.md](docs/PLAN.md)) |
+| 2–8 | Auth → guides & offices → tracker → AI → mascot → polish | Planned ([docs/PLAN.md](docs/PLAN.md)) |
 
 The design is locked in the **Bayan Blue** prototype (light, royal blue `#2042C4`, gold accent, Poppins).
 
@@ -55,7 +55,7 @@ pnpm lint && pnpm typecheck             # what CI runs
 Open http://localhost:8081/showcase to see every UI component. Toggle **Large text** and **Tagalog** there or on Account.
 
 ## Security
-See [SECURITY.md](SECURITY.md): input validation, rate limiting, log redaction of location data, barangay-scoped access, ID check before release, audit log.
+See [SECURITY.md](SECURITY.md): input validation, rate limiting, log redaction of location data, per-user data ownership checks, audit log.
 
 ## Content sources
 Every guide links to its official source (psa.gov.ph, nbi.gov.ph, pnpclearance.ph, passport.gov.ph, bir.gov.ph, phlpost.gov.ph, philsys.gov.ph). Research notes: [docs/CONTENT.md](docs/CONTENT.md).

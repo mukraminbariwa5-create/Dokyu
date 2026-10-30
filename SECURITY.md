@@ -16,10 +16,9 @@ Dokyu handles personal data of Filipino residents, so security is a core feature
 ## Built into the data model, enforced in later phases
 - argon2 password hashing; 15-minute JWT access tokens and **rotating refresh tokens stored hashed** (`RefreshToken.tokenHash`).
 - Account lockout after repeated failed logins (`User.failedLogins`, `User.lockedUntil`).
-- **Role-based access control with barangay scoping:** staff only see their own barangay's requests.
-- **Request rules in one place** (`packages/shared/src/requests.ts`): residents can only cancel a submitted request; release requires staff to confirm a **valid ID check**; rejection requires a reason. Covered by unit tests.
-- **Single-use QR tokens**, stored hashed and cleared on release.
-- **Audit log** for every staff and admin action (`AuditLog`, `RequestEvent`).
+- **Role-based access control with ownership checks:** a user can only read and change their own tracker, family members, saved offices and letters; only the Super Admin can reach `/super` routes.
+- **Audit log** for every Super Admin change, sign-in and account deletion (`AuditLog`).
+- Planned for the barangay system (in "Later", see `docs/PLAN.md` §3.2): barangay-scoped staff access, single-use hashed QR tokens, a required valid-ID check before release. The request rules already live in `packages/shared/src/requests.ts` with tests.
 - Soft delete, then hard delete, on account deletion; data export for the user.
 
 ## Reporting a vulnerability
