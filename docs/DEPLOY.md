@@ -7,7 +7,9 @@ Neon's free Postgres (it does not expire). GitHub Pages keeps hosting the always
 ## 1. Database (Neon)
 
 1. Sign up at https://neon.com with GitHub and create a project `dokyu` in the region closest to the Philippines.
-2. **Connect** → turn **Connection pooling off** → copy the connection string (`postgresql://…?sslmode=require`).
+2. **Connect** → copy the connection string. Keep the `-pooler` host, remove `&channel_binding=require`, and add
+   `&pgbouncer=true&connect_timeout=30` at the end. (Migrations run through the pooler with Prisma's advisory lock
+   switched off, see `setup:prod`.)
 
 ## 2. App + API (Render)
 
