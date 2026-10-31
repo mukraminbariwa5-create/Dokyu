@@ -158,7 +158,12 @@ export function MyDocsProvider({ children }: { children: ReactNode }) {
     if (ready) AsyncStorage.setItem(MYDOCS_KEY, JSON.stringify(store)).catch(() => {});
   }, [store, ready]);
 
-  const changed = useCallback(() => setChanges((c) => c + 1), []);
+  // Counts edits made on this phone; a sync that sees it move knows to run again.
+  const edits = useRef(0);
+  const changed = useCallback(() => {
+    edits.current += 1;
+    setChanges((c) => c + 1);
+  }, []);
 
   // --- Sync with the account -------------------------------------------------------------------
   const running = useRef<Promise<void> | null>(null);
@@ -167,6 +172,7 @@ export function MyDocsProvider({ children }: { children: ReactNode }) {
   const syncOnce = useCallback(async (uid: string) => {
     for (let attempt = 0; attempt < 4; attempt++) {
       const start = latest.current;
+      const editsAtStart = edits.current;
       // Another account's copy is never uploaded to this one: it is replaced instead.
       const mine = start.owner === null || start.owner === uid;
       const local = mine ? start : { ...EMPTY };
@@ -189,12 +195,13 @@ export function MyDocsProvider({ children }: { children: ReactNode }) {
       }
       if (userRef.current !== uid) return; // signed out meanwhile: drop the result
       const docs = await withReminders(merged.docs, start.docs);
+      // Keep anything edited on this phone while the sync was running; those edits sync next round.
+      if (edits.current !== editsAtStart) again.current = true;
       setStore((s) => {
-        // Keep anything edited on this phone while the sync was running (it syncs next).
-        if (s !== start) again.current = true;
         const current = s.owner === null || s.owner === uid ? s : { ...EMPTY };
-        const next = mergeMyDocs(current, { ...merged, docs });
-        return { ...next, owner: uid, version };
+        const next = { ...mergeMyDocs(current, { ...merged, docs }), owner: uid, version };
+        latest.current = next;
+        return next;
       });
       return;
     }
@@ -211,10 +218,12 @@ export function MyDocsProvider({ children }: { children: ReactNode }) {
     setSync('syncing');
     running.current = (async () => {
       try {
-        do {
+        // At most a few rounds in a row (edits made during a sync); the next trigger picks up the rest.
+        for (let round = 0; round < 5; round++) {
           again.current = false;
           await syncOnce(uid);
-        } while (again.current && userRef.current === uid);
+          if (!again.current || userRef.current !== uid) break;
+        }
         setSync('synced');
         setSyncedAt(now());
       } catch {
