@@ -35,7 +35,9 @@ services:
         generateValue: true
       - key: AUTH_RATE_LIMIT
         value: '20'
-      # Optional real email (Resend). Leave empty to switch email off.
+      # Optional real email: BREVO_API_KEY (or RESEND_API_KEY) plus MAIL_FROM. Leave empty to switch it off.
+      - key: BREVO_API_KEY
+        sync: false
       - key: RESEND_API_KEY
         sync: false
       - key: MAIL_FROM

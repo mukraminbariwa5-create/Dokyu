@@ -15,6 +15,7 @@ const schema = z.object({
   WEB_DIR: z.string().optional(),
   /** Optional real email (Resend). Without it, no email is sent in production. */
   RESEND_API_KEY: z.string().optional(),
+  BREVO_API_KEY: z.string().optional(),
   MAIL_FROM: z.string().optional(),
 });
 

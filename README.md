@@ -60,8 +60,17 @@ pnpm lint && pnpm typecheck             # what CI runs
 ```
 Open http://localhost:8081/showcase to see every UI component. Toggle **Large text** and **Tagalog** there or on Account.
 
+## Try it on an Android phone
+No Docker or local server needed: the phone uses the live server.
+1. Install **Expo Go** from the Play Store (it must support Expo SDK 58).
+2. On your computer, in this folder: `pnpm install`, then `pnpm phone`.
+3. Open Expo Go and scan the QR code. The first load takes a minute or two.
+
+`pnpm phone` uses an Expo tunnel, so the phone and computer don't need to be on the same Wi-Fi.
+
 ## Demo accounts
-After `pnpm db:seed`:
+On the live site, tap **Try the demo account** on the sign-in screen. It is shared by every visitor and
+resets to sample documents at each sign-in. After `pnpm db:seed`:
 | Account | Email | Password |
 |---|---|---|
 | User (sample data) | `demo@example.com` | `Dokyu-demo-2026` |

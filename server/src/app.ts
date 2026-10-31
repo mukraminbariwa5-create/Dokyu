@@ -15,7 +15,7 @@ import { authRouter } from './routes/auth.js';
 import { meRouter } from './routes/me.js';
 import { superRouter } from './routes/super.js';
 import { createJwt } from './lib/jwt.js';
-import { LogMailer, NoMailer, ResendMailer, type Mailer } from './lib/mailer.js';
+import { BrevoMailer, LogMailer, NoMailer, ResendMailer, type Mailer } from './lib/mailer.js';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { REDACT_PATHS, redactUrl } from './lib/redact.js';
@@ -27,14 +27,20 @@ export interface AppDeps {
 export function createApp(env: Env, db: PrismaClient, deps: AppDeps = {}) {
   const app = express();
   const jwt = createJwt(env.JWT_ACCESS_SECRET);
-  const emailOn = Boolean(env.RESEND_API_KEY && env.MAIL_FROM);
+  // Real email when a provider is set up (Brevo first, then Resend); otherwise none in production, and
+  // printed to the log in development.
+  const provider = env.MAIL_FROM
+    ? env.BREVO_API_KEY
+      ? new BrevoMailer(env.BREVO_API_KEY, env.MAIL_FROM)
+      : env.RESEND_API_KEY
+        ? new ResendMailer(env.RESEND_API_KEY, env.MAIL_FROM)
+        : null
+    : null;
+  const emailOn = provider !== null;
   const mailer =
     deps.mailer ??
-    (emailOn
-      ? new ResendMailer(env.RESEND_API_KEY!, env.MAIL_FROM!)
-      : env.NODE_ENV === 'production'
-        ? new NoMailer()
-        : new LogMailer(env.NODE_ENV !== 'test'));
+    provider ??
+    (env.NODE_ENV === 'production' ? new NoMailer() : new LogMailer(env.NODE_ENV !== 'test'));
   const webDir =
     env.WEB_DIR && existsSync(path.join(env.WEB_DIR, 'index.html'))
       ? path.resolve(env.WEB_DIR)
