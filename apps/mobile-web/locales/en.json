@@ -44,7 +44,11 @@
     "steps": "{{n}} steps",
     "comingSoon": "Coming soon in Dokyu",
     "docAlerts_one": "1 document in My Docs needs your attention",
-    "docAlerts_other": "{{count}} documents in My Docs need your attention"
+    "docAlerts_other": "{{count}} documents in My Docs need your attention",
+    "search": "Search NBI, passport, birth certificate…",
+    "findDoc": "Find a document",
+    "allGuides": "All guides",
+    "planVisit": "Plan your visit"
   },
   "guides": {
     "title": "Guides",
@@ -64,7 +68,7 @@
     "title": "Display",
     "language": "Language",
     "largeText": "Large text",
-    "largeTextHint": "Bigger letters on every screen (20px body text)."
+    "largeTextHint": "Bigger letters on every screen."
   },
   "status": {
     "notStarted": "Not started",
@@ -113,9 +117,9 @@
     "signUp": "Create account",
     "signOut": "Sign out",
     "signInTitle": "Welcome back",
-    "signInIntro": "Sign in to see your tracked documents and reminders.",
+    "signInIntro": "Welcome back. Sign in to bring back your area, goals and settings.",
     "signUpTitle": "Create your account",
-    "signUpIntro": "Save the documents you're working on and get reminders. Reading guides never needs an account.",
+    "signUpIntro": "An account keeps your area, goals and settings on any phone or browser. Guides and My Docs never need an account.",
     "email": "Email",
     "password": "Password",
     "fullName": "Full name",
@@ -174,8 +178,8 @@
     "exploreGuides": "Explore the guides"
   },
   "account": {
-    "guestTitle": "Save your progress",
-    "guestText": "Create a free account to track documents for you and your family and get reminders before appointments and expiry dates.",
+    "guestTitle": "Save your settings",
+    "guestText": "Optional. An account keeps your area, goals, language and text size, so they come back on a new phone or browser. Guides and My Docs work without one.",
     "unverified": "Please confirm your email. We sent a link to {{email}}.",
     "resend": "Send the link again",
     "resent": "A new link is on its way.",
@@ -187,7 +191,8 @@
     "thisDevice": "This device",
     "signOutDevice": "Sign out",
     "since": "Since {{date}}",
-    "admin": "Super Admin"
+    "admin": "Super Admin",
+    "setupTitle": "Your area and goals"
   },
   "categories": {
     "all": "All",
@@ -233,7 +238,10 @@
     "whereBarangay": "Go to your own barangay hall. Each barangay sets its own hours and fee.",
     "whereOnline": "This one is done online; no office visit is listed yet.",
     "findOffice": "Find an office",
-    "track": "Track in My Docs"
+    "track": "Track in My Docs",
+    "atAGlance": "At a glance",
+    "youPay": "Total",
+    "actionsHint": "A checklist helps you pack. My Docs tracks your application and reminds you of dates."
   },
   "checklist": {
     "title": "Before you go",
@@ -251,14 +259,17 @@
     "travel": "Travel",
     "offices": "Offices",
     "holidays": "Holidays",
-    "myDocs": "My Docs"
+    "myDocs": "My Docs",
+    "civilRegistry": "Civil registry"
   },
   "checklists": {
     "title": "My checklists",
-    "intro": "Your “Before you go” lists. Open a guide to start one.",
-    "empty": "No checklist yet. Open any guide and tap “Make my Before you go checklist”.",
+    "intro": "Your “Before you go” lists, one per document. Tick items as you pack.",
+    "empty": "Open any guide and tap the checklist button under “What to bring”. Your list shows up here so you can pack step by step.",
     "ready": "Ready",
-    "notStarted": "Not started"
+    "notStarted": "Not started",
+    "emptyTitle": "No checklists yet",
+    "browse": "Browse guides"
   },
   "tour": {
     "hello": "Hi, I'm Doki! I'll help you get your papers in one trip. Let me show you around. It takes 20 seconds.",
@@ -326,7 +337,8 @@
     "checked": "Checked {{date}}",
     "source": "Source: {{host}}",
     "policeTitle": "Police clearance anywhere",
-    "policeText": "You can get a National Police Clearance at any police station. Pick the one nearest you when you book on pnpclearance.ph."
+    "policeText": "You can get a National Police Clearance at any police station. Pick the one nearest you when you book on pnpclearance.ph.",
+    "landmark": "Landmark:"
   },
   "holidays": {
     "title": "Holidays",
@@ -375,7 +387,7 @@
     "familyCount_other": "{{count}} people",
     "familyHint": "Track papers for your kids, parents and others",
     "familyIntro": "Add the people whose papers you help with. Their names stay on this phone.",
-    "privacy": "My Docs is saved on this phone only.",
+    "privacy": "My Docs is saved on this device only, even when you are signed in.",
     "apptOn": "Appointment {{date}} {{time}}",
     "expiresOn": "Expires {{date}}",
     "which": "Which document?",
@@ -433,7 +445,7 @@
     "hello": "Hi! I'm Doki. Ask me what to bring, how much it costs, where to go, or what you need for a goal like your first job.",
     "subtitle": "Answers from Dokyu's checked guides",
     "thinking": "Doki is thinking…",
-    "placeholder": "Ask Doki anything about your papers",
+    "placeholder": "Ask about any document",
     "send": "Send",
     "footer": "Doki answers from Dokyu's guides on your phone. Always confirm on the official site.",
     "s1": "What do I bring for NBI clearance?",
@@ -458,7 +470,8 @@
     "goalTotal": "Total, cheapest way: {{amount}}.",
     "seePlan": "See the full plan",
     "nextHoliday": "Next day off: {{name}} ({{date}}).",
-    "offices": "I can show you offices near you, when they're open, and how to get there."
+    "offices": "I can show you offices near you, when they're open, and how to get there.",
+    "tryAsking": "Try asking"
   },
   "about": {
     "title": "About & help",

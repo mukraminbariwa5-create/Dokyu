@@ -3,7 +3,7 @@
     "home": "Home",
     "guides": "Gabay",
     "ask": "Itanong",
-    "docs": "Mga Papeles",
+    "docs": "My Docs",
     "account": "Account",
     "showcase": "Design system"
   },
@@ -44,7 +44,11 @@
     "steps": "{{n}} hakbang",
     "comingSoon": "Malapit na sa Dokyu",
     "docAlerts_one": "May 1 dokumento sa My Docs na kailangan ng pansin",
-    "docAlerts_other": "May {{count}} dokumento sa My Docs na kailangan ng pansin"
+    "docAlerts_other": "May {{count}} dokumento sa My Docs na kailangan ng pansin",
+    "search": "Hanapin: NBI, passport, birth certificate…",
+    "findDoc": "Maghanap ng dokumento",
+    "allGuides": "Lahat ng gabay",
+    "planVisit": "Ihanda ang lakad"
   },
   "guides": {
     "title": "Mga Gabay",
@@ -64,7 +68,7 @@
     "title": "Display",
     "language": "Wika",
     "largeText": "Malaking letra",
-    "largeTextHint": "Mas malaking letra sa bawat screen (20px na body text)."
+    "largeTextHint": "Mas malaking letra sa bawat screen."
   },
   "status": {
     "notStarted": "Hindi pa nasisimulan",
@@ -113,9 +117,9 @@
     "signUp": "Gumawa ng account",
     "signOut": "Mag-sign out",
     "signInTitle": "Maligayang pagbabalik",
-    "signInIntro": "Mag-sign in para makita ang mga papeles at paalala mo.",
+    "signInIntro": "Maligayang pagbabalik. Mag-sign in para maibalik ang lugar, layunin at settings mo.",
     "signUpTitle": "Gumawa ng account",
-    "signUpIntro": "I-save ang mga papeles na inaasikaso mo at makatanggap ng paalala. Hindi kailangan ng account para magbasa ng gabay.",
+    "signUpIntro": "Sa account, nase-save ang lugar, layunin at settings mo sa kahit anong phone o browser. Hindi kailangan ng account para sa mga gabay at My Docs.",
     "email": "Email",
     "password": "Password",
     "fullName": "Buong pangalan",
@@ -174,8 +178,8 @@
     "exploreGuides": "Tingnan ang mga gabay"
   },
   "account": {
-    "guestTitle": "I-save ang progreso mo",
-    "guestText": "Gumawa ng libreng account para i-track ang mga papeles mo at ng pamilya mo at makatanggap ng paalala bago ang appointment at expiry.",
+    "guestTitle": "I-save ang settings mo",
+    "guestText": "Opsyonal. Sa account, nase-save ang lugar, layunin, wika at laki ng letra mo, kaya babalik ang mga ito sa bagong phone o browser. Gumagana ang mga gabay at My Docs kahit walang account.",
     "unverified": "Pakikumpirma ang email mo. Nagpadala kami ng link sa {{email}}.",
     "resend": "Ipadala ulit ang link",
     "resent": "Papunta na ang bagong link.",
@@ -187,7 +191,8 @@
     "thisDevice": "Itong device",
     "signOutDevice": "I-sign out",
     "since": "Mula {{date}}",
-    "admin": "Super Admin"
+    "admin": "Super Admin",
+    "setupTitle": "Lugar at layunin mo"
   },
   "categories": {
     "all": "Lahat",
@@ -233,7 +238,10 @@
     "whereBarangay": "Pumunta sa sarili mong barangay hall. Ang bawat barangay ang nagtatakda ng oras at bayad.",
     "whereOnline": "Ginagawa ito online; wala pang nakalistang opisinang pupuntahan.",
     "findOffice": "Maghanap ng opisina",
-    "track": "I-track sa My Docs"
+    "track": "I-track sa My Docs",
+    "atAGlance": "Sa madaling salita",
+    "youPay": "Kabuuan",
+    "actionsHint": "Tinutulungan ka ng checklist sa pag-iimpake. Sa My Docs, nata-track ang aplikasyon mo at pinapaalala ang mga petsa."
   },
   "checklist": {
     "title": "Bago ka umalis",
@@ -251,14 +259,17 @@
     "travel": "Biyahe",
     "offices": "Opisina",
     "holidays": "Holiday",
-    "myDocs": "Papeles"
+    "myDocs": "My Docs",
+    "civilRegistry": "Civil registry"
   },
   "checklists": {
     "title": "Mga checklist ko",
     "intro": "Ang mga “Bago ka umalis” list mo. Magbukas ng gabay para magsimula.",
-    "empty": "Wala pang checklist. Magbukas ng gabay at pindutin ang “Gawin ang Bago ka umalis checklist ko”.",
+    "empty": "Magbukas ng gabay at pindutin ang checklist button sa ilalim ng “Mga dadalhin”. Lalabas dito ang listahan mo para makapag-impake ka nang paisa-isa.",
     "ready": "Handa na",
-    "notStarted": "Hindi pa nasisimulan"
+    "notStarted": "Hindi pa nasisimulan",
+    "emptyTitle": "Wala pang checklist",
+    "browse": "Tingnan ang mga gabay"
   },
   "tour": {
     "hello": "Hi, ako si Doki! Tutulungan kitang makuha ang papeles mo sa isang punta lang. Ipapakita ko sa'yo ang app. 20 segundo lang.",
@@ -326,7 +337,8 @@
     "checked": "Na-check {{date}}",
     "source": "Source: {{host}}",
     "policeTitle": "Police clearance kahit saan",
-    "policeText": "Makakakuha ka ng National Police Clearance sa kahit anong police station. Piliin ang pinakamalapit sa iyo kapag nag-book sa pnpclearance.ph."
+    "policeText": "Makakakuha ka ng National Police Clearance sa kahit anong police station. Piliin ang pinakamalapit sa iyo kapag nag-book sa pnpclearance.ph.",
+    "landmark": "Palatandaan:"
   },
   "holidays": {
     "title": "Holiday",
@@ -375,7 +387,7 @@
     "familyCount_other": "{{count}} tao",
     "familyHint": "I-track ang papeles ng anak, magulang at iba pa",
     "familyIntro": "Idagdag ang mga taong tinutulungan mo sa papeles. Sa phone na ito lang naka-save ang pangalan nila.",
-    "privacy": "Sa phone na ito lang naka-save ang My Docs.",
+    "privacy": "Sa device na ito lang naka-save ang My Docs, kahit naka-sign in ka.",
     "apptOn": "Appointment {{date}} {{time}}",
     "expiresOn": "Mag-e-expire {{date}}",
     "which": "Anong dokumento?",
@@ -433,7 +445,7 @@
     "hello": "Hi! Ako si Doki. Itanong mo kung ano ang dadalhin, magkano, saan pupunta, o ano ang kailangan para sa layunin gaya ng unang trabaho.",
     "subtitle": "Sagot mula sa mga na-check na gabay ng Dokyu",
     "thinking": "Nag-iisip si Doki…",
-    "placeholder": "Magtanong kay Doki tungkol sa papeles mo",
+    "placeholder": "Magtanong tungkol sa dokumento",
     "send": "Ipadala",
     "footer": "Sumasagot si Doki mula sa gabay ng Dokyu sa phone mo. Kumpirmahin palagi sa opisyal na site.",
     "s1": "Ano ang dadalhin sa NBI clearance?",
@@ -458,7 +470,8 @@
     "goalTotal": "Kabuuan, pinakamura: {{amount}}.",
     "seePlan": "Tingnan ang buong plano",
     "nextHoliday": "Susunod na walang pasok: {{name}} ({{date}}).",
-    "offices": "Maipapakita ko ang mga opisinang malapit sa iyo, kailan bukas, at paano makarating."
+    "offices": "Maipapakita ko ang mga opisinang malapit sa iyo, kailan bukas, at paano makarating.",
+    "tryAsking": "Subukang itanong"
   },
   "about": {
     "title": "Tungkol at tulong",

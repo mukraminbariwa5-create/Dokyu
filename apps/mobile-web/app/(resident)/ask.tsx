@@ -154,6 +154,8 @@ export default function AskDoki() {
     }, 650);
   };
 
+  // Before the first question, show the example questions as an easy list.
+  const fresh = messages.length <= 1 && !thinking;
   const lastDoki = [...messages].reverse().find((m) => m.from === 'doki')?.id;
 
   return (
@@ -202,6 +204,29 @@ export default function AskDoki() {
                 <DokiMessage key={m.id} m={m} latest={m.id === lastDoki} onTyping={onTyping} />
               ),
             )}
+            {fresh ? (
+              <FadeIn delay={300} distance={8}>
+                <View className="mt-2 gap-2">
+                  <AppText variant="small" weight="semibold" tone="muted">
+                    {t('ask.tryAsking')}
+                  </AppText>
+                  {SUGGESTIONS.map((k) => (
+                    <Pressable
+                      key={k}
+                      accessibilityRole="button"
+                      onPress={() => send(t(k))}
+                      className="min-h-[48px] flex-row items-center gap-3 rounded-lg border border-line bg-surface px-4 py-2.5 active:bg-primary-soft"
+                    >
+                      <Icon name="help" size={18} color={colors.primary} />
+                      <AppText variant="body" weight="medium" className="flex-1">
+                        {t(k)}
+                      </AppText>
+                      <Icon name="chevronRight" size={18} color={colors.textSubtle} />
+                    </Pressable>
+                  ))}
+                </View>
+              </FadeIn>
+            ) : null}
             {thinking ? (
               <FadeIn distance={6}>
                 <View
@@ -225,27 +250,29 @@ export default function AskDoki() {
             ) : null}
           </ScrollView>
 
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={{ flexGrow: 0, flexShrink: 0 }}
-            contentContainerClassName="gap-2 px-5 pb-2"
-            keyboardShouldPersistTaps="handled"
-          >
-            {SUGGESTIONS.map((k) => (
-              <Pressable
-                key={k}
-                accessibilityRole="button"
-                onPress={() => send(t(k))}
-                className="rounded-full border border-primary-tint bg-surface px-3.5 active:bg-primary-soft"
-                style={{ minHeight: 40, justifyContent: 'center' }}
-              >
-                <AppText variant="small" weight="medium" tone="primary">
-                  {t(k)}
-                </AppText>
-              </Pressable>
-            ))}
-          </ScrollView>
+          {fresh ? null : (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={{ flexGrow: 0, flexShrink: 0 }}
+              contentContainerClassName="gap-2 px-5 pb-2"
+              keyboardShouldPersistTaps="handled"
+            >
+              {SUGGESTIONS.map((k) => (
+                <Pressable
+                  key={k}
+                  accessibilityRole="button"
+                  onPress={() => send(t(k))}
+                  className="rounded-full border border-primary-tint bg-surface px-3.5 active:bg-primary-soft"
+                  style={{ minHeight: 40, justifyContent: 'center' }}
+                >
+                  <AppText variant="small" weight="medium" tone="primary">
+                    {t(k)}
+                  </AppText>
+                </Pressable>
+              ))}
+            </ScrollView>
+          )}
 
           <View className="flex-row items-center gap-2 border-t border-line px-4 py-3">
             <TextInput

@@ -23,7 +23,7 @@ export default function Guides() {
   const [q, setQ] = useState('');
   const [focused, setFocused] = useState(false);
   // Home's tiles open this page on a category (e.g. ?category=identity).
-  const params = useLocalSearchParams<{ category?: string }>();
+  const params = useLocalSearchParams<{ category?: string; focus?: string }>();
   const fromParam = (GUIDE_CATEGORIES as readonly string[]).includes(params.category ?? '')
     ? (params.category as GuideCategory)
     : 'all';
@@ -36,7 +36,7 @@ export default function Guides() {
       (g) =>
         (category === 'all' || g.category === category) &&
         (!needle ||
-          [g.title.en, g.title.tl, g.agency.en, g.mono].some((s) =>
+          [g.title.en, g.title.tl, g.agency.en, g.mono, g.summary.en, g.summary.tl].some((s) =>
             s.toLowerCase().includes(needle),
           )),
     );
@@ -70,6 +70,9 @@ export default function Guides() {
           // The box above shows focus, so the browser's own outline is turned off.
           style={{ fontSize: textSize('bodyLg'), minHeight: 48, outlineStyle: 'none' } as object}
           autoCorrect={false}
+          // Home's search bar opens this page ready to type.
+          autoFocus={params.focus === '1'}
+          returnKeyType="search"
         />
       </View>
 

@@ -65,10 +65,9 @@ export default function Holidays() {
       year: 'numeric',
       timeZone: 'UTC',
     });
-  const fmtDay = (iso: string) =>
+  const fmtWeekday = (iso: string) =>
     new Date(`${iso}T00:00:00Z`).toLocaleDateString(locale, {
       weekday: 'short',
-      day: 'numeric',
       timeZone: 'UTC',
     });
 
@@ -156,12 +155,20 @@ export default function Holidays() {
                   className="items-center justify-center"
                   style={{ width: 54, height: 54, borderRadius: 16, backgroundColor: s.bg }}
                 >
+                  {/* Calendar-style badge: big day number, weekday under it. */}
+                  <AppText
+                    variant="title"
+                    weight="bold"
+                    style={{ color: s.fg, textAlign: 'center', lineHeight: 24 }}
+                  >
+                    {Number(h.date.slice(8, 10))}
+                  </AppText>
                   <AppText
                     variant="caption"
-                    weight="bold"
-                    style={{ color: s.fg, textAlign: 'center' }}
+                    weight="semibold"
+                    style={{ color: s.fg, textAlign: 'center', fontSize: 11, lineHeight: 14 }}
                   >
-                    {fmtDay(h.date)}
+                    {fmtWeekday(h.date).toUpperCase()}
                   </AppText>
                 </View>
                 <View className="flex-1 gap-0.5">

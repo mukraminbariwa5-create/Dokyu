@@ -99,35 +99,47 @@ export default function OfficeFinder() {
         </AppText>
       </View>
 
-      <View className="flex-row flex-wrap gap-2">
-        <Button
-          label={
-            loc.state === 'ok'
-              ? t('offices.nearMeOn')
-              : loc.state === 'asking'
-                ? t('offices.finding')
-                : t('offices.nearMe')
-          }
-          variant={loc.state === 'ok' ? 'primary' : 'secondary'}
-          size="md"
-          loading={loc.state === 'asking'}
-          icon={
-            <Icon
-              name="locate"
-              size={18}
-              color={loc.state === 'ok' ? '#FFFFFF' : colors.primaryDark}
-            />
-          }
-          onPress={() => (loc.state === 'ok' ? clear() : ask())}
-        />
-        {!isDesktop ? (
+      <View className="flex-row gap-2">
+        <View className="flex-1">
           <Button
-            label={view === 'list' ? t('offices.showMap') : t('offices.showList')}
-            variant="ghost"
+            fullWidth
+            label={
+              loc.state === 'ok'
+                ? t('offices.nearMeOn')
+                : loc.state === 'asking'
+                  ? t('offices.finding')
+                  : t('offices.nearMe')
+            }
+            variant={loc.state === 'ok' ? 'primary' : 'secondary'}
             size="md"
-            icon={<Icon name={view === 'list' ? 'map' : 'list'} size={18} color={colors.primary} />}
-            onPress={() => setView((v) => (v === 'list' ? 'map' : 'list'))}
+            loading={loc.state === 'asking'}
+            icon={
+              <Icon
+                name="locate"
+                size={18}
+                color={loc.state === 'ok' ? '#FFFFFF' : colors.primaryDark}
+              />
+            }
+            onPress={() => (loc.state === 'ok' ? clear() : ask())}
           />
+        </View>
+        {!isDesktop ? (
+          <View className="flex-1">
+            <Button
+              fullWidth
+              label={view === 'list' ? t('offices.showMap') : t('offices.showList')}
+              variant="secondary"
+              size="md"
+              icon={
+                <Icon
+                  name={view === 'list' ? 'map' : 'list'}
+                  size={18}
+                  color={colors.primaryDark}
+                />
+              }
+              onPress={() => setView((v) => (v === 'list' ? 'map' : 'list'))}
+            />
+          </View>
         ) : null}
       </View>
       {loc.state === 'denied' || loc.state === 'error' ? (

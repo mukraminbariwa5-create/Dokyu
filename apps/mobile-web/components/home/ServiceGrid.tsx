@@ -49,8 +49,8 @@ function TileButton({ tile }: { tile: Tile }) {
       <AppText
         variant="caption"
         weight="medium"
-        style={{ color: '#3E4A63', textAlign: 'center' }}
-        numberOfLines={1}
+        style={{ color: '#3E4A63', textAlign: 'center', paddingHorizontal: 2 }}
+        numberOfLines={2}
       >
         {tile.label}
       </AppText>

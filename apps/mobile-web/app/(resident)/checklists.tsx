@@ -1,13 +1,17 @@
 /** All "Before you go" checklists in one place (Home's Checklists tile). */
 import { useCallback, useState } from 'react';
-import { Link, useFocusEffect } from 'expo-router';
+import { Link, useFocusEffect, useRouter } from 'expo-router';
 import { Animated, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { colors, pick, type Guide } from '@dokyu/shared';
 import { Screen } from '../../components/ui/Screen';
 import { AppText } from '../../components/ui/AppText';
 import { AgencyTile } from '../../components/ui/AgencyTile';
-import { PressableCard } from '../../components/ui/Card';
+import { Card, PressableCard } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
+import { Icon } from '../../components/ui/Icon';
+import { BackLink } from '../../components/ui/BackLink';
+import { Doki } from '../../components/ui/Doki';
 import { Badge } from '../../components/ui/Badge';
 import { useGuides } from '../../lib/guides';
 import { useAllChecklists } from '../../lib/checklist';
@@ -53,6 +57,7 @@ function Row({ guide, ticked }: { guide: Guide; ticked: number[] }) {
 
 export default function Checklists() {
   const { t } = useTranslation();
+  const router = useRouter();
   const { data: guides } = useGuides();
   const [visit, setVisit] = useState(0);
   useFocusEffect(useCallback(() => setVisit((v) => v + 1), []));
@@ -64,6 +69,7 @@ export default function Checklists() {
 
   return (
     <Screen>
+      <BackLink label={t('nav.home')} fallback="/" />
       <View className="gap-1">
         <AppText variant="h1">{t('checklists.title')}</AppText>
         <AppText variant="body" tone="muted">
@@ -71,9 +77,20 @@ export default function Checklists() {
         </AppText>
       </View>
       {started.length === 0 ? (
-        <AppText variant="body" tone="muted">
-          {t('checklists.empty')}
-        </AppText>
+        <Card tone="soft" className="items-center gap-3 p-6">
+          <Doki size={96} pose="point" />
+          <AppText variant="title" style={{ textAlign: 'center' }}>
+            {t('checklists.emptyTitle')}
+          </AppText>
+          <AppText variant="body" tone="muted" style={{ textAlign: 'center' }}>
+            {t('checklists.empty')}
+          </AppText>
+          <Button
+            label={t('checklists.browse')}
+            icon={<Icon name="guides" size={20} color="#FFFFFF" />}
+            onPress={() => router.push('/guides')}
+          />
+        </Card>
       ) : null}
       {started.map((g, i) => (
         <FadeIn key={g.slug} delay={i * 50}>

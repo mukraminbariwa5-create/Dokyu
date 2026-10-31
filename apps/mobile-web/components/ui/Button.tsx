@@ -5,19 +5,21 @@ import { AppText } from './AppText';
 import { cn } from '../../lib/cn';
 import { usePressScale } from '../../lib/motion';
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
+type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'dangerGhost';
 
 const BOX: Record<Variant, string> = {
   primary: 'bg-primary active:bg-primary-dark',
   secondary: 'bg-primary-soft border border-primary-tint active:bg-primary-tint',
   ghost: 'bg-transparent active:bg-surface-alt',
   danger: 'bg-danger active:opacity-90',
+  dangerGhost: 'bg-transparent border border-line active:bg-red-soft',
 };
-const TEXT: Record<Variant, 'inverse' | 'primary' | 'primaryDark'> = {
+const TEXT: Record<Variant, 'inverse' | 'primary' | 'primaryDark' | 'danger'> = {
   primary: 'inverse',
   secondary: 'primaryDark',
   ghost: 'primary',
   danger: 'inverse',
+  dangerGhost: 'danger',
 };
 
 export interface ButtonProps extends Omit<PressableProps, 'children'> {
@@ -70,7 +72,12 @@ export function Button({
         ) : (
           icon && <View>{icon}</View>
         )}
-        <AppText variant={size === 'lg' ? 'bodyLg' : 'body'} weight="semibold" tone={TEXT[variant]}>
+        <AppText
+          variant={size === 'lg' ? 'bodyLg' : 'body'}
+          weight="semibold"
+          tone={TEXT[variant]}
+          style={{ textAlign: 'center', flexShrink: 1 }}
+        >
           {label}
         </AppText>
       </Pressable>

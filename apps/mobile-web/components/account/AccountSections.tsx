@@ -1,12 +1,12 @@
 /** Account page sections: help and legal pages, and the user's data (download, delete). */
 import { useState } from 'react';
-import { View } from 'react-native';
-import { Link, useRouter } from 'expo-router';
+import { Pressable, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { colors } from '@dokyu/shared';
 import { AppText } from '../ui/AppText';
 import { Button } from '../ui/Button';
-import { Card, PressableCard } from '../ui/Card';
+import { Card } from '../ui/Card';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { Icon, type IconName } from '../ui/Icon';
 import { PasswordInput } from '../ui/PasswordInput';
@@ -24,22 +24,76 @@ const LINKS: Array<{ page: string; icon: IconName }> = [
   { page: 'terms', icon: 'guides' },
 ];
 
-export function InfoLinks() {
+/** One row of a grouped settings list. */
+export function ListRow({
+  icon,
+  label,
+  hint,
+  onPress,
+  first,
+}: {
+  icon: IconName;
+  label: string;
+  hint?: string;
+  onPress: () => void;
+  first?: boolean;
+}) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityHint={hint}
+      onPress={onPress}
+      className={`min-h-[56px] flex-row items-center gap-3 px-4 py-3 active:bg-surface-alt ${first ? '' : 'border-t border-line'}`}
+    >
+      <View
+        className="items-center justify-center bg-primary-soft"
+        style={{ width: 36, height: 36, borderRadius: 10 }}
+      >
+        <Icon name={icon} size={20} color={colors.primary} />
+      </View>
+      <View className="flex-1">
+        <AppText variant="body" weight="medium">
+          {label}
+        </AppText>
+        {hint ? (
+          <AppText variant="caption" tone="muted">
+            {hint}
+          </AppText>
+        ) : null}
+      </View>
+      <Icon name="chevronRight" size={20} color={colors.textSubtle} />
+    </Pressable>
+  );
+}
+
+/** Help and info: Doki's tour, then the about, help and legal pages, as one grouped list. */
+export function InfoLinks({ onReplayTour }: { onReplayTour?: () => void }) {
   const { t } = useTranslation();
+  const router = useRouter();
   return (
     <View className="gap-2">
       <AppText variant="title">{t('about.section')}</AppText>
-      {LINKS.map((l) => (
-        <Link key={l.page} href={{ pathname: '/about', params: { page: l.page } }} asChild>
-          <PressableCard className="flex-row items-center gap-3">
-            <Icon name={l.icon} size={22} color={colors.primary} />
-            <AppText variant="body" weight="medium" className="flex-1">
-              {t(`about.tab_${l.page}`)}
-            </AppText>
-            <Icon name="chevronRight" size={20} color={colors.textSubtle} />
-          </PressableCard>
-        </Link>
-      ))}
+      <Card style={{ padding: 0, overflow: 'hidden' }}>
+        {onReplayTour ? (
+          <ListRow
+            first
+            icon="sparkle"
+            label={t('tour.replay')}
+            hint={t('tour.replayHint')}
+            onPress={onReplayTour}
+          />
+        ) : null}
+        {LINKS.map((l, i) => (
+          <ListRow
+            key={l.page}
+            first={!onReplayTour && i === 0}
+            icon={l.icon}
+            label={t(`about.tab_${l.page}`)}
+            onPress={() => router.push({ pathname: '/about', params: { page: l.page } })}
+          />
+        ))}
+      </Card>
     </View>
   );
 }
@@ -90,22 +144,25 @@ export function DataSection() {
           label={t('data.download')}
           variant="secondary"
           size="md"
+          fullWidth
           loading={busy}
           icon={<Icon name="download" size={18} color={colors.primaryDark} />}
           onPress={download}
         />
         <Button
           label={t('data.clearDevice')}
-          variant="ghost"
+          variant="dangerGhost"
           size="md"
+          fullWidth
           icon={<Icon name="trash" size={18} color={colors.danger} />}
           onPress={() => setAskClear(true)}
         />
         {status === 'signedIn' ? (
           <Button
             label={t('data.deleteAccount')}
-            variant="ghost"
+            variant="dangerGhost"
             size="md"
+            fullWidth
             icon={<Icon name="trash" size={18} color={colors.danger} />}
             onPress={() => setAskDelete(true)}
           />

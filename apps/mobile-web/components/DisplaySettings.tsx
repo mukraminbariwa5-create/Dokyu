@@ -23,37 +23,39 @@ export function DisplaySettings() {
     updateProfile({ textSize: on ? 'large' : 'normal' }).catch(() => {});
   };
   return (
-    <Card className="gap-4">
+    <View className="gap-2">
       <AppText variant="title">{t('settings.title')}</AppText>
-      <View className="gap-2">
-        <AppText variant="small" weight="medium" tone="muted">
-          {t('settings.language')}
-        </AppText>
-        <SegmentedControl
-          label={t('settings.language')}
-          value={language}
-          onChange={changeLanguage}
-          options={LANGUAGES.map((l) => ({ value: l.code, label: l.label }))}
-        />
-      </View>
-      <View className="flex-row items-center gap-4">
-        <View className="flex-1">
-          <AppText variant="body" weight="medium">
-            {t('settings.largeText')}
+      <Card className="gap-4">
+        <View className="gap-2">
+          <AppText variant="small" weight="medium" tone="muted">
+            {t('settings.language')}
           </AppText>
-          <AppText variant="small" tone="muted">
-            {t('settings.largeTextHint')}
-          </AppText>
+          <SegmentedControl
+            label={t('settings.language')}
+            value={language}
+            onChange={changeLanguage}
+            options={LANGUAGES.map((l) => ({ value: l.code, label: l.label }))}
+          />
         </View>
-        <Switch
-          accessibilityLabel={t('settings.largeText')}
-          value={largeText}
-          onValueChange={changeLargeText}
-          trackColor={{ false: colors.border, true: colors.primary }}
-          thumbColor="#FFFFFF"
-          {...({ activeThumbColor: '#FFFFFF' } as object)}
-        />
-      </View>
-    </Card>
+        <View className="flex-row items-center gap-4">
+          <View className="flex-1">
+            <AppText variant="body" weight="medium">
+              {t('settings.largeText')}
+            </AppText>
+            <AppText variant="small" tone="muted">
+              {t('settings.largeTextHint')}
+            </AppText>
+          </View>
+          <Switch
+            accessibilityLabel={t('settings.largeText')}
+            value={largeText}
+            onValueChange={changeLargeText}
+            trackColor={{ false: colors.border, true: colors.primary }}
+            thumbColor="#FFFFFF"
+            {...({ activeThumbColor: '#FFFFFF' } as object)}
+          />
+        </View>
+      </Card>
+    </View>
   );
 }

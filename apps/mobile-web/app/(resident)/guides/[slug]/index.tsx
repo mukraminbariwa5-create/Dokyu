@@ -7,11 +7,10 @@ import { AgencyTile } from '../../../../components/ui/AgencyTile';
 import { AppText } from '../../../../components/ui/AppText';
 import { Button } from '../../../../components/ui/Button';
 import { Card } from '../../../../components/ui/Card';
-import { Icon } from '../../../../components/ui/Icon';
+import { Icon, type IconName } from '../../../../components/ui/Icon';
 import { Disclaimer } from '../../../../components/ui/Disclaimer';
 import {
   ActionButton,
-  Fact,
   RequirementCard,
   StepGroups,
   TipBox,
@@ -24,7 +23,6 @@ import { sortByArea, shortLink } from '../../../../lib/offices';
 import { OFFICES, officesForGuide } from '@dokyu/shared';
 import { OfficeCard } from '../../../../components/office/OfficeCard';
 import { useNow } from '../../../../lib/offices';
-import { Link } from 'expo-router';
 import { useSettings } from '../../../../lib/settings';
 import { formatDate, formatFee } from '../../../../lib/format';
 
@@ -60,6 +58,8 @@ export default function GuideDetail() {
   const always = g.requirements.filter((r) => !r.onlyIf);
   const sometimes = g.requirements.filter((r) => r.onlyIf);
   const date = formatDate(g.lastVerified, language);
+  const warnings = g.tips.filter((tip) => tip.tone === 'warning');
+  const tips = g.tips.filter((tip) => tip.tone !== 'warning');
 
   return (
     <Screen>
@@ -88,11 +88,52 @@ export default function GuideDetail() {
         <TipBox tone="tip" text={t('guide.noOnline')} />
       )}
 
-      <View className="flex-row flex-wrap gap-2">
-        <Fact icon="wallet" label={t('guide.fee')} value={formatFee(startingFee(g.fees), t)} />
-        <Fact icon="hourglass" label={t('guide.processing')} value={L(g.processing)} />
-        <Fact icon="calendar" label={t('guide.validity')} value={L(g.validity)} />
-      </View>
+      {/* Safety warnings (look-alike sites, fixers) belong next to the first action. */}
+      {warnings.map((tip, i) => (
+        <TipBox key={`w${i}`} tone="warning" text={L(tip.text)} />
+      ))}
+
+      <Section>
+        <AppText variant="title">{t('guide.atAGlance')}</AppText>
+        <Card style={{ padding: 0, gap: 0 }}>
+          <GlanceRow icon="wallet" label={t('guide.fee')}>
+            {g.fees.map((f, i) => (
+              <View key={i} className="flex-row justify-between gap-3">
+                <View className="flex-1">
+                  <AppText variant="body">
+                    {f.addOn ? '+ ' : ''}
+                    {L(f.label)}
+                  </AppText>
+                  {f.note ? (
+                    <AppText variant="caption" tone="muted">
+                      {L(f.note)}
+                    </AppText>
+                  ) : null}
+                </View>
+                <AppText variant="body" weight="semibold" tone="primaryDark">
+                  {f.amount === null ? t('common.varies') : formatPeso(f.amount)}
+                </AppText>
+              </View>
+            ))}
+            {g.fees.length > 1 ? (
+              <View className="flex-row justify-between gap-3 border-t border-line pt-2">
+                <AppText variant="body" weight="semibold" className="flex-1">
+                  {t('guide.youPay')}
+                </AppText>
+                <AppText variant="body" weight="bold" tone="primaryDark">
+                  {formatFee(startingFee(g.fees), t)}
+                </AppText>
+              </View>
+            ) : null}
+          </GlanceRow>
+          <GlanceRow icon="hourglass" label={t('guide.processing')} divider>
+            <AppText variant="body">{L(g.processing)}</AppText>
+          </GlanceRow>
+          <GlanceRow icon="calendar" label={t('guide.validity')} divider>
+            <AppText variant="body">{L(g.validity)}</AppText>
+          </GlanceRow>
+        </Card>
+      </Section>
 
       {g.firstTimeJobseekerFree ? (
         <Card tone="gold" className="flex-row gap-2">
@@ -133,15 +174,26 @@ export default function GuideDetail() {
             ))}
           </View>
         ) : null}
-        <Button
-          label={t('guide.makeChecklist')}
-          variant="secondary"
-          fullWidth
-          icon={<Icon name="checklist" size={20} color={colors.primaryDark} />}
-          onPress={() =>
-            router.push({ pathname: '/guides/[slug]/checklist', params: { slug: g.slug } })
-          }
-        />
+        <View className="mt-1 gap-2">
+          <Button
+            label={t('guide.makeChecklist')}
+            fullWidth
+            icon={<Icon name="checklist" size={20} color="#FFFFFF" />}
+            onPress={() =>
+              router.push({ pathname: '/guides/[slug]/checklist', params: { slug: g.slug } })
+            }
+          />
+          <Button
+            label={t('guide.track')}
+            variant="secondary"
+            fullWidth
+            icon={<Icon name="docs" size={20} color={colors.primaryDark} />}
+            onPress={() => router.push({ pathname: '/docs/new', params: { guide: g.slug } })}
+          />
+          <AppText variant="caption" tone="muted" style={{ textAlign: 'center' }}>
+            {t('guide.actionsHint')}
+          </AppText>
+        </View>
       </Section>
 
       <Section>
@@ -173,46 +225,21 @@ export default function GuideDetail() {
         ) : (
           whereOffices.slice(0, 2).map((o) => <OfficeCard key={o.slug} office={o} now={now} />)
         )}
-        <View className="flex-row flex-wrap gap-2">
-          {whereOffices.length > 0 ? (
-            <Link href={{ pathname: '/offices', params: { guide: g.slug } }} asChild>
-              <Button label={t('guide.findOffice')} variant="secondary" size="md" />
-            </Link>
-          ) : null}
-          <Link href={{ pathname: '/docs/new', params: { guide: g.slug } }} asChild>
-            <Button label={t('guide.track')} variant="ghost" size="md" />
-          </Link>
-        </View>
+        {whereOffices.length > 0 ? (
+          <Button
+            label={t('guide.findOffice')}
+            variant="secondary"
+            fullWidth
+            icon={<Icon name="pin" size={20} color={colors.primaryDark} />}
+            onPress={() => router.push({ pathname: '/offices', params: { guide: g.slug } })}
+          />
+        ) : null}
       </Section>
 
-      <Section>
-        <AppText variant="title">{t('guide.fees')}</AppText>
-        <Card className="gap-2">
-          {g.fees.map((f, i) => (
-            <View key={i} className="flex-row justify-between gap-4">
-              <View className="flex-1">
-                <AppText variant="body">
-                  {f.addOn ? '+ ' : ''}
-                  {L(f.label)}
-                </AppText>
-                {f.note ? (
-                  <AppText variant="caption" tone="muted">
-                    {L(f.note)}
-                  </AppText>
-                ) : null}
-              </View>
-              <AppText variant="body" weight="semibold" tone="primaryDark">
-                {f.amount === null ? t('common.varies') : formatPeso(f.amount)}
-              </AppText>
-            </View>
-          ))}
-        </Card>
-      </Section>
-
-      {g.tips.length ? (
+      {tips.length ? (
         <Section>
           <AppText variant="title">{t('guide.tips')}</AppText>
-          {g.tips.map((tip, i) => (
+          {tips.map((tip, i) => (
             <TipBox key={i} tone={tip.tone} text={L(tip.text)} />
           ))}
         </Section>
@@ -229,16 +256,48 @@ export default function GuideDetail() {
             {g.verified ? t('guide.verified', { date }) : t('guide.unverified', { date })}
           </AppText>
         </View>
-        <AppText variant="caption" weight="semibold" tone="muted">
+        <AppText variant="caption" weight="semibold" tone="muted" className="mt-1">
           {t('guide.sources')}
         </AppText>
-        {g.sources.map((s) => (
-          <TextLink key={s} onPress={() => openOfficial(s)}>
-            {shortLink(s)}
-          </TextLink>
-        ))}
+        <View>
+          {g.sources.map((s) => (
+            <TextLink key={s} onPress={() => openOfficial(s)}>
+              {shortLink(s)}
+            </TextLink>
+          ))}
+        </View>
       </Card>
       <Disclaimer />
     </Screen>
+  );
+}
+
+/** One labelled row of the "At a glance" card. */
+function GlanceRow({
+  icon,
+  label,
+  divider,
+  children,
+}: {
+  icon: IconName;
+  label: string;
+  divider?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <View className={`flex-row gap-3 p-4 ${divider ? 'border-t border-line' : ''}`}>
+      <View
+        className="items-center justify-center bg-primary-soft"
+        style={{ width: 36, height: 36, borderRadius: 10 }}
+      >
+        <Icon name={icon} size={18} color={colors.primary} />
+      </View>
+      <View className="flex-1 gap-1.5">
+        <AppText variant="caption" weight="semibold" tone="muted">
+          {label.toUpperCase()}
+        </AppText>
+        {children}
+      </View>
+    </View>
   );
 }

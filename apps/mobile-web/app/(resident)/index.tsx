@@ -71,37 +71,19 @@ export default function Home() {
   const alerts = [...new Set(docAlerts(docs, manilaTime(now).iso).map((a) => a.doc.id))];
   const firstName = user?.fullName.split(' ')[0];
 
-  const tiles: Tile[] = [
-    {
-      key: 'guides',
-      icon: 'guides',
-      label: t('tiles.guides'),
-      onPress: () => router.push('/guides'),
-    },
-    {
-      key: 'checklists',
-      icon: 'checklist',
-      label: t('tiles.checklists'),
-      onPress: () => router.push('/checklists'),
-    },
-    {
-      key: 'ids',
-      icon: 'account',
-      label: t('tiles.ids'),
-      onPress: () => router.push({ pathname: '/guides', params: { category: 'identity' } }),
-    },
-    {
-      key: 'clearances',
-      icon: 'shield',
-      label: t('tiles.clearances'),
-      onPress: () => router.push({ pathname: '/guides', params: { category: 'clearances' } }),
-    },
-    {
-      key: 'travel',
-      icon: 'plane',
-      label: t('tiles.travel'),
-      onPress: () => router.push({ pathname: '/guides', params: { category: 'travel' } }),
-    },
+  // Document types: each opens Guides on that category.
+  const findTiles: Tile[] = [
+    { key: 'ids', icon: 'account', label: t('tiles.ids'), category: 'identity' },
+    { key: 'clearances', icon: 'shield', label: t('tiles.clearances'), category: 'clearances' },
+    { key: 'civil', icon: 'people', label: t('tiles.civilRegistry'), category: 'civilRegistry' },
+    { key: 'travel', icon: 'plane', label: t('tiles.travel'), category: 'travel' },
+  ].map(({ category, ...tile }) => ({
+    ...tile,
+    icon: tile.icon as Tile['icon'],
+    onPress: () => router.push({ pathname: '/guides', params: { category } }),
+  }));
+  // Tools for the trip itself.
+  const planTiles: Tile[] = [
     {
       key: 'offices',
       icon: 'pin',
@@ -115,11 +97,12 @@ export default function Home() {
       onPress: () => router.push('/holidays'),
     },
     {
-      key: 'docs',
-      icon: 'docs',
-      label: t('tiles.myDocs'),
-      onPress: () => router.push('/docs'),
+      key: 'checklists',
+      icon: 'checklist',
+      label: t('tiles.checklists'),
+      onPress: () => router.push('/checklists'),
     },
+    { key: 'docs', icon: 'docs', label: t('tiles.myDocs'), onPress: () => router.push('/docs') },
   ];
 
   return (
@@ -172,11 +155,30 @@ export default function Home() {
         </FadeIn>
       ) : null}
 
+      <FadeIn delay={70}>
+        <Pressable
+          accessibilityRole="search"
+          accessibilityLabel={t('home.search')}
+          onPress={() => router.push({ pathname: '/guides', params: { focus: '1' } })}
+          className="min-h-[52px] flex-row items-center gap-3 rounded-lg border border-line bg-surface px-4 active:opacity-80"
+        >
+          <Icon name="search" size={20} color={colors.textMuted} />
+          <AppText variant="body" tone="subtle" className="flex-1" numberOfLines={1}>
+            {t('home.search')}
+          </AppText>
+        </Pressable>
+      </FadeIn>
+
       <FadeIn delay={100}>
-        <View className="gap-3 rounded-[22px] py-2">
-          <AppText variant="title">{t('home.whatToDo')}</AppText>
+        <View className="gap-3">
+          <View className="flex-row items-center justify-between">
+            <AppText variant="title">{t('home.findDoc')}</AppText>
+            <TextLink align="right" onPress={() => router.push('/guides')}>
+              {t('home.allGuides')}
+            </TextLink>
+          </View>
           <View ref={servicesRef} collapsable={false}>
-            <ServiceGrid tiles={tiles} />
+            <ServiceGrid tiles={findTiles} />
           </View>
         </View>
       </FadeIn>
@@ -187,6 +189,13 @@ export default function Home() {
           <View ref={forYouRef} collapsable={false}>
             <ForYouCard item={next} />
           </View>
+        </View>
+      </FadeIn>
+
+      <FadeIn delay={190}>
+        <View className="gap-3">
+          <AppText variant="title">{t('home.planVisit')}</AppText>
+          <ServiceGrid tiles={planTiles} />
         </View>
       </FadeIn>
 

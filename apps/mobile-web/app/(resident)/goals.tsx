@@ -1,6 +1,6 @@
 /** Goal planner (plan §3.1 B): what to get for a goal, in what order, how much in total, and how long. */
 import { useMemo, useState } from 'react';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Link, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import {
@@ -18,7 +18,6 @@ import { AppText } from '../../components/ui/AppText';
 import { AgencyTile } from '../../components/ui/AgencyTile';
 import { Button } from '../../components/ui/Button';
 import { Card, PressableCard } from '../../components/ui/Card';
-import { ChoiceChip } from '../../components/ui/ChoiceChip';
 import { Icon } from '../../components/ui/Icon';
 import { BackLink } from '../../components/ui/BackLink';
 import { Disclaimer } from '../../components/ui/Disclaimer';
@@ -71,32 +70,40 @@ export default function Goals() {
         </View>
       </View>
 
-      <View className="flex-row flex-wrap gap-2">
-        {GOALS.map((g) => (
-          <ChoiceChip
-            key={g.slug}
-            label={language === 'tl' ? g.tl : g.en}
-            selected={goal === g.slug}
-            onPress={() => setGoal(g.slug)}
-          />
-        ))}
+      {/* Goals as an even two-column grid of options. */}
+      <View className="flex-row flex-wrap" style={{ gap: 8 }}>
+        {GOALS.map((g) => {
+          const on = goal === g.slug;
+          return (
+            <Pressable
+              key={g.slug}
+              accessibilityRole="radio"
+              accessibilityState={{ selected: on }}
+              onPress={() => setGoal(g.slug)}
+              className={`min-h-[56px] flex-row items-center gap-2 rounded-lg border px-3 py-2 ${on ? 'border-primary bg-primary-soft' : 'border-line bg-surface active:bg-surface-alt'}`}
+              style={{ width: '48.5%', flexGrow: 1 }}
+            >
+              <AppText
+                variant="small"
+                weight={on ? 'semibold' : 'medium'}
+                tone={on ? 'primaryDark' : 'default'}
+                className="flex-1"
+              >
+                {language === 'tl' ? g.tl : g.en}
+              </AppText>
+              {on ? <Icon name="check" size={18} color={colors.primary} /> : null}
+            </Pressable>
+          );
+        })}
       </View>
 
       <PopOnChange value={goal} from={0.92}>
-        <Card tone="primary" className="flex-row flex-wrap gap-4">
-          <View className="gap-0.5" style={{ minWidth: 120 }}>
-            <AppText variant="caption" tone="inverse" style={{ opacity: 0.85 }}>
-              {t('goals.documents')}
-            </AppText>
-            <AppText variant="h2" tone="inverse">
-              {planGuides.length}
-            </AppText>
-          </View>
-          <View className="gap-0.5" style={{ minWidth: 120 }}>
+        <Card tone="primary" className="gap-3">
+          <View className="gap-0.5">
             <AppText variant="caption" tone="inverse" style={{ opacity: 0.85 }}>
               {t('goals.totalCost')}
             </AppText>
-            <AppText variant="h2" tone="inverse">
+            <AppText variant="h1" tone="inverse">
               {total.amount === 0 && !total.atLeast
                 ? t('common.free')
                 : total.atLeast
@@ -104,13 +111,26 @@ export default function Goals() {
                   : formatPeso(total.amount)}
             </AppText>
           </View>
-          <View className="gap-0.5" style={{ minWidth: 120 }}>
-            <AppText variant="caption" tone="inverse" style={{ opacity: 0.85 }}>
-              {t('goals.freeOnes')}
-            </AppText>
-            <AppText variant="h2" tone="inverse">
-              {total.freeCount}
-            </AppText>
+          <View
+            className="flex-row border-t pt-3"
+            style={{ borderColor: 'rgba(255,255,255,0.25)' }}
+          >
+            <View className="flex-1 gap-0.5">
+              <AppText variant="caption" tone="inverse" style={{ opacity: 0.85 }}>
+                {t('goals.documents')}
+              </AppText>
+              <AppText variant="title" tone="inverse">
+                {planGuides.length}
+              </AppText>
+            </View>
+            <View className="flex-1 gap-0.5">
+              <AppText variant="caption" tone="inverse" style={{ opacity: 0.85 }}>
+                {t('goals.freeOnes')}
+              </AppText>
+              <AppText variant="title" tone="inverse">
+                {total.freeCount}
+              </AppText>
+            </View>
           </View>
         </Card>
       </PopOnChange>
@@ -173,6 +193,7 @@ export default function Goals() {
       {untracked.length > 0 ? (
         <Button
           label={t('goals.trackAll', { count: untracked.length })}
+          fullWidth
           icon={<Icon name="docs" size={18} color="#FFFFFF" />}
           onPress={trackAll}
         />

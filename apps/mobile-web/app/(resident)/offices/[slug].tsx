@@ -108,31 +108,42 @@ export default function OfficeDetail() {
         />
       ) : null}
 
-      <View className="flex-row flex-wrap gap-2">
+      {/* Main action first and full width; contact actions share one row. */}
+      <View className="gap-2">
         <Button
           label={t('offices.directions')}
-          size="md"
-          icon={<Icon name="directions" size={18} color="#FFFFFF" />}
+          fullWidth
+          icon={<Icon name="directions" size={20} color="#FFFFFF" />}
           onPress={() => openOfficial(directionsUrl(office))}
         />
-        {office.phone ? (
-          <Button
-            label={t('offices.call')}
-            variant="secondary"
-            size="md"
-            icon={<Icon name="call" size={18} color={colors.primaryDark} />}
-            accessibilityHint={office.phone}
-            onPress={() => Linking.openURL(telUrl(office.phone!)).catch(() => {})}
-          />
-        ) : null}
-        {office.email ? (
-          <Button
-            label={t('offices.email')}
-            variant="secondary"
-            size="md"
-            icon={<Icon name="mail" size={18} color={colors.primaryDark} />}
-            onPress={() => Linking.openURL(`mailto:${office.email}`).catch(() => {})}
-          />
+        {office.phone || office.email ? (
+          <View className="flex-row gap-2">
+            {office.phone ? (
+              <View className="flex-1">
+                <Button
+                  label={t('offices.call')}
+                  variant="secondary"
+                  size="md"
+                  fullWidth
+                  icon={<Icon name="call" size={18} color={colors.primaryDark} />}
+                  accessibilityHint={office.phone}
+                  onPress={() => Linking.openURL(telUrl(office.phone!)).catch(() => {})}
+                />
+              </View>
+            ) : null}
+            {office.email ? (
+              <View className="flex-1">
+                <Button
+                  label={t('offices.email')}
+                  variant="secondary"
+                  size="md"
+                  fullWidth
+                  icon={<Icon name="mail" size={18} color={colors.primaryDark} />}
+                  onPress={() => Linking.openURL(`mailto:${office.email}`).catch(() => {})}
+                />
+              </View>
+            ) : null}
+          </View>
         ) : null}
       </View>
 
@@ -193,6 +204,9 @@ export default function OfficeDetail() {
             <View className="flex-row gap-2">
               <Icon name="flag" size={18} color={colors.primary} />
               <AppText variant="body" tone="muted" className="flex-1">
+                <AppText variant="body" weight="semibold" tone="muted">
+                  {t('offices.landmark')}{' '}
+                </AppText>
                 {L(office.landmark)}
               </AppText>
             </View>

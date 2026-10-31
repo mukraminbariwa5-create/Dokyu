@@ -46,10 +46,10 @@ export default function Account() {
       {status === 'loading' ? <ActivityIndicator color={colors.primary} /> : null}
 
       {status === 'signedOut' ? (
-        <Card tone="soft" className="flex-row items-center gap-4 p-5">
-          <Doki size={88} />
-          <View className="flex-1 gap-3">
-            <View className="gap-1">
+        <Card tone="soft" className="gap-4 p-5">
+          <View className="flex-row items-center gap-4">
+            <Doki size={76} />
+            <View className="flex-1 gap-1">
               <AppText variant="title" tone="primaryDark">
                 {t('account.guestTitle')}
               </AppText>
@@ -57,26 +57,28 @@ export default function Account() {
                 {t('account.guestText')}
               </AppText>
             </View>
-            {ACCOUNTS_ENABLED ? (
-              <View className="flex-row flex-wrap gap-2">
-                <Button
-                  label={t('auth.signUp')}
-                  size="md"
-                  onPress={() => router.push('/sign-up')}
-                />
-                <Button
-                  label={t('auth.signIn')}
-                  size="md"
-                  variant="secondary"
-                  onPress={() => router.push('/sign-in')}
-                />
-              </View>
-            ) : (
-              <AppText variant="small" weight="medium" tone="primaryDark">
-                {t('preview.account')}
-              </AppText>
-            )}
           </View>
+          {ACCOUNTS_ENABLED ? (
+            <View className="gap-2">
+              <Button
+                label={t('auth.signUp')}
+                size="md"
+                fullWidth
+                onPress={() => router.push('/sign-up')}
+              />
+              <Button
+                label={t('auth.signIn')}
+                size="md"
+                variant="secondary"
+                fullWidth
+                onPress={() => router.push('/sign-in')}
+              />
+            </View>
+          ) : (
+            <AppText variant="small" weight="medium" tone="primaryDark">
+              {t('preview.account')}
+            </AppText>
+          )}
         </Card>
       ) : null}
 
@@ -97,44 +99,43 @@ export default function Account() {
         </>
       ) : null}
 
-      <Card className="gap-3">
-        <Row icon="pin" label={t('account.area')} value={area || t('account.notSet')} />
-        <Row
-          icon="check"
-          label={t('account.goals')}
-          value={goalNames.join(', ') || t('account.notSet')}
-        />
-        <Button
-          label={t('account.editSetup')}
-          variant="ghost"
-          size="md"
-          onPress={() => router.push('/setup')}
-        />
-      </Card>
-
-      <Button
-        label={t('tour.replay')}
-        accessibilityHint={t('tour.replayHint')}
-        variant="secondary"
-        size="md"
-        icon={<Icon name="sparkle" size={18} color={colors.primaryDark} />}
-        onPress={() => {
-          settings.update({ tourSeen: false });
-          router.navigate('/');
-        }}
-      />
+      <View className="gap-2">
+        <AppText variant="title">{t('account.setupTitle')}</AppText>
+        <Card className="gap-3">
+          <Row icon="pin" label={t('account.area')} value={area || t('account.notSet')} />
+          <Row
+            icon="target"
+            label={t('account.goals')}
+            value={goalNames.join(', ') || t('account.notSet')}
+          />
+          <Button
+            label={t('account.editSetup')}
+            variant="secondary"
+            size="md"
+            fullWidth
+            icon={<Icon name="edit" size={18} color={colors.primaryDark} />}
+            onPress={() => router.push('/setup')}
+          />
+        </Card>
+      </View>
 
       <DisplaySettings />
 
       {status === 'signedIn' ? <Devices /> : null}
 
-      <InfoLinks />
+      <InfoLinks
+        onReplayTour={() => {
+          settings.update({ tourSeen: false });
+          router.navigate('/');
+        }}
+      />
       <DataSection />
 
       {status === 'signedIn' ? (
         <Button
           label={t('auth.signOut')}
           variant="secondary"
+          fullWidth
           icon={<Icon name="logout" size={18} color={colors.primaryDark} />}
           onPress={() => signOut()}
         />
@@ -144,7 +145,7 @@ export default function Account() {
   );
 }
 
-function Row({ icon, label, value }: { icon: 'pin' | 'check'; label: string; value: string }) {
+function Row({ icon, label, value }: { icon: 'pin' | 'target'; label: string; value: string }) {
   return (
     <View className="flex-row items-start gap-3">
       <Icon name={icon} size={20} color={colors.primary} />
