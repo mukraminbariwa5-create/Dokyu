@@ -30,7 +30,8 @@ export function OfficeMap({
     >
       <WebView
         originWhitelist={['*']}
-        source={{ html }}
+        // A web base URL so map tile requests carry a Referer (OpenStreetMap requires one).
+        source={{ html, baseUrl: 'https://dokyu.onrender.com/' }}
         onMessage={(e) => {
           try {
             const msg = JSON.parse(e.nativeEvent.data) as { type?: string; slug?: string };

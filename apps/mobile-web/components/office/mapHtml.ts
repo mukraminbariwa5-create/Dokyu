@@ -49,8 +49,9 @@ function offline(){document.getElementById('map').style.display='none';document.
 <script>
 if(!window.L){offline()}else{
   var map=L.map('map',{zoomControl:true,attributionControl:true});
-  // CARTO Voyager tiles (built from OpenStreetMap data) work inside embedded frames and WebViews.
-  var tiles=L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:20,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank">CARTO</a>'}).addTo(map);
+  // OpenStreetMap's own tiles: free with attribution, no key. Their policy asks for a Referer,
+  // which the app sends (the server's Referrer-Policy is strict-origin-when-cross-origin).
+  var tiles=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors'}).addTo(map);
   var fails=0;tiles.on('tileerror',function(){fails++;if(fails>12&&!window.__offline){window.__offline=1;offline()}});
   var pts=[];
   D.pins.forEach(function(p){

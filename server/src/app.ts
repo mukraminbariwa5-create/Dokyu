@@ -47,10 +47,10 @@ export function createApp(env: Env, db: PrismaClient, deps: AppDeps = {}) {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
-          // The web app's start-up script and the office map (Leaflet from a CDN, CARTO map tiles).
+          // The web app's start-up script and the office map (Leaflet from a CDN, OpenStreetMap tiles).
           scriptSrc: ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net', 'https://unpkg.com'],
           styleSrc: ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net', 'https://unpkg.com'],
-          imgSrc: ["'self'", 'data:', 'blob:', 'https://*.basemaps.cartocdn.com'],
+          imgSrc: ["'self'", 'data:', 'blob:', 'https://tile.openstreetmap.org'],
           fontSrc: ["'self'", 'data:'],
           connectSrc: ["'self'"],
           frameSrc: ["'self'"],
@@ -60,6 +60,8 @@ export function createApp(env: Env, db: PrismaClient, deps: AppDeps = {}) {
           formAction: ["'self'"],
         },
       },
+      // OpenStreetMap's tile servers require a Referer; send only the origin to other sites.
+      referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
     }),
   );
   app.use(cors({ origin: origins, credentials: true }));
