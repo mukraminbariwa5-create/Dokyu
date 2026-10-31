@@ -1,0 +1,27 @@
+name: Keep the live app awake
+# Render's free plan puts the app to sleep after 15 minutes without visitors, and the next visitor waits
+# about a minute. This pings it every 10 minutes from 7 AM to 10 PM Philippine time only: the 750 free
+# hours a month are shared by every free service on the Render account, so a 24/7 ping would use them all.
+# (GitHub may run scheduled jobs a few minutes late, and pauses them after 60 days without commits.)
+on:
+  schedule:
+    - cron: '*/10 23 * * *' # 7:00–7:59 AM Manila (UTC+8)
+    - cron: '*/10 0-13 * * *' # 8:00 AM–9:59 PM Manila
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ping the health check
+        run: |
+          for i in 1 2 3; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 90 https://dokyu.onrender.com/api/v1/health) || code=000
+            echo "Attempt $i: HTTP $code"
+            [ "$code" = "200" ] && exit 0
+            sleep 20
+          done
+          echo "The app did not answer with 200." && exit 1
