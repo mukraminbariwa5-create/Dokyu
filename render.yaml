@@ -1,0 +1,41 @@
+# Render Blueprint: one free web service that runs the API and serves the web app from the same address
+# (so the sign-in cookie stays first-party). The database is Neon (free, does not expire): paste its
+# connection string as DATABASE_URL when Render asks.
+services:
+  - type: web
+    name: dokyu
+    runtime: node
+    plan: free
+    region: singapore
+    branch: main
+    healthCheckPath: /api/v1/health
+    buildCommand: >-
+      corepack enable &&
+      pnpm install --frozen-lockfile --prod=false &&
+      pnpm --filter @dokyu/server exec prisma generate &&
+      pnpm --filter @dokyu/server setup:prod &&
+      cd apps/mobile-web &&
+      EXPO_OFFLINE=1 EXPO_PUBLIC_API_URL=same-origin npx expo export --platform web --output-dir ../../server/web
+    startCommand: cd server && pnpm start:prod
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: '22'
+      - key: WEB_DIR
+        value: web
+      - key: DATABASE_URL
+        sync: false
+      - key: SEED_ADMIN_PASSWORD
+        sync: false
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: AUTH_RATE_LIMIT
+        value: '20'
+      # Optional real email (Resend). Leave empty to switch email off.
+      - key: RESEND_API_KEY
+        sync: false
+      - key: MAIL_FROM
+        sync: false

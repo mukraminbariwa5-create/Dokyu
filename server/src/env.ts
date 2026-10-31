@@ -11,12 +11,23 @@ const schema = z.object({
   APP_URL: z.string().url().default('http://localhost:8081'),
   /** Max sign-in, sign-up and password-reset attempts per IP per 15 minutes. */
   AUTH_RATE_LIMIT: z.coerce.number().int().positive().default(20),
+  /** Folder with the exported web app. When set, the API also serves the app from the same address. */
+  WEB_DIR: z.string().optional(),
+  /** Optional real email (Resend). Without it, no email is sent in production. */
+  RESEND_API_KEY: z.string().optional(),
+  MAIL_FROM: z.string().optional(),
 });
 
 export type Env = z.infer<typeof schema>;
 
 export function loadEnv(source: NodeJS.ProcessEnv = process.env): Env {
-  const parsed = schema.safeParse(source);
+  // On Render the public address is known only at runtime: use it for CORS and email links by default.
+  const external = source.RENDER_EXTERNAL_URL;
+  const parsed = schema.safeParse({
+    ...source,
+    CORS_ORIGINS: source.CORS_ORIGINS ?? external,
+    APP_URL: source.APP_URL ?? external,
+  });
   if (!parsed.success) {
     // Print field names only, never values (they may be secrets).
     const fields = parsed.error.issues.map((i) => i.path.join('.')).join(', ');

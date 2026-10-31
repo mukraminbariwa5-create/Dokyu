@@ -29,7 +29,10 @@ describe.skipIf(!hasTestDb)('privacy and holidays (database)', () => {
     const { accessToken, refreshToken } = await login(app, 'ana@example.com');
     const auth = { Authorization: `Bearer ${accessToken}` };
 
-    const wrong = await request(app).delete('/api/v1/me').set(auth).send({ password: 'nope-nope-nope' });
+    const wrong = await request(app)
+      .delete('/api/v1/me')
+      .set(auth)
+      .send({ password: 'nope-nope-nope' });
     expect(wrong.status).toBe(403);
     expect(await db.user.count({ where: { id: user.id } })).toBe(1);
 
@@ -61,7 +64,12 @@ describe.skipIf(!hasTestDb)('privacy and holidays (database)', () => {
       data: HOLIDAYS.map((h) => ({
         date: new Date(`${h.date}T00:00:00Z`),
         name: h.name.en,
-        type: h.kind === 'regular' ? 'REGULAR' : h.kind === 'special' ? 'SPECIAL_NON_WORKING' : 'SPECIAL_WORKING',
+        type:
+          h.kind === 'regular'
+            ? 'REGULAR'
+            : h.kind === 'special'
+              ? 'SPECIAL_NON_WORKING'
+              : 'SPECIAL_WORKING',
         scope: 'NATIONAL',
         sourceUrl: h.source,
       })),
@@ -70,6 +78,10 @@ describe.skipIf(!hasTestDb)('privacy and holidays (database)', () => {
     expect(res.status).toBe(200);
     const dates = res.body.data.map((h: { date: string }) => h.date);
     expect(dates).toEqual([...dates].sort());
-    expect(dates.every((d: string) => d >= new Date(Date.now() + 8 * 3600_000).toISOString().slice(0, 10))).toBe(true);
+    expect(
+      dates.every(
+        (d: string) => d >= new Date(Date.now() + 8 * 3600_000).toISOString().slice(0, 10),
+      ),
+    ).toBe(true);
   });
 });

@@ -7,10 +7,9 @@ import { Platform } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import type { PublicUser } from '@dokyu/shared';
 
-export const API_URL = (process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:4000').replace(
-  /\/$/,
-  '',
-);
+/** "same-origin" = the app is served by the API itself (production on Render). */
+const RAW_API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:4000';
+export const API_URL = RAW_API_URL === 'same-origin' ? '' : RAW_API_URL.replace(/\/$/, '');
 /**
  * The public web preview (GitHub Pages) has no server yet, so accounts are switched off there and every
  * screen that needs one says so instead of failing. Set EXPO_PUBLIC_PREVIEW=1 at build time.
@@ -125,6 +124,16 @@ export async function api<T>(
     const renewed = await refreshSession();
     if (!renewed) throw e;
     return raw<T>(path, { ...init, token: accessToken });
+  }
+}
+
+/** Optional server features (e.g. email). Defaults to everything on if the server can't be asked. */
+export async function serverFeatures(): Promise<{ email: boolean }> {
+  try {
+    const data = await raw<{ features?: { email?: boolean } }>('/health');
+    return { email: data.features?.email !== false };
+  } catch {
+    return { email: true };
   }
 }
 

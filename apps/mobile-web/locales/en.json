@@ -143,7 +143,8 @@
     "verifyFailed": "This link is invalid or has expired.",
     "missingToken": "This link is missing its code. Open the newest link from your email.",
     "backToSignIn": "Back to sign in",
-    "goHome": "Go to Home"
+    "goHome": "Go to Home",
+    "noEmail": "Password reset by email isn't switched on yet. Email {{email}} from your account's email address and we'll help you get back in."
   },
   "onboarding": {
     "skip": "Skip",

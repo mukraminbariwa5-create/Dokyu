@@ -8,6 +8,8 @@ import { Input } from '../../components/ui/Input';
 import { authApi } from '../../lib/api';
 import { useSettings } from '../../lib/settings';
 import { checkFields, describeError, translateError } from '../../lib/errors';
+import { useServerFeatures } from '../../lib/serverFeatures';
+import { CONTACT_EMAIL } from '../../lib/legal';
 
 export default function ForgotPassword() {
   const { t } = useTranslation();
@@ -19,6 +21,7 @@ export default function ForgotPassword() {
   const [sent, setSent] = useState(false);
   const [busy, setBusy] = useState(false);
   const tr = (m?: string) => (m ? translateError(m, language) : undefined);
+  const { email: emailOn } = useServerFeatures();
 
   async function submit() {
     const local = checkFields(forgotPasswordSchema, { email });
@@ -41,7 +44,9 @@ export default function ForgotPassword() {
   return (
     <AuthScreen title={t('auth.forgotTitle')} intro={t('auth.forgotIntro')}>
       {error ? <FormNotice tone="error">{tr(error)!}</FormNotice> : null}
-      {sent ? (
+      {!emailOn ? (
+        <FormNotice tone="error">{t('auth.noEmail', { email: CONTACT_EMAIL })}</FormNotice>
+      ) : sent ? (
         <>
           <FormNotice tone="success">{t('auth.linkSent')}</FormNotice>
           <Button

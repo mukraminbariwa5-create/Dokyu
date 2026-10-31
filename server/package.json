@@ -9,7 +9,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "prisma:migrate": "prisma migrate dev",
-    "seed": "tsx --env-file=.env prisma/seed.ts"
+    "seed": "tsx --env-file=.env prisma/seed.ts",
+    "setup:prod": "prisma migrate deploy && tsx prisma/seed.ts",
+    "start:prod": "node --import tsx src/index.ts"
   },
   "dependencies": {
     "@dokyu/shared": "workspace:*",

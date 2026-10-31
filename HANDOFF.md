@@ -70,7 +70,7 @@ Expo SDK **58** (RN 0.88, React 19.3), Expo Router 58, NativeWind **4.2** + Tail
 - Still open: host the API (needs an account on a host), test on an Android phone with Expo Go, Super Admin guide/office editor (content is in the seed files for now), more office areas.
 
 ## Next
-1. Put the API online (Render/Railway/Fly + a free Postgres), set `EXPO_PUBLIC_API_URL` in `web.yml` and drop `EXPO_PUBLIC_PREVIEW`.
+1. Deploy with `render.yaml` + Neon, steps in `docs/DEPLOY.md`. The server serves the web app itself (`WEB_DIR`, same-origin cookie), runs migrations + seed in the build, and switches email on only with `RESEND_API_KEY` + `MAIL_FROM` (`/api/v1/health` reports `features.email`). Tested locally in production mode: sign-up, sign-in, reload, export, delete, demo login, 58/59 crawl (the 1 is preview-only).
 2. Test on an Android phone with Expo Go (map WebView, date picker, reminders, Near me).
 3. Super Admin editor for guides and offices; more office areas.
 

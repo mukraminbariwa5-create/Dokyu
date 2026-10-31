@@ -16,6 +16,7 @@ import { useAuth } from '../../lib/auth';
 import { ACCOUNTS_ENABLED, api, authApi } from '../../lib/api';
 import { DataSection, InfoLinks } from '../../components/account/AccountSections';
 import { useSettings } from '../../lib/settings';
+import { useServerFeatures } from '../../lib/serverFeatures';
 import { formatDate } from '../../lib/format';
 
 interface Session {
@@ -30,6 +31,7 @@ export default function Account() {
   const router = useRouter();
   const { status, user, signOut } = useAuth();
   const settings = useSettings();
+  const { email: emailOn } = useServerFeatures();
 
   const goalNames = settings.goals
     .map((slug) => GOALS.find((g) => g.slug === slug))
@@ -91,7 +93,7 @@ export default function Account() {
               {user.email}
             </AppText>
           </Card>
-          {!user.emailVerified ? <VerifyBanner email={user.email} /> : null}
+          {!user.emailVerified && emailOn ? <VerifyBanner email={user.email} /> : null}
         </>
       ) : null}
 

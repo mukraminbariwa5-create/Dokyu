@@ -74,8 +74,7 @@ export async function startSession(
 }
 
 export type RotateResult =
-  | { ok: true; tokens: IssuedTokens; user: User }
-  | { ok: false; reason: 'invalid' | 'reused' };
+  { ok: true; tokens: IssuedTokens; user: User } | { ok: false; reason: 'invalid' | 'reused' };
 
 /** Swaps a refresh token for a new pair. Safe against two requests racing with the same token. */
 export async function rotateSession(

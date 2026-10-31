@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/mukraminbariwa5-create/dokyu/actions/workflows/ci.yml/badge.svg)](https://github.com/mukraminbariwa5-create/dokyu/actions/workflows/ci.yml)
 
-**Try it:** https://mukraminbariwa5-create.github.io/Dokyu/ (web app, updated on every push; sign-in needs the API, which is not hosted yet)
+**Try it:** https://mukraminbariwa5-create.github.io/Dokyu/ (preview, updated on every push; accounts are off there). Full app with accounts: see [docs/DEPLOY.md](docs/DEPLOY.md).
 
 **Dokyu** helps anyone in the Philippines who needs government papers (students, job seekers, teachers, employees, workers, parents, seniors) get them in **one trip instead of three**: know exactly what to bring, do the online part at home, and go to the office only to submit and claim.
 

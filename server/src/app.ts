@@ -14,7 +14,9 @@ import { authRouter } from './routes/auth.js';
 import { meRouter } from './routes/me.js';
 import { superRouter } from './routes/super.js';
 import { createJwt } from './lib/jwt.js';
-import { LogMailer, type Mailer } from './lib/mailer.js';
+import { LogMailer, NoMailer, ResendMailer, type Mailer } from './lib/mailer.js';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 import { REDACT_PATHS, redactUrl } from './lib/redact.js';
 
 export interface AppDeps {
@@ -24,12 +26,42 @@ export interface AppDeps {
 export function createApp(env: Env, db: PrismaClient, deps: AppDeps = {}) {
   const app = express();
   const jwt = createJwt(env.JWT_ACCESS_SECRET);
-  const mailer = deps.mailer ?? new LogMailer(env.NODE_ENV !== 'test');
+  const emailOn = Boolean(env.RESEND_API_KEY && env.MAIL_FROM);
+  const mailer =
+    deps.mailer ??
+    (emailOn
+      ? new ResendMailer(env.RESEND_API_KEY!, env.MAIL_FROM!)
+      : env.NODE_ENV === 'production'
+        ? new NoMailer()
+        : new LogMailer(env.NODE_ENV !== 'test'));
+  const webDir =
+    env.WEB_DIR && existsSync(path.join(env.WEB_DIR, 'index.html'))
+      ? path.resolve(env.WEB_DIR)
+      : null;
   const origins = env.CORS_ORIGINS.split(',').map((o) => o.trim());
 
   app.disable('x-powered-by');
   app.set('trust proxy', 1);
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          // The web app's start-up script and the office map (Leaflet from a CDN, CARTO map tiles).
+          scriptSrc: ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net', 'https://unpkg.com'],
+          styleSrc: ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net', 'https://unpkg.com'],
+          imgSrc: ["'self'", 'data:', 'blob:', 'https://*.basemaps.cartocdn.com'],
+          fontSrc: ["'self'", 'data:'],
+          connectSrc: ["'self'"],
+          frameSrc: ["'self'"],
+          objectSrc: ["'none'"],
+          baseUri: ["'self'"],
+          frameAncestors: ["'none'"],
+          formAction: ["'self'"],
+        },
+      },
+    }),
+  );
   app.use(cors({ origin: origins, credentials: true }));
   app.use(express.json({ limit: '100kb' }));
   app.use(cookieParser());
@@ -49,7 +81,7 @@ export function createApp(env: Env, db: PrismaClient, deps: AppDeps = {}) {
     rateLimit({ windowMs: 60_000, limit: 120, standardHeaders: 'draft-8', legacyHeaders: false }),
   );
 
-  app.use('/api/v1/health', health);
+  app.use('/api/v1/health', health({ email: emailOn || env.NODE_ENV !== 'production' }));
   app.use('/api/v1/guides', guidesRouter(db));
   app.use('/api/v1/offices', officesRouter(db));
   app.use('/api/v1/holidays', holidaysRouter(db));
@@ -57,6 +89,11 @@ export function createApp(env: Env, db: PrismaClient, deps: AppDeps = {}) {
   app.use('/api/v1/me', meRouter(db, jwt));
   app.use('/api/v1/super', superRouter(db, jwt));
 
+  if (webDir) {
+    // The web app, from the same address as the API, so the sign-in cookie stays first-party.
+    app.use(express.static(webDir, { index: 'index.html', maxAge: '1h' }));
+    app.get(/^(?!\/api\/).*/, (_req, res) => res.sendFile(path.join(webDir, 'index.html')));
+  }
   app.use((_req, res) => res.status(404).json({ error: 'Not found' }));
   const onError: ErrorRequestHandler = (err, _req, res, _next) => {
     // Never leak stack traces to clients.

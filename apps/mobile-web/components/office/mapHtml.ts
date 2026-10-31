@@ -28,7 +28,7 @@ export function mapHtml({
   );
   return `<!doctype html><html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" onerror="this.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'">
+
 <style>
 html,body,#map{height:100%;margin:0;background:#ECF0FF;font-family:Poppins,system-ui,sans-serif}
 .pin{width:38px;height:38px;border-radius:12px 12px 12px 2px;transform:rotate(-45deg);background:#2042C4;border:3px solid #fff;box-shadow:0 4px 10px rgba(19,40,122,.35);display:flex;align-items:center;justify-content:center}
@@ -39,11 +39,13 @@ html,body,#map{height:100%;margin:0;background:#ECF0FF;font-family:Poppins,syste
 </style></head><body><div id="map"></div><div id="off">${offlineText.replace(/</g, '&lt;')}</div>
 <script>
 var D=${data};
+function css(h){var l=document.createElement('link');l.rel='stylesheet';l.href=h;document.head.appendChild(l)}
+css('https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css');
 function send(m){try{(window.ReactNativeWebView||window.parent).postMessage(JSON.stringify(m),'*')}catch(e){}}
 function offline(){document.getElementById('map').style.display='none';document.getElementById('off').style.display='flex'}
 </script>
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>if(!window.L){document.write('<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\\/script>')}</script>
+<script>if(!window.L){css('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');document.write('<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\\/script>')}</script>
 <script>
 if(!window.L){offline()}else{
   var map=L.map('map',{zoomControl:true,attributionControl:true});

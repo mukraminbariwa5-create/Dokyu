@@ -143,7 +143,8 @@
     "verifyFailed": "Hindi na gumagana o expired na ang link na ito.",
     "missingToken": "Kulang ang code ng link na ito. Buksan ang pinakabagong link mula sa email mo.",
     "backToSignIn": "Bumalik sa sign in",
-    "goHome": "Pumunta sa Home"
+    "goHome": "Pumunta sa Home",
+    "noEmail": "Hindi pa naka-on ang pag-reset ng password sa email. Mag-email sa {{email}} gamit ang email ng account mo at tutulungan ka naming makapasok ulit."
   },
   "onboarding": {
     "skip": "Laktawan",

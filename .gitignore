@@ -10,3 +10,4 @@ coverage/
 .DS_Store
 android/
 ios/
+server/web/

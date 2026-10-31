@@ -25,3 +25,30 @@ export class LogMailer implements Mailer {
     }
   }
 }
+
+/** Sends real email through Resend's HTTP API (free tier). */
+export class ResendMailer implements Mailer {
+  constructor(
+    private readonly apiKey: string,
+    private readonly from: string,
+  ) {}
+  async send(mail: Mail): Promise<void> {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${this.apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: this.from,
+        to: [mail.to],
+        subject: mail.subject,
+        text: mail.text,
+      }),
+    });
+    // Never throw to the user: sign-up and reset answer the same way whether or not email worked.
+    if (!res.ok) console.error(`Email to provider failed with status ${res.status}`);
+  }
+}
+
+/** Production without an email provider: sends nothing and never writes links (secrets) to the log. */
+export class NoMailer implements Mailer {
+  async send(): Promise<void> {}
+}
