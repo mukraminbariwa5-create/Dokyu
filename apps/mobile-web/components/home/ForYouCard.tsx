@@ -40,14 +40,14 @@ export function ForYouCard({ item }: { item: ForYou }) {
     title = pick(item.guide.title, language);
     text = pick(item.why, language);
     cta = t('home.goalCta', { title: pick(item.guide.title, language) });
-    onPress = () => router.push({ pathname: '/guides/[slug]', params: { slug: item.guide.slug } });
+    onPress = () => router.push({ pathname: '/goals', params: { goal: item.goal } });
     art = <AgencyTile mono={item.guide.mono} size={58} />;
   } else {
     label = t('home.pickLabel');
     title = t('home.pickTitle');
     text = t('home.pickText');
     cta = t('home.pickCta');
-    onPress = () => router.push('/setup');
+    onPress = () => router.push('/goals');
     art = (
       <View
         className="items-center justify-center rounded-lg"

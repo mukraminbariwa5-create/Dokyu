@@ -6,3 +6,7 @@ export * from './seed/guides';
 export * from './seed/offices';
 export * from './seed/barangay';
 export * from './auth';
+export * from './seed/holidays';
+export * from './offices';
+export * from './goals';
+export * from './ask';

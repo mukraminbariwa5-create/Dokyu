@@ -8,13 +8,35 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "android": {
-      "package": "ph.dokyu.app"
+      "package": "ph.dokyu.app",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ]
     },
     "web": {
       "bundler": "metro",
       "output": "single"
     },
-    "plugins": ["expo-router", "expo-font", "expo-splash-screen", "expo-status-bar"],
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-splash-screen",
+      "expo-status-bar",
+      "@react-native-community/datetimepicker",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Dokyu uses your location only to sort offices by distance. It is never saved or sent anywhere."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#2042C4"
+        }
+      ]
+    ],
     "experiments": {
       "typedRoutes": true
     }

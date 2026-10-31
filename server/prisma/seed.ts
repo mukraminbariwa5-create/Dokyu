@@ -4,7 +4,7 @@
  */
 import { PrismaClient, type Prisma } from '@prisma/client';
 import { randomBytes } from 'node:crypto';
-import { GUIDES, OFFICES } from '@dokyu/shared';
+import { GUIDES, HOLIDAYS, OFFICES, hoursText } from '@dokyu/shared';
 import { hashPassword } from '../src/lib/passwords.js';
 
 const db = new PrismaClient();
@@ -16,6 +16,8 @@ const AGENCIES: Record<string, { name: string; officialUrl: string }> = {
   NBI: { name: 'National Bureau of Investigation', officialUrl: 'https://nbi.gov.ph' },
   DFA: { name: 'Department of Foreign Affairs', officialUrl: 'https://dfa.gov.ph' },
   PhilHealth: { name: 'PhilHealth', officialUrl: 'https://www.philhealth.gov.ph' },
+  PNP: { name: 'Philippine National Police', officialUrl: 'https://pnpclearance.ph' },
+  PHLPost: { name: 'Philippine Postal Corporation', officialUrl: 'https://phlpost.gov.ph' },
 };
 
 async function main() {
@@ -55,9 +57,16 @@ async function main() {
       province: o.province,
       municipality: o.municipality,
       contactNumber: o.phone ?? null,
-      hours: { text: o.hours, confirmed: o.hoursConfirmed },
-      notes: o.services.join(' · '),
-      lastVerifiedAt: new Date('2026-10-30'),
+      lat: o.lat,
+      lng: o.lng,
+      landmark: o.landmark?.en ?? null,
+      hours: {
+        weekly: o.hours,
+        text: hoursText(o, 'en'),
+        confirmed: o.hoursConfirmed,
+      } as unknown as Prisma.InputJsonValue,
+      notes: o.services.en,
+      lastVerifiedAt: new Date(o.lastVerified),
       sourceUrl: o.source,
     };
     await db.office.upsert({
@@ -66,6 +75,23 @@ async function main() {
       update: data,
     });
   }
+
+  // Holidays are replaced as a set so a corrected date never leaves a stale row behind.
+  await db.holiday.deleteMany({ where: { scope: 'NATIONAL' } });
+  await db.holiday.createMany({
+    data: HOLIDAYS.map((h) => ({
+      date: new Date(`${h.date}T00:00:00Z`),
+      name: h.name.en,
+      type:
+        h.kind === 'regular'
+          ? ('REGULAR' as const)
+          : h.kind === 'special'
+            ? ('SPECIAL_NON_WORKING' as const)
+            : ('SPECIAL_WORKING' as const),
+      scope: 'NATIONAL' as const,
+      sourceUrl: h.source,
+    })),
+  });
 
   // Demo accounts (plan §10). The demo user's password is public on purpose so recruiters can try the app.
   // The admin password comes from SEED_ADMIN_PASSWORD, or a random one is printed once.
@@ -104,7 +130,7 @@ async function main() {
   }
 
   console.log(
-    `Seeded ${GUIDES.length} guides, ${OFFICES.length} offices, demo user ${DEMO_USER_EMAIL} and admin ${ADMIN_EMAIL}.`,
+    `Seeded ${GUIDES.length} guides, ${OFFICES.length} offices, ${HOLIDAYS.length} holidays, demo user ${DEMO_USER_EMAIL} and admin ${ADMIN_EMAIL}.`,
   );
 }
 

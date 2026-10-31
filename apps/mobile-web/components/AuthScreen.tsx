@@ -9,6 +9,8 @@ import { Wordmark } from './ui/Wordmark';
 import { Disclaimer } from './ui/Disclaimer';
 import { Icon } from './ui/Icon';
 import { useLayout } from '../lib/useLayout';
+import { ACCOUNTS_ENABLED } from '../lib/api';
+import { Button } from './ui/Button';
 
 /** Layout for sign-in and related pages: full width on phones, a centred card on desktop. */
 export function AuthScreen({
@@ -53,7 +55,19 @@ export function AuthScreen({
             </AppText>
           ) : null}
         </View>
-        {children}
+        {ACCOUNTS_ENABLED ? (
+          children
+        ) : (
+          <View className="gap-3 rounded-lg bg-primary-soft p-4" accessibilityRole="alert">
+            <AppText variant="body" weight="semibold">
+              {t('preview.title')}
+            </AppText>
+            <AppText variant="small" tone="muted">
+              {t('preview.text')}
+            </AppText>
+            <Button label={t('preview.home')} size="md" onPress={() => router.replace('/')} />
+          </View>
+        )}
       </View>
       <Disclaimer />
     </Screen>

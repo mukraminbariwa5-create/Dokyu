@@ -30,6 +30,8 @@ interface AuthContextValue {
     consent: boolean;
   }) => Promise<PublicUser>;
   signOut: () => Promise<void>;
+  /** Deletes the account on the server (needs the password again), then signs out. */
+  deleteAccount: (password: string) => Promise<void>;
   /** Saves profile fields. Does nothing for guests. */
   updateProfile: (patch: ProfileUpdate) => Promise<void>;
 }
@@ -112,6 +114,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setStatus('signedOut');
   }, []);
 
+  const deleteAccount = useCallback(async (password: string) => {
+    await authApi.deleteAccount(password);
+    setUser(null);
+    setStatus('signedOut');
+  }, []);
+
   const updateProfile = useCallback(
     async (patch: ProfileUpdate) => {
       if (status !== 'signedIn') return;
@@ -122,8 +130,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const value = useMemo(
-    () => ({ status, user, signIn, signUp, signOut, updateProfile }),
-    [status, user, signIn, signUp, signOut, updateProfile],
+    () => ({ status, user, signIn, signUp, signOut, deleteAccount, updateProfile }),
+    [status, user, signIn, signUp, signOut, deleteAccount, updateProfile],
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

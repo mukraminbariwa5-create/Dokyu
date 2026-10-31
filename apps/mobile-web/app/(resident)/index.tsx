@@ -23,6 +23,9 @@ import { useSettings } from '../../lib/settings';
 import { useAllChecklists } from '../../lib/checklist';
 import { forYou } from '../../lib/forYou';
 import { formatFee } from '../../lib/format';
+import { docAlerts, useMyDocs } from '../../lib/mydocs';
+import { manilaTime } from '@dokyu/shared';
+import { useNow } from '../../lib/offices';
 
 const POPULAR = [
   'nbi-clearance',
@@ -52,7 +55,6 @@ export default function Home() {
     }, [ready, tourSeen, touring, startTour]),
   );
   const { data: guides } = useGuides();
-  const [soonNote, setSoonNote] = useState('');
 
   // Re-read checklist progress whenever Home comes back into view.
   const [visit, setVisit] = useState(0);
@@ -62,9 +64,11 @@ export default function Home() {
     visit,
   );
   const next = forYou(guides, goals, ticks);
+  const { docs } = useMyDocs();
+  const now = useNow();
+  const alerts = docAlerts(docs, manilaTime(now).iso);
   const firstName = user?.fullName.split(' ')[0];
 
-  const soon = (label: string) => () => setSoonNote(`${label}: ${t('home.comingSoon')}`);
   const tiles: Tile[] = [
     {
       key: 'guides',
@@ -100,22 +104,19 @@ export default function Home() {
       key: 'offices',
       icon: 'pin',
       label: t('tiles.offices'),
-      soon: true,
-      onPress: soon(t('tiles.offices')),
+      onPress: () => router.push('/offices'),
     },
     {
       key: 'holidays',
       icon: 'calendar',
       label: t('tiles.holidays'),
-      soon: true,
-      onPress: soon(t('tiles.holidays')),
+      onPress: () => router.push('/holidays'),
     },
     {
       key: 'docs',
       icon: 'docs',
       label: t('tiles.myDocs'),
-      soon: true,
-      onPress: soon(t('tiles.myDocs')),
+      onPress: () => router.push('/docs'),
     },
   ];
 
@@ -148,24 +149,33 @@ export default function Home() {
         <GreetingCard name={firstName} />
       </FadeIn>
 
+      {alerts.length ? (
+        <FadeIn delay={70}>
+          <PressableCard
+            tone="gold"
+            className="flex-row items-center gap-3"
+            onPress={() => router.push('/docs')}
+          >
+            <Icon name="bell" size={22} color="#8A6400" />
+            <AppText
+              variant="body"
+              weight="semibold"
+              className="flex-1"
+              style={{ color: '#5C4300' }}
+            >
+              {t('home.docAlerts', { count: alerts.length })}
+            </AppText>
+            <Icon name="chevronRight" size={20} color="#8A6400" />
+          </PressableCard>
+        </FadeIn>
+      ) : null}
+
       <FadeIn delay={100}>
         <View className="gap-3 rounded-[22px] py-2">
           <AppText variant="title">{t('home.whatToDo')}</AppText>
           <View ref={servicesRef} collapsable={false}>
             <ServiceGrid tiles={tiles} />
           </View>
-          {soonNote ? (
-            <FadeIn key={soonNote} distance={4}>
-              <AppText
-                variant="small"
-                tone="muted"
-                style={{ textAlign: 'center' }}
-                accessibilityLiveRegion="polite"
-              >
-                {soonNote}
-              </AppText>
-            </FadeIn>
-          ) : null}
         </View>
       </FadeIn>
 

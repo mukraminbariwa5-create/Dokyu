@@ -14,6 +14,7 @@ import {
 } from '@expo-google-fonts/poppins';
 import { SettingsProvider, useSettings } from '../lib/settings';
 import { AuthProvider } from '../lib/auth';
+import { MyDocsProvider } from '../lib/mydocs';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '../lib/queryClient';
 
@@ -48,7 +49,9 @@ export default function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <SettingsProvider>
           <AuthProvider>
-            <Root />
+            <MyDocsProvider>
+              <Root />
+            </MyDocsProvider>
           </AuthProvider>
         </SettingsProvider>
       </QueryClientProvider>

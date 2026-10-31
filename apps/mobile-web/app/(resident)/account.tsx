@@ -13,7 +13,8 @@ import { Icon } from '../../components/ui/Icon';
 import { Disclaimer } from '../../components/ui/Disclaimer';
 import { DisplaySettings } from '../../components/DisplaySettings';
 import { useAuth } from '../../lib/auth';
-import { api, authApi } from '../../lib/api';
+import { ACCOUNTS_ENABLED, api, authApi } from '../../lib/api';
+import { DataSection, InfoLinks } from '../../components/account/AccountSections';
 import { useSettings } from '../../lib/settings';
 import { formatDate } from '../../lib/format';
 
@@ -54,15 +55,25 @@ export default function Account() {
                 {t('account.guestText')}
               </AppText>
             </View>
-            <View className="flex-row flex-wrap gap-2">
-              <Button label={t('auth.signUp')} size="md" onPress={() => router.push('/sign-up')} />
-              <Button
-                label={t('auth.signIn')}
-                size="md"
-                variant="secondary"
-                onPress={() => router.push('/sign-in')}
-              />
-            </View>
+            {ACCOUNTS_ENABLED ? (
+              <View className="flex-row flex-wrap gap-2">
+                <Button
+                  label={t('auth.signUp')}
+                  size="md"
+                  onPress={() => router.push('/sign-up')}
+                />
+                <Button
+                  label={t('auth.signIn')}
+                  size="md"
+                  variant="secondary"
+                  onPress={() => router.push('/sign-in')}
+                />
+              </View>
+            ) : (
+              <AppText variant="small" weight="medium" tone="primaryDark">
+                {t('preview.account')}
+              </AppText>
+            )}
           </View>
         </Card>
       ) : null}
@@ -114,6 +125,9 @@ export default function Account() {
       <DisplaySettings />
 
       {status === 'signedIn' ? <Devices /> : null}
+
+      <InfoLinks />
+      <DataSection />
 
       {status === 'signedIn' ? (
         <Button

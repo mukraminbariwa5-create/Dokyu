@@ -11,6 +11,11 @@ export const API_URL = (process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:400
   /\/$/,
   '',
 );
+/**
+ * The public web preview (GitHub Pages) has no server yet, so accounts are switched off there and every
+ * screen that needs one says so instead of failing. Set EXPO_PUBLIC_PREVIEW=1 at build time.
+ */
+export const ACCOUNTS_ENABLED = process.env.EXPO_PUBLIC_PREVIEW !== '1';
 const CLIENT = Platform.OS === 'web' ? 'web' : 'native';
 const REFRESH_KEY = 'dokyu.refresh';
 
@@ -51,6 +56,7 @@ async function raw<T>(
   path: string,
   init: { method?: string; body?: unknown; token?: string | null } = {},
 ): Promise<T> {
+  if (!ACCOUNTS_ENABLED) throw new ApiError(0, 'Accounts are not available in this preview yet.');
   let res: Response;
   try {
     res = await fetch(`${API_URL}/api/v1${path}`, {
@@ -154,6 +160,14 @@ export const authApi = {
   },
   verifyEmail(token: string) {
     return raw<{ message: string }>('/auth/verify-email', { method: 'POST', body: { token } });
+  },
+  exportMyData() {
+    return api<Record<string, unknown>>('/me/export');
+  },
+  async deleteAccount(password: string) {
+    await api('/me', { method: 'DELETE', body: { password } });
+    accessToken = null;
+    await refreshStore.clear();
   },
   resendVerification() {
     return api<{ message: string }>('/auth/resend-verification', { method: 'POST', body: {} });

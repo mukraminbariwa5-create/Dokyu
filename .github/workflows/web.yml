@@ -30,7 +30,7 @@ jobs:
         working-directory: apps/mobile-web
         run: |
           node -e "const f='app.json',j=require('./'+f);j.expo.experiments.baseUrl='/Dokyu';require('fs').writeFileSync(f,JSON.stringify(j,null,2))"
-          EXPO_OFFLINE=1 npx expo export --platform web --output-dir dist
+          EXPO_OFFLINE=1 EXPO_PUBLIC_PREVIEW=1 npx expo export --platform web --output-dir dist
           cp dist/index.html dist/404.html
           touch dist/.nojekyll
       - uses: actions/configure-pages@v5

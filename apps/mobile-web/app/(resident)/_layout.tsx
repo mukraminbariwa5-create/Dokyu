@@ -28,6 +28,10 @@ export default function ResidentTabs() {
           {/* Not in the tab list (AppTabBar draws a fixed set), but reachable at /showcase and from the desktop sidebar. */}
           <Tabs.Screen name="showcase" options={{ title: t('nav.showcase') }} />
           <Tabs.Screen name="checklists" options={{ title: t('checklists.title') }} />
+          <Tabs.Screen name="offices" options={{ title: t('offices.title') }} />
+          <Tabs.Screen name="holidays" options={{ title: t('holidays.title') }} />
+          <Tabs.Screen name="goals" options={{ title: t('goals.title') }} />
+          <Tabs.Screen name="about" options={{ title: t('about.title') }} />
         </Tabs>
         <TourOverlay />
       </View>

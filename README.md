@@ -8,9 +8,12 @@
 
 - **Document guides:** exact requirements (how many copies, original or photocopy, photo size), fees, and steps split into "Do at home" and "At the office", for the PSA birth certificate, National ID, NBI and Police clearance, Postal ID, TIN, passport and barangay clearance. Each one links only to the official site and shows a "last verified" date.
 - **Before you go:** turn a guide's requirements into a checklist to tick off the night before.
-- **Office Finder with map:** the nearest PSA, NBI, DFA, PhilHealth and other offices, with landmarks, hours and "Closed today" on holidays.
+- **Office Finder with map:** checked PSA, NBI, DFA, police and post offices in Metro Manila, Sulu and Zamboanga City, with landmarks, hours, directions, booking links and "Closed today" on holidays.
+- **Holidays:** the 2026 and 2027 proclamations, with today's status and the next day off.
+- **Goal plans:** what to get for a first job, passport, scholarship and more, in order, with the total cost.
 - **My Docs:** track documents for you and your family, with appointment and expiry reminders.
-- **Doki,** an animated AI guide who answers in Tagalog or English from Dokyu's checked guides.
+- **Doki,** an animated guide built in code who gives a guided tour and answers questions in Tagalog or English from Dokyu's checked guides (offline).
+- **Your data:** download everything as a file, delete it from the device, or delete your account.
 
 > Dokyu is an **independent** project and is **not affiliated with any government agency**. Always confirm on the official site linked in each guide.
 

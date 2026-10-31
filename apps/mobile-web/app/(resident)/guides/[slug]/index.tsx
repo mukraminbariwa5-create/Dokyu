@@ -19,6 +19,10 @@ import {
   openOfficial,
 } from '../../../../components/guide/parts';
 import { useGuide } from '../../../../lib/guides';
+import { OFFICES, officesForGuide } from '@dokyu/shared';
+import { OfficeCard } from '../../../../components/office/OfficeCard';
+import { useNow } from '../../../../lib/offices';
+import { Link } from 'expo-router';
 import { useSettings } from '../../../../lib/settings';
 import { formatDate, formatFee } from '../../../../lib/format';
 
@@ -28,6 +32,7 @@ export default function GuideDetail() {
   const { language } = useSettings();
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const g = useGuide(slug);
+  const now = useNow();
   const L = (x: { en: string; tl: string }) => pick(x, language);
 
   const back = (
@@ -143,6 +148,36 @@ export default function GuideDetail() {
       <Section>
         <AppText variant="title">{t('guide.steps')}</AppText>
         <StepGroups steps={g.steps} />
+      </Section>
+
+      <Section>
+        <View className="flex-row items-center justify-between">
+          <AppText variant="title">{t('guide.whereToGo')}</AppText>
+          {officesForGuide(OFFICES, g.slug).length > 2 ? (
+            <Link href={{ pathname: '/offices', params: { guide: g.slug } }}>
+              <AppText variant="small" weight="semibold" tone="primary">
+                {t('home.seeAll')}
+              </AppText>
+            </Link>
+          ) : null}
+        </View>
+        {officesForGuide(OFFICES, g.slug).length === 0 ? (
+          <AppText variant="body" tone="muted">
+            {g.slug === 'barangay-clearance' ? t('guide.whereBarangay') : t('guide.whereOnline')}
+          </AppText>
+        ) : (
+          officesForGuide(OFFICES, g.slug)
+            .slice(0, 2)
+            .map((o) => <OfficeCard key={o.slug} office={o} now={now} />)
+        )}
+        <View className="flex-row flex-wrap gap-2">
+          <Link href={{ pathname: '/offices', params: { guide: g.slug } }} asChild>
+            <Button label={t('guide.findOffice')} variant="secondary" size="md" />
+          </Link>
+          <Link href={{ pathname: '/docs/new', params: { guide: g.slug } }} asChild>
+            <Button label={t('guide.track')} variant="ghost" size="md" />
+          </Link>
+        </View>
       </Section>
 
       <Section>

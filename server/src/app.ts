@@ -9,6 +9,7 @@ import type { Env } from './env.js';
 import { health } from './routes/health.js';
 import { guidesRouter } from './routes/guides.js';
 import { officesRouter } from './routes/offices.js';
+import { holidaysRouter } from './routes/holidays.js';
 import { authRouter } from './routes/auth.js';
 import { meRouter } from './routes/me.js';
 import { superRouter } from './routes/super.js';
@@ -51,6 +52,7 @@ export function createApp(env: Env, db: PrismaClient, deps: AppDeps = {}) {
   app.use('/api/v1/health', health);
   app.use('/api/v1/guides', guidesRouter(db));
   app.use('/api/v1/offices', officesRouter(db));
+  app.use('/api/v1/holidays', holidaysRouter(db));
   app.use('/api/v1/auth', authRouter(env, db, jwt, mailer));
   app.use('/api/v1/me', meRouter(db, jwt));
   app.use('/api/v1/super', superRouter(db, jwt));
