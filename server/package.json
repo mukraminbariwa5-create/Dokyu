@@ -10,8 +10,8 @@
     "test": "vitest run",
     "prisma:migrate": "prisma migrate dev",
     "seed": "tsx --env-file=.env prisma/seed.ts",
-    "setup:prod": "node scripts/netcheck.mjs; sh -c 'export PRISMA_SCHEMA_DISABLE_ADVISORY_LOCK=1; for i in 1 2 3 4 5 6; do prisma migrate deploy && exit 0; echo \"Database not reachable yet (it may be waking up). Retrying in 10 s...\"; sleep 10; done; exit 1' && tsx prisma/seed.ts",
-    "start:prod": "node --import tsx src/index.ts"
+    "setup:prod": "node scripts/netcheck.mjs; export DATABASE_URL=\"$(node scripts/ipv4-url.mjs)\" && sh -c 'for i in 1 2 3 4 5 6; do prisma migrate deploy && exit 0; echo \"Database not reachable yet (it may be waking up). Retrying in 10 s...\"; sleep 10; done; exit 1' && tsx prisma/seed.ts",
+    "start:prod": "export DATABASE_URL=\"$(node scripts/ipv4-url.mjs)\" && node --import tsx src/index.ts"
   },
   "dependencies": {
     "@dokyu/shared": "workspace:*",

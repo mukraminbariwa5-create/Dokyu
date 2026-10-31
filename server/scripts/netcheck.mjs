@@ -9,7 +9,9 @@ if (!url) {
 }
 const host = url.hostname;
 const port = Number(url.port || 5432);
-console.log(`[netcheck] host=${host} port=${port} params=${[...url.searchParams.keys()].join(',')}`);
+console.log(
+  `[netcheck] host=${host} port=${port} params=${[...url.searchParams.keys()].join(',')}`,
+);
 try {
   console.log('[netcheck] A   ', (await dns.resolve4(host)).join(' '));
 } catch (e) {
