@@ -1,5 +1,5 @@
 /**
- * The office map is a small Leaflet + OpenStreetMap page, shown in an iframe on the web and a WebView on
+ * The office map is a small MapLibre + OpenFreeMap (OpenStreetMap data) page, shown in an iframe on the web and a WebView on
  * Android. Tapping a pin sends the office slug back to the app. Without internet it says so instead of
  * showing a blank box.
  */
@@ -40,34 +40,39 @@ html,body,#map{height:100%;margin:0;background:#ECF0FF;font-family:Poppins,syste
 <script>
 var D=${data};
 function css(h){var l=document.createElement('link');l.rel='stylesheet';l.href=h;document.head.appendChild(l)}
-css('https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css');
+css('https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.2/dist/maplibre-gl.css');
 function send(m){try{(window.ReactNativeWebView||window.parent).postMessage(JSON.stringify(m),'*')}catch(e){}}
 function offline(){document.getElementById('map').style.display='none';document.getElementById('off').style.display='flex'}
 </script>
-<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>if(!window.L){css('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');document.write('<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\\/script>')}</script>
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script>
+<script>if(!window.maplibregl){css('https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.css');document.write('<script src="https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.js"><\\/script>')}</script>
 <script>
-if(!window.L){offline()}else{
-  var map=L.map('map',{zoomControl:true,attributionControl:true});
-  // OpenStreetMap's own tiles: free with attribution, no key. Their policy asks for a Referer,
-  // which the app sends (the server's Referrer-Policy is strict-origin-when-cross-origin).
-  var tiles=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors'}).addTo(map);
-  var fails=0;tiles.on('tileerror',function(){fails++;if(fails>12&&!window.__offline){window.__offline=1;offline()}});
-  var pts=[];
-  D.pins.forEach(function(p){
-    var sel=p.slug===D.selected;
-    var icon=L.divIcon({className:'',html:'<div class="pin'+(sel?' sel':'')+'"><span>'+p.mono+'</span></div>',iconSize:[38,38],iconAnchor:[19,38]});
-    var m=L.marker([p.lat,p.lng],{icon:icon,title:p.label,zIndexOffset:sel?1000:0}).addTo(map);
-    m.bindTooltip(p.label,{direction:'top',offset:[0,-36]});
-    m.on('click',function(){send({type:'select',slug:p.slug})});
-    pts.push([p.lat,p.lng]);
-  });
-  if(D.me){L.marker([D.me.lat,D.me.lng],{icon:L.divIcon({className:'',html:'<div class="me"></div>',iconSize:[16,16]})}).addTo(map);pts.push([D.me.lat,D.me.lng]);}
-  var sel=D.pins.find(function(p){return p.slug===D.selected});
-  if(sel){map.setView([sel.lat,sel.lng],16)}
-  else if(pts.length===1){map.setView(pts[0],15)}
-  else if(pts.length){map.fitBounds(pts,{padding:[36,36],maxZoom:15})}
-  else{map.setView([12.5,122],5)}
+function el(html,title){var w=document.createElement('div');w.innerHTML=html;if(title){w.title=title;w.setAttribute('aria-label',title);w.setAttribute('role','button')}return w}
+if(!window.maplibregl){offline()}else{
+  try{
+    // OpenFreeMap: free OpenStreetMap-based map with no API key, no sign-up and no Referer rules.
+    var map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[122,12.5],zoom:5,attributionControl:{compact:true},dragRotate:false,pitchWithRotate:false,touchPitch:false});
+    map.addControl(new maplibregl.NavigationControl({showCompass:false}),'top-left');
+    map.touchZoomRotate.disableRotation();
+    var fails=0,loaded=false;
+    map.on('load',function(){loaded=true});
+    map.on('error',function(){fails++;if(!loaded&&fails>6&&!window.__offline){window.__offline=1;offline()}});
+    setTimeout(function(){if(!loaded&&!window.__offline){window.__offline=1;offline()}},20000);
+    var pts=[];
+    D.pins.forEach(function(p){
+      var sel=p.slug===D.selected;
+      var e=el('<div class="pin'+(sel?' sel':'')+'"><span>'+p.mono+'</span></div>',p.label);
+      e.style.cursor='pointer';e.style.zIndex=sel?'2':'1';
+      e.addEventListener('click',function(ev){ev.stopPropagation();send({type:'select',slug:p.slug})});
+      new maplibregl.Marker({element:e,anchor:'bottom'}).setLngLat([p.lng,p.lat]).addTo(map);
+      pts.push([p.lng,p.lat]);
+    });
+    if(D.me){new maplibregl.Marker({element:el('<div class="me"></div>')}).setLngLat([D.me.lng,D.me.lat]).addTo(map);pts.push([D.me.lng,D.me.lat]);}
+    var sel=D.pins.find(function(p){return p.slug===D.selected});
+    if(sel){map.jumpTo({center:[sel.lng,sel.lat],zoom:16})}
+    else if(pts.length===1){map.jumpTo({center:pts[0],zoom:15})}
+    else if(pts.length){var b=new maplibregl.LngLatBounds(pts[0],pts[0]);pts.forEach(function(q){b.extend(q)});map.fitBounds(b,{padding:40,maxZoom:15,duration:0})}
+  }catch(e){offline()}
 }
 </script></body></html>`;
 }

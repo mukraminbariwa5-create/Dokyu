@@ -1,6 +1,7 @@
-name: Web app (GitHub Pages)
-# Publishes the web app to https://mukraminbariwa5-create.github.io/Dokyu/ on every push to main.
-# Guides, checklists and Doki work there; sign-in needs the API, which is not hosted yet.
+name: Old preview link (GitHub Pages)
+# The app now lives at https://dokyu.onrender.com (app + accounts + database).
+# The old preview address https://mukraminbariwa5-create.github.io/Dokyu/... sends visitors there,
+# keeping the page they asked for, so there is only one app.
 on:
   push:
     branches: [main]
@@ -19,18 +20,22 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - name: Build for the /Dokyu/ address
-        working-directory: apps/mobile-web
+      - name: Redirect page
         run: |
-          node -e "const f='app.json',j=require('./'+f);j.expo.experiments.baseUrl='/Dokyu';require('fs').writeFileSync(f,JSON.stringify(j,null,2))"
-          EXPO_OFFLINE=1 EXPO_PUBLIC_PREVIEW=1 npx expo export --platform web --output-dir dist
+          mkdir -p dist
+          cat > dist/index.html <<'HTML'
+          <!doctype html><html lang="en"><head><meta charset="utf-8">
+          <meta name="viewport" content="width=device-width,initial-scale=1">
+          <title>Dokyu has moved</title>
+          <meta name="robots" content="noindex">
+          <link rel="canonical" href="https://dokyu.onrender.com/">
+          <script>
+            var p = location.pathname.replace(/^\/Dokyu/, '') || '/';
+            location.replace('https://dokyu.onrender.com' + p + location.search + location.hash);
+          </script>
+          <style>body{font-family:system-ui,sans-serif;display:flex;min-height:90vh;align-items:center;justify-content:center;color:#13287A;text-align:center}</style>
+          </head><body><p>Dokyu has moved to <a href="https://dokyu.onrender.com/">dokyu.onrender.com</a>.</p></body></html>
+          HTML
           cp dist/index.html dist/404.html
           touch dist/.nojekyll
       - uses: actions/configure-pages@v5
@@ -38,7 +43,7 @@ jobs:
           enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: apps/mobile-web/dist
+          path: dist
 
   deploy:
     needs: build

@@ -47,12 +47,13 @@ export function createApp(env: Env, db: PrismaClient, deps: AppDeps = {}) {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
-          // The web app's start-up script and the office map (Leaflet from a CDN, OpenStreetMap tiles).
+          // The web app's start-up script and the office map (MapLibre from a CDN, OpenFreeMap tiles).
           scriptSrc: ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net', 'https://unpkg.com'],
           styleSrc: ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net', 'https://unpkg.com'],
-          imgSrc: ["'self'", 'data:', 'blob:', 'https://tile.openstreetmap.org'],
+          imgSrc: ["'self'", 'data:', 'blob:', 'https://tiles.openfreemap.org'],
           fontSrc: ["'self'", 'data:'],
-          connectSrc: ["'self'"],
+          connectSrc: ["'self'", 'https://tiles.openfreemap.org'],
+          workerSrc: ["'self'", 'blob:'],
           frameSrc: ["'self'"],
           objectSrc: ["'none'"],
           baseUri: ["'self'"],
@@ -60,7 +61,7 @@ export function createApp(env: Env, db: PrismaClient, deps: AppDeps = {}) {
           formAction: ["'self'"],
         },
       },
-      // OpenStreetMap's tile servers require a Referer; send only the origin to other sites.
+      // Send only the origin (never the path) to other sites.
       referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
     }),
   );
