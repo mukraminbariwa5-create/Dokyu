@@ -41,7 +41,7 @@ export default function GuideDetail() {
   const back = (
     <Pressable
       accessibilityRole="link"
-      onPress={() => (router.canGoBack() ? router.back() : router.replace('/guides'))}
+      onPress={() => router.navigate('/guides')}
       className="min-h-[44px] flex-row items-center gap-1 self-start"
     >
       <Icon name="chevronLeft" size={20} color={colors.primary} />

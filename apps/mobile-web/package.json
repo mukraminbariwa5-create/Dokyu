@@ -8,6 +8,7 @@
     "android": "expo start --android",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
+    "export:web": "expo export --platform web --output-dir ${WEB_OUT:-dist} && node scripts/finish-web.mjs ${WEB_OUT:-dist}",
     "test": "echo \"app tests start in Phase 1\""
   },
   "dependencies": {

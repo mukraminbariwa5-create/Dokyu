@@ -1,5 +1,5 @@
 /** Home, following the locked Bayan Blue prototype (plan §4.2), adapted to the citizen-first scope (v1.6). */
-import { useCallback, useState } from 'react';
+import { useCallback, useState, type ReactNode } from 'react';
 import { HOME_TOUR, useTour, useTourTarget } from '../../lib/tour';
 import { Link, useFocusEffect, useRouter } from 'expo-router';
 import { Pressable, ScrollView, View } from 'react-native';
@@ -198,33 +198,47 @@ export default function Home() {
               {t('home.seeAll')}
             </TextLink>
           </View>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerClassName="gap-3 pb-1.5"
-          >
+          <PopularRow desktop={isDesktop}>
             {POPULAR.map((slug) => {
               const g = guides.find((x) => x.slug === slug);
               if (!g) return null;
               return (
-                <Link key={slug} href={{ pathname: '/guides/[slug]', params: { slug } }} asChild>
-                  <PressableCard className="gap-2.5" style={{ width: 164 }}>
-                    <AgencyTile mono={g.mono} size={40} />
-                    <AppText variant="body" weight="semibold" numberOfLines={2}>
-                      {pick(g.title, language)}
-                    </AppText>
-                    <AppText variant="caption" tone="muted">
-                      {t('home.steps', { n: g.steps.length })} · {formatFee(startingFee(g.fees), t)}
-                    </AppText>
-                  </PressableCard>
-                </Link>
+                // `Link asChild` replaces the card's style, so the width lives on a wrapping View.
+                <View key={slug} style={isDesktop ? { flex: 1, minWidth: 0 } : { width: 164 }}>
+                  <Link href={{ pathname: '/guides/[slug]', params: { slug } }} asChild>
+                    <PressableCard className="gap-2.5 flex-1">
+                      <AgencyTile mono={g.mono} size={40} />
+                      <AppText variant="body" weight="semibold" numberOfLines={2}>
+                        {pick(g.title, language)}
+                      </AppText>
+                      <AppText variant="caption" tone="muted">
+                        {t('home.steps', { n: g.steps.length })} ·{' '}
+                        {formatFee(startingFee(g.fees), t)}
+                      </AppText>
+                    </PressableCard>
+                  </Link>
+                </View>
               );
             })}
-          </ScrollView>
+          </PopularRow>
         </View>
       </FadeIn>
 
       <Disclaimer />
     </Screen>
+  );
+}
+
+/** Popular guides: a swipeable row on phones, all cards side by side on desktop (a mouse can't swipe). */
+function PopularRow({ desktop, children }: { desktop: boolean; children: ReactNode }) {
+  if (desktop) return <View className="flex-row gap-3">{children}</View>;
+  return (
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerClassName="gap-3 pb-1.5"
+    >
+      {children}
+    </ScrollView>
   );
 }

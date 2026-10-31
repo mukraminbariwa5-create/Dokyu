@@ -7,7 +7,7 @@ Read this first, then `docs/PLAN.md` (the full plan) and `docs/CONTENT.md` (veri
 - **Dokyu:** government-documents guide for anyone who processes papers (students, job seekers, teachers, employees, workers, parents, seniors). Tells them exactly what to bring and links the official online registration, so they do the prep at home and visit the office once. Android + web from one Expo codebase. Animated AI guide mascot **Doki**.
 - **Name:** kept as "Dokyu". No PH trademark conflict in Classes 9/42/45. Public handle "DokyuPH".
 
-## Status (2026-10-30, end of session 2)
+## Status (2026-10-31, end of session 3)
 | Item | State |
 |---|---|
 | Plan | **v1.6, citizen-first** (`docs/PLAN.md`). The barangay request system and staff roles moved to §3.2 "Later"; Phase 5 is skipped |
@@ -69,10 +69,17 @@ Expo SDK **58** (RN 0.88, React 19.3), Expo Router 58, NativeWind **4.2** + Tail
   - Pre-launch audit (31 Oct): all 44 routes checked in 4 modes (phone EN, phone TL, large text, desktop) on the exact Pages build: no errors, overflow, missing text or tap targets under 40 px. Added `app/+not-found.tsx` + `components/NotFound.tsx`, `components/ui/TextLink.tsx` (44 px tap area), `lib/reminders.web.ts` (no notifications library on web), area-first office order on guides, closures only on days the office opens, map from MapLibre + OpenFreeMap (CARTO now needs an API key and OSM's tile server blocks some browsers; OpenFreeMap needs no key), showcase hidden in production. Android bundle (`expo export --platform android`) builds.
 - Still open: host the API (needs an account on a host), test on an Android phone with Expo Go, Super Admin guide/office editor (content is in the seed files for now), more office areas.
 
+## Session 3 (31 Oct): judge-ready pass
+Goal: the app must work and feel fast when a panel tests it. No new content or features.
+- **Speed (web):** the server now compresses (gzip/Brotli, `compression`) and caches hashed files for a year (`immutable`), `index.html` is `no-cache`. All screens are in one bundle (`expo-router` `asyncRoutes: false`), so no screen waits for a download on its first tap. `apps/mobile-web/scripts/finish-web.mjs` (run after `expo export`, also in `render.yaml`) adds an instant "dokyu" loading screen and preloads the Poppins fonts; `app/_layout.tsx` fades it out when ready. Measured on a 4x-slowed CPU + slow 4G: first screen 0.35 s (was blank ~9 s), Home 3.1 s (was 9.8 s), return visits 1.0 s, first open of Guides 0.46 s (was 5.7 s), NBI guide 0.5 s (was 7.6 s). Normal taps: 50–150 ms.
+- **Fixes:** back links now always go where their label says (`BackLink`, guide "Back to guides", checklist back): before, "‹ My Docs" after Guide → Track went back to the guide. Guests no longer get a red 401 in the console (`POST /auth/refresh` with no token → 204). Checkboxes, chips, tabs and buttons expose `aria-checked/selected/disabled` on web. Sign-in/sign-up small links use `TextLink` (44 px). Desktop "Popular guides" shows all 5 cards in a row (a mouse can't swipe). Account → devices no longer says "This device" twice.
+- **Checked:** a 19-step judge script (welcome → setup → tour → guides/search/checklist → My Docs → offices Near me → holidays → Ask Doki EN/TL → sign up/out → demo login → Tagalog → 404) all pass with no console errors; tap-everything crawl: 232 taps on phone + 150 on desktop, no errors. Tests 40 pass, lint + typecheck clean, Android bundle builds.
+- The QA scripts live outside the repo (Playwright); ask Claude to re-run a "judge pass" before a demo.
+
 ## Next
-1. Deploy with `render.yaml` + Neon, steps in `docs/DEPLOY.md`. The server serves the web app itself (`WEB_DIR`, same-origin cookie), runs migrations + seed in the build, and switches email on only with `RESEND_API_KEY` + `MAIL_FROM` (`/api/v1/health` reports `features.email`). Tested locally in production mode: sign-up, sign-in, reload, export, delete, demo login, 58/59 crawl (the 1 is preview-only).
+1. Push this session's changes to GitHub so Render redeploys, then open https://dokyu.onrender.com once a few minutes before a demo (the free server sleeps and takes ~1 minute to wake).
 2. Test on an Android phone with Expo Go (map WebView, date picker, reminders, Near me).
-3. Super Admin editor for guides and offices; more office areas.
+3. Later: Super Admin editor for guides and offices; more office areas.
 
 ## Rules to keep
 - One phase at a time. New ideas go to `docs/PLAN.md` §3.2 "Later".

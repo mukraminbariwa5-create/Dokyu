@@ -26,6 +26,7 @@ export function SegmentedControl<T extends string>({
             key={o.value}
             accessibilityRole="radio"
             accessibilityState={{ checked: selected }}
+            aria-checked={selected}
             onPress={() => onChange(o.value)}
             className={cn(
               'min-h-[44px] justify-center rounded-md px-4',

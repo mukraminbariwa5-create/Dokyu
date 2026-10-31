@@ -18,6 +18,7 @@ export function ChoiceChip({
     <Pressable
       accessibilityRole="checkbox"
       accessibilityState={{ checked: selected }}
+      aria-checked={selected}
       onPress={onPress}
       className={cn(
         'min-h-[52px] flex-row items-center gap-2 rounded-lg border px-4',

@@ -212,9 +212,7 @@ function Devices() {
               {s.device}
             </AppText>
             <AppText variant="small" tone="muted">
-              {s.current
-                ? t('account.thisDevice')
-                : t('account.since', { date: formatDate(s.signedInAt.slice(0, 10), language) })}
+              {t('account.since', { date: formatDate(s.signedInAt.slice(0, 10), language) })}
             </AppText>
           </View>
           {!s.current ? (

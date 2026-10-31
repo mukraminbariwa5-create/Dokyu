@@ -171,6 +171,7 @@ export function RequirementCard({
       <Pressable
         accessibilityRole="checkbox"
         accessibilityState={{ checked: !!checked }}
+        aria-checked={!!checked}
         accessibilityLabel={`${req.qty > 1 ? `${req.qty} ` : ''}${name}, ${bring}`}
         onPress={onToggle}
         className="flex-row gap-3 rounded-card border border-line bg-surface p-4 active:bg-surface-alt"

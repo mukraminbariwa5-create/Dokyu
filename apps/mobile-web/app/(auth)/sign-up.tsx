@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { View } from 'react-native';
-import { Link, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
+import { TextLink } from '../../components/ui/TextLink';
 import { useTranslation } from 'react-i18next';
 import { signupSchema } from '@dokyu/shared';
 import { AuthScreen, FormNotice } from '../../components/AuthScreen';
@@ -97,11 +98,7 @@ export default function SignUp() {
         <AppText variant="small" tone="muted">
           {t('auth.haveAccount')}
         </AppText>
-        <Link href="/sign-in" replace>
-          <AppText variant="small" weight="semibold" tone="primary">
-            {t('auth.signIn')}
-          </AppText>
-        </Link>
+        <TextLink onPress={() => router.replace('/sign-in')}>{t('auth.signIn')}</TextLink>
       </View>
     </AuthScreen>
   );

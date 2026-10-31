@@ -47,11 +47,7 @@ export default function Checklist() {
     <Screen>
       <Pressable
         accessibilityRole="link"
-        onPress={() =>
-          router.canGoBack()
-            ? router.back()
-            : router.replace({ pathname: '/guides/[slug]', params: { slug: g.slug } })
-        }
+        onPress={() => router.navigate({ pathname: '/guides/[slug]', params: { slug: g.slug } })}
         className="min-h-[44px] flex-row items-center gap-1 self-start"
       >
         <Icon name="chevronLeft" size={20} color={colors.primary} />

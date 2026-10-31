@@ -1,6 +1,7 @@
 import '../global.css';
 import '../lib/i18n';
 import { useEffect } from 'react';
+import { Platform } from 'react-native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
@@ -20,6 +21,15 @@ import { queryClient } from '../lib/queryClient';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
+/** Web: fade out the "dokyu" loading screen from index.html (added by scripts/finish-web.mjs). */
+function hideWebBoot() {
+  if (Platform.OS !== 'web' || typeof document === 'undefined') return;
+  const boot = document.getElementById('boot');
+  if (!boot) return;
+  boot.classList.add('hide');
+  setTimeout(() => boot.remove(), 300);
+}
+
 function Root() {
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -31,7 +41,9 @@ function Root() {
   const loaded = fontsLoaded && ready;
 
   useEffect(() => {
-    if (loaded) SplashScreen.hideAsync().catch(() => {});
+    if (!loaded) return;
+    SplashScreen.hideAsync().catch(() => {});
+    hideWebBoot();
   }, [loaded]);
 
   if (!loaded) return null;

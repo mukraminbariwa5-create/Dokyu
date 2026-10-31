@@ -93,12 +93,12 @@ export function refreshSession(): Promise<SessionResponse | null> {
     try {
       const stored = await refreshStore.get();
       if (CLIENT === 'native' && !stored) return null;
-      return await keep(
-        await raw<SessionResponse>('/auth/refresh', {
-          method: 'POST',
-          body: stored ? { refreshToken: stored } : {},
-        }),
-      );
+      const session = await raw<SessionResponse | undefined>('/auth/refresh', {
+        method: 'POST',
+        body: stored ? { refreshToken: stored } : {},
+      });
+      // 204: no session (a guest). Nothing to renew.
+      return session ? await keep(session) : null;
     } catch (e) {
       if (e instanceof ApiError && e.status === 401) {
         accessToken = null;

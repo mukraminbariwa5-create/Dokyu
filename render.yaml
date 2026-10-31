@@ -15,7 +15,8 @@ services:
       pnpm --filter @dokyu/server exec prisma generate &&
       pnpm --filter @dokyu/server setup:prod &&
       cd apps/mobile-web &&
-      EXPO_OFFLINE=1 EXPO_PUBLIC_API_URL=same-origin npx expo export --platform web --output-dir ../../server/web
+      EXPO_OFFLINE=1 EXPO_PUBLIC_API_URL=same-origin npx expo export --platform web --output-dir ../../server/web &&
+      node scripts/finish-web.mjs ../../server/web
     startCommand: cd server && pnpm start:prod
     envVars:
       - key: NODE_ENV

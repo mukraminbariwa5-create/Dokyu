@@ -65,6 +65,7 @@ function BottomBar(props: BottomTabBarProps) {
             accessibilityRole="tab"
             accessibilityLabel={t(tab.label)}
             accessibilityState={{ selected: tab.focused }}
+            aria-selected={tab.focused}
             onPress={tab.onPress}
             className="flex-1 items-center"
           >
@@ -97,6 +98,7 @@ function BottomBar(props: BottomTabBarProps) {
             accessibilityRole="tab"
             accessibilityLabel={t(tab.label)}
             accessibilityState={{ selected: tab.focused }}
+            aria-selected={tab.focused}
             onPress={tab.onPress}
             className="min-h-[52px] flex-1 items-center justify-end gap-1"
           >
@@ -154,6 +156,7 @@ function Sidebar(props: BottomTabBarProps) {
                 accessibilityRole="tab"
                 accessibilityLabel={t(tab.label)}
                 accessibilityState={{ selected: tab.focused }}
+                aria-selected={tab.focused}
                 onPress={tab.onPress}
                 className={cn(
                   'my-2 flex-row items-center gap-3 rounded-tile p-2 pr-4 active:opacity-90',
@@ -221,6 +224,7 @@ function SidebarItem({
       accessibilityRole="tab"
       accessibilityLabel={label}
       accessibilityState={{ selected: focused }}
+      aria-selected={focused}
       onPress={onPress}
       className={cn(
         'min-h-[48px] flex-row items-center gap-3 rounded-lg px-3',

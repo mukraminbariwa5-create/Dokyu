@@ -2,6 +2,7 @@ import express, { type ErrorRequestHandler } from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import helmet from 'helmet';
+import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import pinoHttp from 'pino-http';
 import type { PrismaClient } from '@prisma/client';
@@ -42,6 +43,8 @@ export function createApp(env: Env, db: PrismaClient, deps: AppDeps = {}) {
 
   app.disable('x-powered-by');
   app.set('trust proxy', 1);
+  // Gzip/Brotli for the API and the web app: the app's JavaScript shrinks to about a quarter on the wire.
+  app.use(compression());
   app.use(
     helmet({
       contentSecurityPolicy: {
@@ -94,8 +97,24 @@ export function createApp(env: Env, db: PrismaClient, deps: AppDeps = {}) {
 
   if (webDir) {
     // The web app, from the same address as the API, so the sign-in cookie stays first-party.
-    app.use(express.static(webDir, { index: 'index.html', maxAge: '1h' }));
-    app.get(/^(?!\/api\/).*/, (_req, res) => res.sendFile(path.join(webDir, 'index.html')));
+    // Built files have a content hash in their name, so they can be cached for a year. index.html must always be
+    // fresh, so a new deploy is picked up on the next visit.
+    app.use(
+      express.static(webDir, {
+        index: false,
+        setHeaders(res, file) {
+          const hashed = /[.-][0-9a-f]{16,}\.[a-z0-9]+$/i.test(file);
+          res.setHeader(
+            'Cache-Control',
+            hashed ? 'public, max-age=31536000, immutable' : 'public, max-age=300',
+          );
+        },
+      }),
+    );
+    app.get(/^(?!\/api\/).*/, (_req, res) => {
+      res.setHeader('Cache-Control', 'no-cache');
+      res.sendFile(path.join(webDir, 'index.html'));
+    });
   }
   app.use((_req, res) => res.status(404).json({ error: 'Not found' }));
   const onError: ErrorRequestHandler = (err, _req, res, _next) => {

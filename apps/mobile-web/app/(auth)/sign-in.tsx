@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { View } from 'react-native';
-import { Link, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
+import { TextLink } from '../../components/ui/TextLink';
 import { useTranslation } from 'react-i18next';
 import { loginSchema } from '@dokyu/shared';
 import { AuthScreen, FormNotice } from '../../components/AuthScreen';
@@ -64,21 +65,15 @@ export default function SignIn() {
         textContentType="password"
         onSubmitEditing={submit}
       />
-      <Link href="/forgot-password" className="self-end">
-        <AppText variant="small" weight="semibold" tone="primary">
-          {t('auth.forgot')}
-        </AppText>
-      </Link>
+      <TextLink align="right" onPress={() => router.push('/forgot-password')}>
+        {t('auth.forgot')}
+      </TextLink>
       <Button label={t('auth.signIn')} onPress={submit} loading={busy} fullWidth />
       <View className="flex-row flex-wrap items-center justify-center gap-1">
         <AppText variant="small" tone="muted">
           {t('auth.noAccount')}
         </AppText>
-        <Link href="/sign-up" replace>
-          <AppText variant="small" weight="semibold" tone="primary">
-            {t('auth.signUp')}
-          </AppText>
-        </Link>
+        <TextLink onPress={() => router.replace('/sign-up')}>{t('auth.signUp')}</TextLink>
       </View>
       <Button
         label={t('auth.continueGuest')}

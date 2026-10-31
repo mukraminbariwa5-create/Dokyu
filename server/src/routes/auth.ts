@@ -249,9 +249,12 @@ export function authRouter(env: Env, db: PrismaClient, jwt: Jwt, mailer: Mailer)
 
   r.post('/refresh', async (req, res) => {
     const presented = presentedRefresh(req);
-    const result = presented
-      ? await rotateSession(db, jwt, presented, req.ip)
-      : ({ ok: false, reason: 'invalid' } as const);
+    // A guest with no session at all is not an error: answer "no session" so the browser console stays clean.
+    if (!presented) {
+      res.status(204).end();
+      return;
+    }
+    const result = await rotateSession(db, jwt, presented, req.ip);
     if (!result.ok) {
       res.clearCookie(REFRESH_COOKIE, cookieBase);
       res.status(401).json({ error: 'Please sign in again' });

@@ -10,6 +10,10 @@ import { loadEnv } from '../src/env.js';
 
 const web = mkdtempSync(path.join(tmpdir(), 'dokyu-web-'));
 writeFileSync(path.join(web, 'index.html'), '<!doctype html><title>Dokyu</title>');
+writeFileSync(
+  path.join(web, 'entry-0123456789abcdef0123.js'),
+  `console.log("${'dokyu '.repeat(500)}");`,
+);
 const base = {
   NODE_ENV: 'production',
   DATABASE_URL: 'postgresql://x:y@localhost:5432/z',
@@ -35,6 +39,18 @@ describe('production', () => {
     const api = await request(app).get('/api/v1/nope');
     expect(api.status).toBe(404);
     expect(api.body).toEqual({ error: 'Not found' });
+  });
+
+  it('caches hashed files for a year, keeps the page fresh, and compresses', async () => {
+    const js = await request(app)
+      .get('/entry-0123456789abcdef0123.js')
+      .set('Accept-Encoding', 'gzip');
+    expect(js.status).toBe(200);
+    expect(js.headers['cache-control']).toContain('immutable');
+    expect(js.headers['content-encoding']).toBe('gzip');
+    const page = await request(app).get('/');
+    expect(page.status).toBe(200);
+    expect(page.headers['cache-control']).toBe('no-cache');
   });
 
   it('reports email as off without a provider, and on with one', async () => {

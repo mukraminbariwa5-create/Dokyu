@@ -12,6 +12,7 @@ export default tseslint.config(
       '**/.expo/**',
       '**/web-build/**',
       '**/coverage/**',
+      'server/web/**',
       'apps/mobile-web/expo-env.d.ts',
       'apps/mobile-web/nativewind-env.d.ts',
     ],

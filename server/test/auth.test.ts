@@ -122,6 +122,24 @@ describe.skipIf(!hasTestDb)('auth (database)', () => {
   });
 
   describe('sessions', () => {
+    it('answers a guest with no refresh token with 204, not an error', async () => {
+      const { app } = makeApp();
+      const res = await request(app)
+        .post('/api/v1/auth/refresh')
+        .set('X-Dokyu-Client', 'web')
+        .send({});
+      expect(res.status).toBe(204);
+    });
+
+    it('still rejects a bad refresh token with 401', async () => {
+      const { app } = makeApp();
+      const res = await request(app)
+        .post('/api/v1/auth/refresh')
+        .set('X-Dokyu-Client', 'native')
+        .send({ refreshToken: 'not-a-real-token' });
+      expect(res.status).toBe(401);
+    });
+
     it('rotates the refresh token and signs the device out if an old token is reused', async () => {
       const { app } = makeApp();
       await createUser('eve@example.com');

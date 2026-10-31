@@ -50,6 +50,8 @@ export function Button({
         accessibilityRole="button"
         accessibilityLabel={label}
         accessibilityState={{ disabled: !!inactive, busy: loading }}
+        aria-disabled={!!inactive}
+        aria-busy={loading}
         disabled={inactive}
         {...press.handlers}
         className={cn(

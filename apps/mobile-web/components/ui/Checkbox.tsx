@@ -21,6 +21,7 @@ export function Checkbox({
       <Pressable
         accessibilityRole="checkbox"
         accessibilityState={{ checked }}
+        aria-checked={checked}
         accessibilityLabel={label}
         onPress={() => onChange(!checked)}
         className="min-h-[44px] flex-row items-center gap-3"
