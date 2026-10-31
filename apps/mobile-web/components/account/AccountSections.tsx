@@ -101,7 +101,7 @@ export function InfoLinks({ onReplayTour }: { onReplayTour?: () => void }) {
 export function DataSection() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { status, deleteAccount } = useAuth();
+  const { status, deleteAccount, signOut } = useAuth();
   const { language, update } = useSettings();
   const { clearAll } = useMyDocs();
   const [note, setNote] = useState('');
@@ -183,6 +183,8 @@ export function DataSection() {
         danger
         onCancel={() => setAskClear(false)}
         onConfirm={async () => {
+          // Signed in: sign out first (My Docs saves its last changes to the account), then empty the device.
+          if (status === 'signedIn') await signOut();
           clearAll();
           await clearLocalData();
           update({

@@ -44,8 +44,8 @@ export const HELP: InfoBlock[] = [
   {
     heading: { en: 'Do I need an account?', tl: 'Kailangan ko ba ng account?' },
     body: {
-      en: 'No. Guides, checklists, the Office Finder, holidays, My Docs and Ask Doki all work without one. An account will let you keep your profile on more than one device.',
-      tl: 'Hindi. Gumagana ang mga gabay, checklist, Office Finder, holiday, My Docs at Ask Doki kahit walang account. Sa account, mapapanatili mo ang profile mo sa higit sa isang device.',
+      en: 'No. Guides, checklists, the Office Finder, holidays, My Docs and Ask Doki all work without one. An account keeps your profile and My Docs on every phone or browser you sign in on.',
+      tl: 'Hindi. Gumagana ang mga gabay, checklist, Office Finder, holiday, My Docs at Ask Doki kahit walang account. Sa account, nasa bawat phone o browser na pag-sign in-an mo ang profile at My Docs mo.',
     },
   },
   {
@@ -88,15 +88,15 @@ export const PRIVACY: InfoBlock[] = [
   {
     heading: { en: 'On your phone', tl: 'Sa phone mo' },
     body: {
-      en: 'Your language, text size, area, goals, checklists and My Docs are saved on this device only. They are not uploaded.',
-      tl: 'Sa device na ito lang naka-save ang wika, laki ng text, lugar, layunin, checklist at My Docs mo. Hindi ito ina-upload.',
+      en: 'Your language, text size, area, goals, checklists and My Docs are saved on this device. Without an account, nothing is uploaded.',
+      tl: 'Naka-save sa device na ito ang wika, laki ng text, lugar, layunin, checklist at My Docs mo. Kung walang account, walang ina-upload.',
     },
   },
   {
     heading: { en: 'If you make an account', tl: 'Kung gagawa ka ng account' },
     body: {
-      en: 'We keep your name, email, general area (province and city, never GPS), goals, a scrambled (hashed) password and a list of signed-in devices. We never see or store your password itself.',
-      tl: 'Itinatago namin ang pangalan, email, pangkalahatang lugar (probinsya at lungsod, hindi GPS), layunin, naka-hash na password at listahan ng naka-sign-in na device. Hindi namin nakikita o itinatago ang mismong password mo.',
+      en: 'We keep your name, email, general area (province and city, never GPS), goals, the documents and family members in your My Docs, a scrambled (hashed) password and a list of signed-in devices. We never see or store your password itself. Signing out removes your My Docs from that device; your account keeps it.',
+      tl: 'Itinatago namin ang pangalan, email, pangkalahatang lugar (probinsya at lungsod, hindi GPS), layunin, ang mga dokumento at kapamilya sa My Docs mo, naka-hash na password at listahan ng naka-sign-in na device. Hindi namin nakikita o itinatago ang mismong password mo. Kapag nag-sign out ka, mabubura ang My Docs sa device na iyon; nasa account mo pa rin ito.',
     },
   },
   {

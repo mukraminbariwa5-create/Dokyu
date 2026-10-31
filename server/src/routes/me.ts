@@ -5,7 +5,13 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import type { PrismaClient } from '@prisma/client';
-import { profileUpdateSchema } from '@dokyu/shared';
+import {
+  EMPTY_MYDOCS,
+  myDocsDataSchema,
+  myDocsPutSchema,
+  profileUpdateSchema,
+} from '@dokyu/shared';
+import { Prisma } from '@prisma/client';
 import type { Jwt } from '../lib/jwt.js';
 import { validate } from '../lib/validate.js';
 import { verifyPassword } from '../lib/passwords.js';
@@ -75,11 +81,55 @@ export function meRouter(db: PrismaClient, jwt: Jwt) {
     res.status(204).end();
   });
 
+  /** The account's copy of My Docs (version 0 = nothing saved yet). */
+  r.get('/docs', async (req, res) => {
+    const store = await db.myDocsStore.findUnique({ where: { userId: req.auth!.sub } });
+    const data = store ? myDocsDataSchema.safeParse(store.data) : null;
+    res.json({ data: data?.success ? data.data : EMPTY_MYDOCS, version: store?.version ?? 0 });
+  });
+
+  /**
+   * Saves a merged copy. `baseVersion` must be the version the app merged with; if another phone saved
+   * in between, the answer is 409 with the newer copy, and the app merges again and retries.
+   */
+  r.put('/docs', async (req, res) => {
+    const input = validate(myDocsPutSchema, req.body, res);
+    if (!input) return;
+    const userId = req.auth!.sub;
+    const data = input.data as unknown as Prisma.InputJsonValue;
+    const conflict = async () => {
+      const store = await db.myDocsStore.findUnique({ where: { userId } });
+      res.status(409).json({
+        error: 'My Docs changed on another device',
+        data: store ? store.data : EMPTY_MYDOCS,
+        version: store?.version ?? 0,
+      });
+    };
+    if (input.baseVersion === 0) {
+      try {
+        await db.myDocsStore.create({ data: { userId, data, version: 1 } });
+        res.json({ version: 1 });
+      } catch (e) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002')
+          return conflict();
+        throw e;
+      }
+      return;
+    }
+    // Only saves if nobody else saved since `baseVersion` (an atomic compare-and-set).
+    const saved = await db.myDocsStore.updateMany({
+      where: { userId, version: input.baseVersion },
+      data: { data, version: { increment: 1 } },
+    });
+    if (saved.count === 0) return conflict();
+    res.json({ version: input.baseVersion + 1 });
+  });
+
   /** Everything stored about this account, as one JSON file (privacy promise, plan §5.4). */
   r.get('/export', async (req, res) => {
     const user = await db.user.findUnique({
       where: { id: req.auth!.sub },
-      include: { family: true, tracked: true, savedOffices: true },
+      include: { family: true, tracked: true, savedOffices: true, myDocs: true },
     });
     if (!user || user.deletedAt) {
       res.status(401).json({ error: 'Please sign in again' });
@@ -100,6 +150,9 @@ export function meRouter(db: PrismaClient, jwt: Jwt) {
       familyMembers: user.family,
       trackedDocuments: user.tracked,
       savedOffices: user.savedOffices,
+      myDocs: user.myDocs
+        ? { ...(user.myDocs.data as object), savedAt: user.myDocs.updatedAt }
+        : null,
     });
   });
 

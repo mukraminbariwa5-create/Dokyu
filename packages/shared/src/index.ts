@@ -10,3 +10,4 @@ export * from './seed/holidays';
 export * from './offices';
 export * from './goals';
 export * from './ask';
+export * from './mydocs';

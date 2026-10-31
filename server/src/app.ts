@@ -69,7 +69,12 @@ export function createApp(env: Env, db: PrismaClient, deps: AppDeps = {}) {
     }),
   );
   app.use(cors({ origin: origins, credentials: true }));
-  app.use(express.json({ limit: '100kb' }));
+  // Small bodies everywhere, except a synced My Docs copy (up to 300 documents).
+  const smallJson = express.json({ limit: '100kb' });
+  const docsJson = express.json({ limit: '1mb' });
+  app.use((req, res, next) =>
+    (req.path === '/api/v1/me/docs' ? docsJson : smallJson)(req, res, next),
+  );
   app.use(cookieParser());
   if (env.NODE_ENV !== 'test') {
     app.use(

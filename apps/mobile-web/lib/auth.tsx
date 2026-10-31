@@ -19,6 +19,22 @@ import { useSettings } from './settings';
 
 type Status = 'loading' | 'signedOut' | 'signedIn';
 
+/**
+ * Other parts of the app can take part in signing out: `before` runs while the user is still signed in
+ * (e.g. My Docs saves its last changes), `after` runs once they are out (e.g. My Docs clears this device).
+ */
+export interface SignOutHook {
+  before?: () => Promise<void>;
+  after?: () => void;
+}
+const signOutHooks = new Set<SignOutHook>();
+export function onSignOut(hook: SignOutHook): () => void {
+  signOutHooks.add(hook);
+  return () => {
+    signOutHooks.delete(hook);
+  };
+}
+
 interface AuthContextValue {
   status: Status;
   user: PublicUser | null;
@@ -109,15 +125,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const signOut = useCallback(async () => {
+    for (const hook of signOutHooks) await hook.before?.().catch(() => {});
     await authApi.logout().catch(() => {});
     setUser(null);
     setStatus('signedOut');
+    for (const hook of signOutHooks) hook.after?.();
   }, []);
 
   const deleteAccount = useCallback(async (password: string) => {
     await authApi.deleteAccount(password);
     setUser(null);
     setStatus('signedOut');
+    for (const hook of signOutHooks) hook.after?.();
   }, []);
 
   const updateProfile = useCallback(

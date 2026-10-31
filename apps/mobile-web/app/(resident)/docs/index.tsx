@@ -11,6 +11,7 @@ import { Card, PressableCard } from '../../../components/ui/Card';
 import { ChoiceChip } from '../../../components/ui/ChoiceChip';
 import { Icon } from '../../../components/ui/Icon';
 import { Doki } from '../../../components/ui/Doki';
+import { SyncStatus } from '../../../components/docs/SyncStatus';
 import { Disclaimer } from '../../../components/ui/Disclaimer';
 import { DocCard, docTitle } from '../../../components/docs/DocCard';
 import { FadeIn, Float } from '../../../lib/motion';
@@ -66,6 +67,7 @@ export default function MyDocs() {
       <AppText variant="body" tone="muted">
         {t('mydocs.intro')}
       </AppText>
+      <SyncStatus />
 
       {people.length > 0 ? (
         <ScrollView
@@ -184,9 +186,6 @@ export default function MyDocs() {
         </PressableCard>
       </Link>
 
-      <AppText variant="caption" tone="muted">
-        {t('mydocs.privacy')}
-      </AppText>
       <Disclaimer />
     </Screen>
   );

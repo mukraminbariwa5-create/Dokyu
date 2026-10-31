@@ -82,6 +82,7 @@ model User {
   pushTokens    PushToken[]
   authLetters   AuthLetter[]
   chatSessions  ChatSession[]
+  myDocs        MyDocsStore?
 
   @@index([barangayId])
 }
@@ -465,4 +466,14 @@ model PushToken {
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   token    String @unique
   platform String
+}
+
+/// My Docs synced from the app: one merged copy per account (see packages/shared/src/mydocs.ts).
+/// `version` goes up by one on every save, so two phones saving at once cannot overwrite each other.
+model MyDocsStore {
+  userId    String   @id
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  data      Json
+  version   Int      @default(0)
+  updatedAt DateTime @updatedAt
 }
