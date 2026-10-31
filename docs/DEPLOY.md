@@ -36,6 +36,12 @@ Without email, the app says so on "Forgot password" and hides the verify banner.
 free Resend account, verify a sending domain, and set `RESEND_API_KEY` and `MAIL_FROM`
 (e.g. `Dokyu <no-reply@yourdomain>`) in Render.
 
+## Why there is a database tunnel
+Render's machines have no IPv6, Neon's address offers IPv6 first, and Prisma's engine does not fall back to
+IPv4 (the build failed with P1001). `server/scripts/with-db.mjs` opens a local tunnel that connects over IPv4,
+upgrades to TLS with the real hostname (so Neon routes it), and gives Prisma a local address. It is only
+used for `*.neon.tech` URLs; `DB_TUNNEL=1` forces it for testing.
+
 ## If the build runs out of memory
 
 The web export needs about 400–500 MB. If Render's free build fails with "out of memory", tell Claude:
