@@ -72,6 +72,8 @@ interface Store {
 export type SyncState = 'off' | 'syncing' | 'synced' | 'offline';
 
 export const MYDOCS_KEY = 'dokyu.mydocs.v1';
+/** A guest's own My Docs, set aside while they try the shared demo account, and put back at sign-out. */
+const GUEST_KEY = 'dokyu.mydocs.guest.v1';
 const EMPTY: Store = { people: [], docs: [], deleted: [], owner: null, version: 0 };
 
 function parse(raw: string | null): Store {
@@ -146,6 +148,8 @@ export function MyDocsProvider({ children }: { children: ReactNode }) {
   const userId = status === 'signedIn' ? (user?.id ?? null) : null;
   const userRef = useRef(userId);
   userRef.current = userId;
+  const demoRef = useRef(false);
+  demoRef.current = status === 'signedIn' && !!user?.demo;
 
   useEffect(() => {
     AsyncStorage.getItem(MYDOCS_KEY)
@@ -173,8 +177,14 @@ export function MyDocsProvider({ children }: { children: ReactNode }) {
     for (let attempt = 0; attempt < 4; attempt++) {
       const start = latest.current;
       const editsAtStart = edits.current;
-      // Another account's copy is never uploaded to this one: it is replaced instead.
-      const mine = start.owner === null || start.owner === uid;
+      // Another account's copy is never uploaded to this one: it is replaced instead. A guest's own
+      // documents never go into the shared demo account: they are set aside and come back at sign-out.
+      const guestIntoDemo = start.owner === null && demoRef.current;
+      if (guestIntoDemo && (start.docs.length || start.people.length)) {
+        const { people, docs, deleted } = start;
+        await AsyncStorage.setItem(GUEST_KEY, JSON.stringify({ people, docs, deleted }));
+      }
+      const mine = !guestIntoDemo && (start.owner === null || start.owner === uid);
       const local = mine ? start : { ...EMPTY };
       const remote = await api<{ data: MyDocsData; version: number }>('/me/docs');
       const merged = mergeMyDocs(local, remote.data);
@@ -198,7 +208,7 @@ export function MyDocsProvider({ children }: { children: ReactNode }) {
       // Keep anything edited on this phone while the sync was running; those edits sync next round.
       if (edits.current !== editsAtStart) again.current = true;
       setStore((s) => {
-        const current = s.owner === null || s.owner === uid ? s : { ...EMPTY };
+        const current = s.owner === uid || (s.owner === null && !guestIntoDemo) ? s : { ...EMPTY };
         const next = { ...mergeMyDocs(current, { ...merged, docs }), owner: uid, version };
         latest.current = next;
         return next;
@@ -272,6 +282,15 @@ export function MyDocsProvider({ children }: { children: ReactNode }) {
             if (d.reminderIds?.length) cancelReminders(d.reminderIds).catch(() => {});
           setStore(EMPTY);
           setSyncedAt(null);
+          // Back from the demo account: the guest's own documents return.
+          void (async () => {
+            const saved = await AsyncStorage.getItem(GUEST_KEY).catch(() => null);
+            if (!saved) return;
+            await AsyncStorage.removeItem(GUEST_KEY).catch(() => {});
+            const back = parse(saved);
+            const docs = await withReminders(back.docs, []);
+            setStore({ ...back, docs, owner: null, version: 0 });
+          })();
         },
       }),
     [syncOnce],

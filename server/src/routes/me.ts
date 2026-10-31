@@ -16,12 +16,17 @@ import type { Jwt } from '../lib/jwt.js';
 import { validate } from '../lib/validate.js';
 import { verifyPassword } from '../lib/passwords.js';
 import { requireAuth } from '../middleware/auth.js';
+import { isDemo } from '../services/demo.js';
 import { audit } from '../services/audit.js';
 import { listSessions, toPublicUser } from '../services/sessions.js';
 
 export function meRouter(db: PrismaClient, jwt: Jwt) {
   const r = Router();
   r.use(requireAuth(jwt));
+  const demoUser = async (id: string) => {
+    const u = await db.user.findUnique({ where: { id }, select: { email: true } });
+    return u ? isDemo(u.email) : false;
+  };
 
   r.get('/', async (req, res) => {
     const user = await db.user.findUnique({ where: { id: req.auth!.sub } });
@@ -53,11 +58,19 @@ export function meRouter(db: PrismaClient, jwt: Jwt) {
 
   /** Devices where this account is signed in. */
   r.get('/sessions', async (req, res) => {
-    res.json({ data: await listSessions(db, req.auth!.sub, req.auth!.sid) });
+    const sessions = await listSessions(db, req.auth!.sub, req.auth!.sid);
+    // The shared demo account shows only this visitor's own device, never other visitors'.
+    res.json({
+      data: (await demoUser(req.auth!.sub)) ? sessions.filter((s) => s.current) : sessions,
+    });
   });
 
   /** Sign out one device. Only the owner's sessions match, so another user's id answers 404. */
   r.delete('/sessions/:id', async (req, res) => {
+    if (await demoUser(req.auth!.sub)) {
+      res.status(403).json({ error: "Other visitors' demo sessions can't be signed out." });
+      return;
+    }
     const id = z.string().uuid().safeParse(req.params.id);
     if (!id.success) {
       res.status(404).json({ error: 'Session not found' });
@@ -170,6 +183,12 @@ export function meRouter(db: PrismaClient, jwt: Jwt) {
     }
     if (!(await verifyPassword(user.passwordHash, input.password))) {
       res.status(403).json({ error: 'That password is not correct' });
+      return;
+    }
+    if (isDemo(user.email)) {
+      res
+        .status(403)
+        .json({ error: "The demo account can't be deleted. Create your own account to try this." });
       return;
     }
     await db.user.delete({ where: { id: user.id } });

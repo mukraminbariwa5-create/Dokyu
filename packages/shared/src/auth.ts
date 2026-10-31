@@ -5,6 +5,10 @@ import { z } from 'zod';
 
 export const PASSWORD_MIN = 10;
 
+/** The public demo account (its password is in the README): shared by every visitor, reset at each sign-in. */
+export const DEMO_EMAIL = 'demo@example.com';
+export const DEMO_PASSWORD = 'Dokyu-demo-2026';
+
 export const emailSchema = z
   .string()
   .trim()
@@ -182,4 +186,6 @@ export interface PublicUser {
   goals: GoalSlug[];
   emailVerified: boolean;
   onboarded: boolean;
+  /** The shared demo account: reset at each sign-in, can't be deleted. */
+  demo: boolean;
 }

@@ -5,7 +5,7 @@
  */
 import { randomUUID } from 'node:crypto';
 import type { PrismaClient, User } from '@prisma/client';
-import type { PublicUser } from '@dokyu/shared';
+import { DEMO_EMAIL, type PublicUser } from '@dokyu/shared';
 import { randomToken, sha256 } from '../lib/crypto.js';
 import type { Jwt } from '../lib/jwt.js';
 import { audit } from './audit.js';
@@ -32,6 +32,7 @@ export function toPublicUser(u: User): PublicUser {
     goals: u.goals as PublicUser['goals'],
     emailVerified: u.emailVerifiedAt !== null,
     onboarded: u.onboardedAt !== null,
+    demo: u.email === DEMO_EMAIL,
   };
 }
 

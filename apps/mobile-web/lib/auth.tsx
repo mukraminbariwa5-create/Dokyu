@@ -83,8 +83,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     if (current.onboarded) {
       s.update({
-        language: current.language,
-        largeText: current.textSize === 'large',
+        // The shared demo account keeps each visitor's own language and text size.
+        ...(current.demo
+          ? {}
+          : { language: current.language, largeText: current.textSize === 'large' }),
         province: current.province,
         municipality: current.municipality,
         goals: current.goals,

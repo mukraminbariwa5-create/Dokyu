@@ -33,6 +33,7 @@ import {
   toPublicUser,
   type IssuedTokens,
 } from '../services/sessions.js';
+import { isDemo, resetDemo } from '../services/demo.js';
 
 export const REFRESH_COOKIE = 'dokyu_rt';
 export const MAX_FAILED_LOGINS = 5;
@@ -207,6 +208,12 @@ export function authRouter(env: Env, db: PrismaClient, jwt: Jwt, mailer: Mailer)
       return;
     }
     if (!(await verifyPassword(user.passwordHash, input.password))) {
+      // The demo password is public: never lock it, or one visitor could lock everyone out.
+      // (The per-IP rate limit on this route still applies.)
+      if (isDemo(user.email)) {
+        wrong();
+        return;
+      }
       const failed = user.failedLogins + 1;
       const lock = failed >= MAX_FAILED_LOGINS;
       await db.user.update({
@@ -227,6 +234,7 @@ export function authRouter(env: Env, db: PrismaClient, jwt: Jwt, mailer: Mailer)
       return;
     }
 
+    if (isDemo(user.email)) await resetDemo(db, user.id);
     const fresh = await db.user.update({
       where: { id: user.id },
       data: { failedLogins: 0, lockedUntil: null },
@@ -315,7 +323,8 @@ export function authRouter(env: Env, db: PrismaClient, jwt: Jwt, mailer: Mailer)
     const input = validate(forgotPasswordSchema, req.body, res);
     if (!input) return;
     const user = await db.user.findUnique({ where: { email: input.email } });
-    if (user && !user.deletedAt) await sendEmailLink(user.id, user.email, 'RESET_PASSWORD');
+    if (user && !user.deletedAt && !isDemo(user.email))
+      await sendEmailLink(user.id, user.email, 'RESET_PASSWORD');
     res
       .status(202)
       .json({ message: 'If that email has a Dokyu account, a reset link is on its way.' });

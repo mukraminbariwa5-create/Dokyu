@@ -12,7 +12,7 @@ import { ACCOUNTS_ENABLED } from '../../lib/api';
 export function SyncStatus() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { status } = useAuth();
+  const { status, user } = useAuth();
   const { sync, syncNow } = useMyDocs();
 
   let icon: IconName = 'check';
@@ -20,7 +20,11 @@ export function SyncStatus() {
   let text = t('mydocs.syncOn');
   let action: { label: string; onPress: () => void } | null = null;
 
-  if (status !== 'signedIn') {
+  if (status === 'signedIn' && user?.demo) {
+    icon = 'alert';
+    color = colors.warning;
+    text = t('demo.notice');
+  } else if (status !== 'signedIn') {
     icon = 'info';
     color = colors.textMuted;
     text = t('mydocs.syncGuest');

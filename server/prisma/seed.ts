@@ -4,11 +4,11 @@
  */
 import { PrismaClient, type Prisma } from '@prisma/client';
 import { randomBytes } from 'node:crypto';
-import { GUIDES, HOLIDAYS, OFFICES, hoursText } from '@dokyu/shared';
+import { DEMO_EMAIL, DEMO_PASSWORD, GUIDES, HOLIDAYS, OFFICES, hoursText } from '@dokyu/shared';
 import { hashPassword } from '../src/lib/passwords.js';
 
 const db = new PrismaClient();
-const DEMO_USER_EMAIL = 'demo@example.com';
+const DEMO_USER_EMAIL = DEMO_EMAIL;
 const ADMIN_EMAIL = 'admin@example.com';
 
 const AGENCIES: Record<string, { name: string; officialUrl: string }> = {
@@ -95,7 +95,7 @@ async function main() {
 
   // Demo accounts (plan §10). The demo user's password is public on purpose so recruiters can try the app.
   // The admin password comes from SEED_ADMIN_PASSWORD, or a random one is printed once.
-  const demoPassword = 'Dokyu-demo-2026';
+  const demoPassword = DEMO_PASSWORD;
   await db.user.upsert({
     where: { email: DEMO_USER_EMAIL },
     create: {

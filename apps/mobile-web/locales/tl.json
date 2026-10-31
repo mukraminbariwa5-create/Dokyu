@@ -515,5 +515,11 @@
     "title": "Walang ganitong pahina",
     "text": "Wala o lumipat na ang pahinang ito. Bumalik tayo sa Home.",
     "home": "Pumunta sa Home"
+  },
+  "demo": {
+    "title": "Tumitingin lang?",
+    "text": "Subukan ang shared demo account na may sample na dokumento. Nire-reset ito tuwing may nagsa-sign in, kaya huwag maglagay ng totoong impormasyon.",
+    "button": "Subukan ang demo account",
+    "notice": "Nasa shared demo account ka. Kahit sino ay puwedeng mag-sign in dito at nire-reset ito tuwing may nagsa-sign in, kaya huwag maglagay ng totoong impormasyon. Babalik ang sarili mong mga dokumento kapag nag-sign out ka."
   }
 }

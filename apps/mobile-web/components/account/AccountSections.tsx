@@ -101,7 +101,7 @@ export function InfoLinks({ onReplayTour }: { onReplayTour?: () => void }) {
 export function DataSection() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { status, deleteAccount, signOut } = useAuth();
+  const { status, user, deleteAccount, signOut } = useAuth();
   const { language, update } = useSettings();
   const { clearAll } = useMyDocs();
   const [note, setNote] = useState('');
@@ -157,7 +157,7 @@ export function DataSection() {
           icon={<Icon name="trash" size={18} color={colors.danger} />}
           onPress={() => setAskClear(true)}
         />
-        {status === 'signedIn' ? (
+        {status === 'signedIn' && !user?.demo ? (
           <Button
             label={t('data.deleteAccount')}
             variant="dangerGhost"

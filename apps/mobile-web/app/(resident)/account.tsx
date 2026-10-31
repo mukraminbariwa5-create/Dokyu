@@ -96,6 +96,14 @@ export default function Account() {
             </AppText>
           </Card>
           {!user.emailVerified && emailOn ? <VerifyBanner email={user.email} /> : null}
+          {user.demo ? (
+            <View className="flex-row gap-2 rounded-lg bg-gold-soft p-4" accessibilityRole="alert">
+              <Icon name="alert" size={20} color="#8A6400" />
+              <AppText variant="small" className="flex-1" style={{ color: '#5C4300' }}>
+                {t('demo.notice')}
+              </AppText>
+            </View>
+          ) : null}
         </>
       ) : null}
 

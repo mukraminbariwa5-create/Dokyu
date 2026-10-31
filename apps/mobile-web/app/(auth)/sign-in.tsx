@@ -3,7 +3,9 @@ import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { TextLink } from '../../components/ui/TextLink';
 import { useTranslation } from 'react-i18next';
-import { loginSchema } from '@dokyu/shared';
+import { DEMO_EMAIL, DEMO_PASSWORD, colors, loginSchema } from '@dokyu/shared';
+import { Card } from '../../components/ui/Card';
+import { Icon } from '../../components/ui/Icon';
 import { AuthScreen, FormNotice } from '../../components/AuthScreen';
 import { AppText } from '../../components/ui/AppText';
 import { Button } from '../../components/ui/Button';
@@ -26,14 +28,15 @@ export default function SignIn() {
   const [busy, setBusy] = useState(false);
   const tr = (m?: string) => (m ? translateError(m, language) : undefined);
 
-  async function submit() {
-    const local = checkFields(loginSchema, { email, password });
+  async function submit(demo = false) {
+    const creds = demo ? { email: DEMO_EMAIL, password: DEMO_PASSWORD } : { email, password };
+    const local = checkFields(loginSchema, creds);
     setFields(local);
     setError('');
     if (Object.keys(local).length) return;
     setBusy(true);
     try {
-      goAfterAuth(router, await signIn(email, password));
+      goAfterAuth(router, await signIn(creds.email, creds.password));
     } catch (e) {
       const d = describeError(e);
       setFields(d.fields);
@@ -63,18 +66,37 @@ export default function SignIn() {
         error={tr(fields.password)}
         autoComplete="current-password"
         textContentType="password"
-        onSubmitEditing={submit}
+        onSubmitEditing={() => submit()}
       />
       <TextLink align="right" onPress={() => router.push('/forgot-password')}>
         {t('auth.forgot')}
       </TextLink>
-      <Button label={t('auth.signIn')} onPress={submit} loading={busy} fullWidth />
+      <Button label={t('auth.signIn')} onPress={() => submit()} loading={busy} fullWidth />
       <View className="flex-row flex-wrap items-center justify-center gap-1">
         <AppText variant="small" tone="muted">
           {t('auth.noAccount')}
         </AppText>
         <TextLink onPress={() => router.replace('/sign-up')}>{t('auth.signUp')}</TextLink>
       </View>
+      <Card tone="soft" className="gap-2">
+        <View className="flex-row items-center gap-2">
+          <Icon name="sparkle" size={18} color={colors.primary} />
+          <AppText variant="body" weight="semibold" tone="primaryDark">
+            {t('demo.title')}
+          </AppText>
+        </View>
+        <AppText variant="small" tone="muted">
+          {t('demo.text')}
+        </AppText>
+        <Button
+          label={t('demo.button')}
+          variant="secondary"
+          size="md"
+          fullWidth
+          disabled={busy}
+          onPress={() => submit(true)}
+        />
+      </Card>
       <Button
         label={t('auth.continueGuest')}
         variant="ghost"

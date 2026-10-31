@@ -515,5 +515,11 @@
     "title": "Page not found",
     "text": "This page doesn't exist or has moved. Let's go back to Home.",
     "home": "Go to Home"
+  },
+  "demo": {
+    "title": "Just looking?",
+    "text": "Try the shared demo account with sample documents. It resets every time someone signs in, so don't add real information.",
+    "button": "Try the demo account",
+    "notice": "You're in the shared demo account. Anyone can sign in to it and it resets at every sign-in, so don't add real information. Your own documents come back when you sign out."
   }
 }
