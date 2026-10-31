@@ -30,9 +30,13 @@ import { AGENCY_MONO, useNow, useOffice } from '../../../lib/offices';
 import { useSettings } from '../../../lib/settings';
 import { formatDate } from '../../../lib/format';
 import { FadeIn } from '../../../lib/motion';
+import { NotFound } from '../../../components/NotFound';
+import { TextLink } from '../../../components/ui/TextLink';
+import { useRouter } from 'expo-router';
 
 export default function OfficeDetail() {
   const { t } = useTranslation();
+  const router = useRouter();
   const { language } = useSettings();
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const office = useOffice(slug);
@@ -61,6 +65,8 @@ export default function OfficeDetail() {
     const out: Array<{ iso: string; name: string }> = [];
     for (let i = 1; i <= 7; i++) {
       const d = manilaTime(addDays(now, i));
+      // Only days the office would normally be open (a holiday on a Sunday changes nothing).
+      if (!office.hours.some((h) => h.days.includes(d.dow))) continue;
       const h = closingHoliday(d.iso, HOLIDAYS);
       if (h) out.push({ iso: d.iso, name: L(h.name) });
       const local = office.usuallyClosed?.find((c) => c.month === d.month && c.day === d.day);
@@ -72,10 +78,7 @@ export default function OfficeDetail() {
 
   if (!office) {
     return (
-      <Screen>
-        <BackLink label={t('offices.title')} fallback="/offices" />
-        <AppText variant="h2">{t('offices.notFound')}</AppText>
-      </Screen>
+      <NotFound title={t('offices.notFound')} back="/offices" backLabel={t('offices.title')} />
     );
   }
 
@@ -173,11 +176,7 @@ export default function OfficeDetail() {
               {L(office.hoursNote)}
             </AppText>
           ) : null}
-          <Link href="/holidays" asChild>
-            <AppText variant="small" weight="semibold" tone="primary" accessibilityRole="link">
-              {t('offices.seeHolidays')}
-            </AppText>
-          </Link>
+          <TextLink onPress={() => router.push('/holidays')}>{t('offices.seeHolidays')}</TextLink>
         </Card>
       </Section>
 
@@ -246,15 +245,9 @@ export default function OfficeDetail() {
         <AppText variant="caption" tone="muted">
           {t('offices.checked', { date: formatDate(office.lastVerified, language) })}
         </AppText>
-        <AppText
-          variant="caption"
-          weight="semibold"
-          tone="primary"
-          accessibilityRole="link"
-          onPress={() => openOfficial(office.source)}
-        >
+        <TextLink onPress={() => openOfficial(office.source)}>
           {t('offices.source', { host: hostOf(office.source) })}
-        </AppText>
+        </TextLink>
       </Card>
       <Disclaimer />
     </Screen>

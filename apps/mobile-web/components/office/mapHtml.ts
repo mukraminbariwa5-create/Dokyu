@@ -28,7 +28,7 @@ export function mapHtml({
   );
   return `<!doctype html><html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" onerror="this.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'">
 <style>
 html,body,#map{height:100%;margin:0;background:#ECF0FF;font-family:Poppins,system-ui,sans-serif}
 .pin{width:38px;height:38px;border-radius:12px 12px 12px 2px;transform:rotate(-45deg);background:#2042C4;border:3px solid #fff;box-shadow:0 4px 10px rgba(19,40,122,.35);display:flex;align-items:center;justify-content:center}
@@ -42,11 +42,14 @@ var D=${data};
 function send(m){try{(window.ReactNativeWebView||window.parent).postMessage(JSON.stringify(m),'*')}catch(e){}}
 function offline(){document.getElementById('map').style.display='none';document.getElementById('off').style.display='flex'}
 </script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" onerror="offline()"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>if(!window.L){document.write('<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\\/script>')}</script>
 <script>
-if(window.L){
+if(!window.L){offline()}else{
   var map=L.map('map',{zoomControl:true,attributionControl:true});
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
+  // CARTO Voyager tiles (built from OpenStreetMap data) work inside embedded frames and WebViews.
+  var tiles=L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:20,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank">CARTO</a>'}).addTo(map);
+  var fails=0;tiles.on('tileerror',function(){fails++;if(fails>12&&!window.__offline){window.__offline=1;offline()}});
   var pts=[];
   D.pins.forEach(function(p){
     var sel=p.slug===D.selected;

@@ -119,6 +119,10 @@ export default function AskDoki() {
   const [pose, setPose] = useState<DokiPose>('wave');
   const [talking, setTalking] = useState(false);
   const [mouth, setMouth] = useState(false);
+  // The greeting follows a language switch until the user starts chatting.
+  useEffect(() => {
+    setMessages((m) => (m.length === 1 ? [{ id: 0, from: 'doki', text: t('ask.hello') }] : m));
+  }, [language, t]);
   const scroll = useRef<{ scrollToEnd: (o?: { animated?: boolean }) => void } | null>(null);
   const nextId = useRef(1);
 

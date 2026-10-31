@@ -139,30 +139,32 @@ export default function Goals() {
                   />
                 ) : null}
               </View>
-              <Link href={{ pathname: '/guides/[slug]', params: { slug: g.slug } }} asChild>
-                <PressableCard className="mb-3 flex-1 gap-2">
-                  <View className="flex-row items-center gap-3">
-                    <AgencyTile mono={g.mono} size={40} />
-                    <View className="flex-1">
-                      <AppText variant="body" weight="semibold">
-                        {pick(g.title, language)}
-                      </AppText>
-                      <AppText variant="caption" tone="muted">
-                        {formatFee(startingFee(g.fees), t)}
-                        {tracked(g.slug) ? ` · ${t('goals.inMyDocs')}` : ''}
+              <View style={{ flex: 1, minWidth: 0 }}>
+                <Link href={{ pathname: '/guides/[slug]', params: { slug: g.slug } }} asChild>
+                  <PressableCard className="mb-3 gap-2">
+                    <View className="flex-row items-center gap-3">
+                      <AgencyTile mono={g.mono} size={40} />
+                      <View className="flex-1">
+                        <AppText variant="body" weight="semibold">
+                          {pick(g.title, language)}
+                        </AppText>
+                        <AppText variant="caption" tone="muted">
+                          {formatFee(startingFee(g.fees), t)}
+                          {tracked(g.slug) ? ` · ${t('goals.inMyDocs')}` : ''}
+                        </AppText>
+                      </View>
+                      <Icon name="chevronRight" size={20} color={colors.textSubtle} />
+                    </View>
+                    <AppText variant="small">{pick(s.why, language)}</AppText>
+                    <View className="flex-row gap-1.5">
+                      <Icon name="hourglass" size={14} color={colors.textMuted} />
+                      <AppText variant="caption" tone="muted" className="flex-1">
+                        {pick(g.processing, language)}
                       </AppText>
                     </View>
-                    <Icon name="chevronRight" size={20} color={colors.textSubtle} />
-                  </View>
-                  <AppText variant="small">{pick(s.why, language)}</AppText>
-                  <View className="flex-row gap-1.5">
-                    <Icon name="hourglass" size={14} color={colors.textMuted} />
-                    <AppText variant="caption" tone="muted" className="flex-1">
-                      {pick(g.processing, language)}
-                    </AppText>
-                  </View>
-                </PressableCard>
-              </Link>
+                  </PressableCard>
+                </Link>
+              </View>
             </View>
           </FadeIn>
         );

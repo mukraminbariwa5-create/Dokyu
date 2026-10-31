@@ -118,6 +118,11 @@ test('Ask Doki understands English, Tagalog and Taglish', () => {
   assert.equal(understand('hello Doki').kind, 'greeting');
   assert.equal(understand('salamat!').kind, 'thanks');
   assert.equal(understand('what is the meaning of life').kind, 'unknown');
+  assert.deepEqual(understand('Ano ang dadalhin sa NBI clearance?'), {
+    kind: 'guide',
+    guides: ['nbi-clearance'],
+    topic: 'requirements',
+  });
   // "tin" must be a whole word
   assert.equal(understand('getting started').kind, 'unknown');
 });

@@ -43,8 +43,8 @@
     "soon": "Malapit na",
     "steps": "{{n}} hakbang",
     "comingSoon": "Malapit na sa Dokyu",
-    "docAlerts_one": "May 1 bagay sa My Docs na kailangan ng pansin",
-    "docAlerts_other": "May {{count}} bagay sa My Docs na kailangan ng pansin"
+    "docAlerts_one": "May 1 dokumento sa My Docs na kailangan ng pansin",
+    "docAlerts_other": "May {{count}} dokumento sa My Docs na kailangan ng pansin"
   },
   "guides": {
     "title": "Mga Gabay",
@@ -435,7 +435,7 @@
     "placeholder": "Magtanong kay Doki tungkol sa papeles mo",
     "send": "Ipadala",
     "footer": "Sumasagot si Doki mula sa gabay ng Dokyu sa phone mo. Kumpirmahin palagi sa opisyal na site.",
-    "s1": "What do I bring for NBI clearance?",
+    "s1": "Ano ang dadalhin sa NBI clearance?",
     "s2": "Magkano ang passport?",
     "s3": "Saan kukuha ng PSA birth certificate?",
     "s4": "Unang trabaho, ano ang kailangan?",
@@ -492,5 +492,10 @@
     "text": "Wala pang server ang public preview na ito, kaya hindi ka makaka-sign in dito. Gumagana ang lahat ng iba kahit walang account: gabay, checklist, opisina, holiday, My Docs at Ask Doki.",
     "home": "Bumalik sa Home",
     "account": "Naka-off ang account sa preview na ito. Gumagana ang lahat ng iba kahit wala nito."
+  },
+  "notFound": {
+    "title": "Walang ganitong pahina",
+    "text": "Wala o lumipat na ang pahinang ito. Bumalik tayo sa Home.",
+    "home": "Pumunta sa Home"
   }
 }

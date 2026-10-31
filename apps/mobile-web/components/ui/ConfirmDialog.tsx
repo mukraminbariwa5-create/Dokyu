@@ -12,6 +12,7 @@ export function ConfirmDialog({
   cancelLabel,
   danger,
   loading,
+  confirmDisabled,
   onConfirm,
   onCancel,
   children,
@@ -23,6 +24,7 @@ export function ConfirmDialog({
   cancelLabel: string;
   danger?: boolean;
   loading?: boolean;
+  confirmDisabled?: boolean;
   onConfirm: () => void;
   onCancel: () => void;
   children?: ReactNode;
@@ -64,6 +66,7 @@ export function ConfirmDialog({
               variant={danger ? 'danger' : 'primary'}
               size="md"
               loading={loading}
+              disabled={confirmDisabled}
               onPress={onConfirm}
             />
           </View>

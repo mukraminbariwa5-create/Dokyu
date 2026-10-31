@@ -15,10 +15,12 @@ import {
   RequirementCard,
   StepGroups,
   TipBox,
-  hostOf,
   openOfficial,
 } from '../../../../components/guide/parts';
 import { useGuide } from '../../../../lib/guides';
+import { NotFound } from '../../../../components/NotFound';
+import { TextLink } from '../../../../components/ui/TextLink';
+import { sortByArea, shortLink } from '../../../../lib/offices';
 import { OFFICES, officesForGuide } from '@dokyu/shared';
 import { OfficeCard } from '../../../../components/office/OfficeCard';
 import { useNow } from '../../../../lib/offices';
@@ -33,6 +35,7 @@ export default function GuideDetail() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const g = useGuide(slug);
   const now = useNow();
+  const { province } = useSettings();
   const L = (x: { en: string; tl: string }) => pick(x, language);
 
   const back = (
@@ -49,14 +52,10 @@ export default function GuideDetail() {
   );
 
   if (!g) {
-    return (
-      <Screen>
-        {back}
-        <AppText variant="h2">{t('guides.notFound')}</AppText>
-      </Screen>
-    );
+    return <NotFound title={t('guides.notFound')} back="/guides" backLabel={t('guides.back')} />;
   }
 
+  const whereOffices = sortByArea(officesForGuide(OFFICES, g.slug), province);
   const main = mainAction(g);
   const always = g.requirements.filter((r) => !r.onlyIf);
   const sometimes = g.requirements.filter((r) => r.onlyIf);
@@ -153,27 +152,33 @@ export default function GuideDetail() {
       <Section>
         <View className="flex-row items-center justify-between">
           <AppText variant="title">{t('guide.whereToGo')}</AppText>
-          {officesForGuide(OFFICES, g.slug).length > 2 ? (
-            <Link href={{ pathname: '/offices', params: { guide: g.slug } }}>
-              <AppText variant="small" weight="semibold" tone="primary">
-                {t('home.seeAll')}
-              </AppText>
-            </Link>
+          {whereOffices.length > 2 ? (
+            <TextLink
+              align="right"
+              onPress={() => router.push({ pathname: '/offices', params: { guide: g.slug } })}
+            >
+              {t('home.seeAll')}
+            </TextLink>
           ) : null}
         </View>
-        {officesForGuide(OFFICES, g.slug).length === 0 ? (
+        {g.slug === 'police-clearance' ? (
+          <AppText variant="body" tone="muted">
+            {t('offices.policeText')}
+          </AppText>
+        ) : null}
+        {whereOffices.length === 0 ? (
           <AppText variant="body" tone="muted">
             {g.slug === 'barangay-clearance' ? t('guide.whereBarangay') : t('guide.whereOnline')}
           </AppText>
         ) : (
-          officesForGuide(OFFICES, g.slug)
-            .slice(0, 2)
-            .map((o) => <OfficeCard key={o.slug} office={o} now={now} />)
+          whereOffices.slice(0, 2).map((o) => <OfficeCard key={o.slug} office={o} now={now} />)
         )}
         <View className="flex-row flex-wrap gap-2">
-          <Link href={{ pathname: '/offices', params: { guide: g.slug } }} asChild>
-            <Button label={t('guide.findOffice')} variant="secondary" size="md" />
-          </Link>
+          {whereOffices.length > 0 ? (
+            <Link href={{ pathname: '/offices', params: { guide: g.slug } }} asChild>
+              <Button label={t('guide.findOffice')} variant="secondary" size="md" />
+            </Link>
+          ) : null}
           <Link href={{ pathname: '/docs/new', params: { guide: g.slug } }} asChild>
             <Button label={t('guide.track')} variant="ghost" size="md" />
           </Link>
@@ -228,11 +233,9 @@ export default function GuideDetail() {
           {t('guide.sources')}
         </AppText>
         {g.sources.map((s) => (
-          <Pressable key={s} accessibilityRole="link" onPress={() => openOfficial(s)}>
-            <AppText variant="caption" tone="primary">
-              {hostOf(s)}
-            </AppText>
-          </Pressable>
+          <TextLink key={s} onPress={() => openOfficial(s)}>
+            {shortLink(s)}
+          </TextLink>
         ))}
       </Card>
       <Disclaimer />

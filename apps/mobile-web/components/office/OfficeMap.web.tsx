@@ -49,7 +49,7 @@ export function OfficeMap({
       {createElement('iframe', {
         srcDoc: html,
         title: t('offices.mapLabel'),
-        sandbox: 'allow-scripts',
+        sandbox: 'allow-scripts allow-popups allow-popups-to-escape-sandbox',
         style: { border: 0, width: '100%', height: '100%' },
       })}
     </View>

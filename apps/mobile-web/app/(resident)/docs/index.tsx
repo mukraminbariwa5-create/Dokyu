@@ -1,6 +1,6 @@
 /** My Docs (plan §3.1 C): everything you and your family have, are getting or need, and what needs attention. */
 import { useMemo, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { GUIDES, colors, manilaTime, pick } from '@dokyu/shared';
@@ -100,14 +100,17 @@ export default function MyDocs() {
               </AppText>
             </View>
             {alerts.slice(0, 5).map((a, i) => (
-              <Link
+              <Pressable
                 key={`${a.kind}-${a.doc.id}-${i}`}
-                href={{ pathname: '/docs/[id]', params: { id: a.doc.id } }}
+                accessibilityRole="link"
+                onPress={() => router.push({ pathname: '/docs/[id]', params: { id: a.doc.id } })}
+                className="justify-center active:opacity-70"
+                style={{ minHeight: 40 }}
               >
                 <AppText variant="small" style={{ color: '#5C4300' }}>
                   • {alertText(a)}
                 </AppText>
-              </Link>
+              </Pressable>
             ))}
           </Card>
         </FadeIn>

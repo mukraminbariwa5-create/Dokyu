@@ -35,6 +35,35 @@ export function useNow(): Date {
   return now;
 }
 
+/** Offices in the user's own area first (Sulu users also see Zamboanga City next). */
+export function sortByArea<T extends OfficeSeed>(offices: T[], province: string | null): T[] {
+  const area =
+    province === 'Metro Manila'
+      ? 'metro-manila'
+      : province === 'Sulu'
+        ? 'sulu'
+        : province?.startsWith('Zamboanga')
+          ? 'zamboanga'
+          : null;
+  if (!area) return offices;
+  const rank = (o: T) => (o.area === area ? 0 : area === 'sulu' && o.area === 'zamboanga' ? 1 : 2);
+  return [...offices].sort((a, b) => rank(a) - rank(b));
+}
+
+/** "lawphil.net › ra_11261_2019.html" so two links from one site look different. */
+export function shortLink(url: string): string {
+  try {
+    const u = new URL(url);
+    const host = u.hostname.replace(/^www\./, '');
+    const last = u.pathname.split('/').filter(Boolean).pop();
+    if (!last) return host;
+    const tail = decodeURIComponent(last);
+    return `${host} › ${tail.length > 32 ? `${tail.slice(0, 30)}…` : tail}`;
+  } catch {
+    return url;
+  }
+}
+
 export type LocationState =
   | { state: 'idle' }
   | { state: 'asking' }

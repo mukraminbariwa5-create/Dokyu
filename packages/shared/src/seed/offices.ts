@@ -304,8 +304,7 @@ export const OFFICES: OfficeSeed[] = [
       url: 'https://pnpclearance.ph',
       label: { en: 'Book on pnpclearance.ph', tl: 'Mag-book sa pnpclearance.ph' },
     },
-    source:
-      'https://mindanews.com/top-stories/2020/06/cops-who-killed-4-soldiers-in-jolo-now-in-police-custody-as-they-await-nbi-probe/',
+    source: 'https://pnpclearance.ph',
     lastVerified: CHECKED,
   },
 

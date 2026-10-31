@@ -9,6 +9,7 @@ import { DocForm } from '../../../components/docs/DocForm';
 import { docTitle } from '../../../components/docs/DocCard';
 import { useMyDocs } from '../../../lib/mydocs';
 import { useSettings } from '../../../lib/settings';
+import { NotFound } from '../../../components/NotFound';
 
 export default function EditDoc() {
   const { t } = useTranslation();
@@ -18,12 +19,7 @@ export default function EditDoc() {
   const doc = docs.find((d) => d.id === id);
   if (!ready) return <Screen>{null}</Screen>;
   if (!doc) {
-    return (
-      <Screen>
-        <BackLink label={t('nav.docs')} fallback="/docs" />
-        <AppText variant="h2">{t('mydocs.notFound')}</AppText>
-      </Screen>
-    );
+    return <NotFound title={t('mydocs.notFound')} back="/docs" backLabel={t('nav.docs')} />;
   }
   return (
     <Screen>

@@ -205,7 +205,7 @@ export function DocForm({
       </Card>
 
       <View className="flex-row flex-wrap gap-3">
-        <View style={{ flexGrow: 1, minWidth: 180 }}>
+        <View style={{ flexGrow: 1, flexBasis: 220, minWidth: 0, maxWidth: '100%' }}>
           <Input
             label={t('mydocs.reference')}
             value={referenceNo}
@@ -265,6 +265,7 @@ export function DocForm({
         confirmLabel={t('mydocs.add')}
         cancelLabel={t('common.cancel')}
         onCancel={() => setAdding(false)}
+        confirmDisabled={newName.trim().length < 1}
         onConfirm={() => {
           if (newName.trim().length < 1) return;
           const p = addPerson(newName, newRelation);

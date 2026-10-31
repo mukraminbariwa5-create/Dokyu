@@ -43,8 +43,8 @@
     "soon": "Soon",
     "steps": "{{n}} steps",
     "comingSoon": "Coming soon in Dokyu",
-    "docAlerts_one": "1 thing in My Docs needs your attention",
-    "docAlerts_other": "{{count}} things in My Docs need your attention"
+    "docAlerts_one": "1 document in My Docs needs your attention",
+    "docAlerts_other": "{{count}} documents in My Docs need your attention"
   },
   "guides": {
     "title": "Guides",
@@ -492,5 +492,10 @@
     "text": "This public preview has no server yet, so you can't sign in here. Everything else works without an account: guides, checklists, offices, holidays, My Docs and Ask Doki.",
     "home": "Back to Home",
     "account": "Accounts are off on this preview. Everything else works without one."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "text": "This page doesn't exist or has moved. Let's go back to Home.",
+    "home": "Go to Home"
   }
 }

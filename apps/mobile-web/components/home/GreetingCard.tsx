@@ -46,7 +46,8 @@ export function GreetingCard({ name }: { name?: string }) {
         <Pressable
           accessibilityRole="button"
           onPress={() => router.push('/setup')}
-          className="mt-2 flex-row items-center gap-1.5 self-start rounded-full bg-surface px-2.5 py-1 active:opacity-80"
+          className="mt-2 flex-row items-center gap-1.5 self-start rounded-full bg-surface px-3 active:opacity-80"
+          style={{ minHeight: 40 }}
         >
           <Icon name="pin" size={13} color={colors.primary} strokeWidth={2.2} />
           <AppText variant="caption" weight="medium" tone="primary">

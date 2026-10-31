@@ -36,7 +36,10 @@ export function DateField({
       : value
     : t('common.notSet');
   return (
-    <View className="gap-1.5" style={{ flexGrow: 1, minWidth: 150 }}>
+    <View
+      className="gap-1.5"
+      style={{ flexGrow: 1, flexBasis: 160, minWidth: 0, maxWidth: '100%' }}
+    >
       <AppText variant="small" weight="medium">
         {label}
       </AppText>

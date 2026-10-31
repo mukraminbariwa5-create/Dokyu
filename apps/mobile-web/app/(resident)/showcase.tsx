@@ -1,3 +1,4 @@
+import { Redirect } from 'expo-router';
 /**
  * Phase 1 component showcase (docs/PLAN.md §12). Open /showcase on a phone and on a desktop browser.
  */
@@ -39,7 +40,13 @@ const SWATCHES: Array<[name: string, hex: string]> = [
 const TYPE: TextVariant[] = ['h1', 'h2', 'title', 'bodyLg', 'body', 'small', 'caption'];
 const TONES = Object.keys(statusColors) as StatusTone[];
 
-export default function Showcase() {
+/** Developer page: the public build sends visitors Home. */
+export default function ShowcaseRoute() {
+  if (!__DEV__) return <Redirect href="/" />;
+  return <Showcase />;
+}
+
+function Showcase() {
   const { t } = useTranslation();
   const { isDesktop } = useLayout();
   const [name, setName] = useState('');

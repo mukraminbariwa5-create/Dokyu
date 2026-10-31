@@ -66,6 +66,7 @@ Expo SDK **58** (RN 0.88, React 19.3), Expo Router 58, NativeWind **4.2** + Tail
   - Trust: `/about?page=about|help|privacy|terms` (`lib/legal.ts`), Account → Download my data (device + account JSON), Delete data on this device, Delete account (`DELETE /api/v1/me` with password, `GET /api/v1/me/export`; tests in `server/test/privacy.test.ts`). `components/ui/ConfirmDialog.tsx` replaces browser alerts.
   - Live preview: the Pages build sets `EXPO_PUBLIC_PREVIEW=1`, so sign-in screens explain that accounts need the server instead of failing.
   - Click-test: a Playwright crawl of every screen and button (59 checks) passes on phone and desktop sizes.
+  - Pre-launch audit (31 Oct): all 44 routes checked in 4 modes (phone EN, phone TL, large text, desktop) on the exact Pages build: no errors, overflow, missing text or tap targets under 40 px. Added `app/+not-found.tsx` + `components/NotFound.tsx`, `components/ui/TextLink.tsx` (44 px tap area), `lib/reminders.web.ts` (no notifications library on web), area-first office order on guides, closures only on days the office opens, CARTO map tiles (work inside frames), showcase hidden in production. Android bundle (`expo export --platform android`) builds.
 - Still open: host the API (needs an account on a host), test on an Android phone with Expo Go, Super Admin guide/office editor (content is in the seed files for now), more office areas.
 
 ## Next

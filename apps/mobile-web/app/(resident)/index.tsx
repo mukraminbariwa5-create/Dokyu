@@ -23,6 +23,7 @@ import { useSettings } from '../../lib/settings';
 import { useAllChecklists } from '../../lib/checklist';
 import { forYou } from '../../lib/forYou';
 import { formatFee } from '../../lib/format';
+import { TextLink } from '../../components/ui/TextLink';
 import { docAlerts, useMyDocs } from '../../lib/mydocs';
 import { manilaTime } from '@dokyu/shared';
 import { useNow } from '../../lib/offices';
@@ -66,7 +67,8 @@ export default function Home() {
   const next = forYou(guides, goals, ticks);
   const { docs } = useMyDocs();
   const now = useNow();
-  const alerts = docAlerts(docs, manilaTime(now).iso);
+  // One line per document, even if a document has two alerts (ready + expired).
+  const alerts = [...new Set(docAlerts(docs, manilaTime(now).iso).map((a) => a.doc.id))];
   const firstName = user?.fullName.split(' ')[0];
 
   const tiles: Tile[] = [
@@ -192,11 +194,9 @@ export default function Home() {
         <View className="gap-2.5">
           <View className="flex-row items-center justify-between">
             <AppText variant="title">{t('home.popular')}</AppText>
-            <Link href="/guides">
-              <AppText variant="small" weight="semibold" tone="primary">
-                {t('home.seeAll')}
-              </AppText>
-            </Link>
+            <TextLink align="right" onPress={() => router.push('/guides')}>
+              {t('home.seeAll')}
+            </TextLink>
           </View>
           <ScrollView
             horizontal
